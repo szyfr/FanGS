@@ -14,7 +14,9 @@ Name is not final, and subject to change when either I come up with something be
 
 ## Resources
 [TODO](TODO.md)
+
 [Changelog](CHANGELOG.md)
 
+---
 
 **NOTE: Any and all resources inside of the directory labeled "Anbennar", unless stated otherwise, belongs to the team behind the Anbennar Mod. If they wish to see the resources removed, I will comply.**
