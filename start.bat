@@ -7,4 +7,4 @@ call ./build.bat
 
 Start remedybg target/debug/%date%/FanGS.exe
 
-Start code ./
+code ./

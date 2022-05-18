@@ -10,16 +10,16 @@ import "core:fmt"
 import "core:strings"
 
 import rl "raylib"
-import pl "player"
+import lc "core/localization"
+import pl "core/player"
+import wm "core/worldmap"
+import ut "core/utilities"
 
 
 /// Main
 main :: proc() {
 
-	rl.init_window(screen_width, screen_height, "FanGS: Fantasy Grande Strategy");
-	rl.set_target_fps(60);
-
-	pl.init_player();
+	init_main();
 
 
 	for !rl.window_should_close() {
@@ -45,7 +45,7 @@ main :: proc() {
 				rl.clear_background(rl.RAYWHITE);
 
 				rl.begin_mode3d(pl.player_user.camera);
-					rl.draw_grid(10, 1);
+					rl.draw_grid(100, 1);
 					rl.draw_cube(
 						position = rl.Vector3{0, 0, 0},
 						width    = 2,

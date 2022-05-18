@@ -6,7 +6,7 @@ package player
 
 
 
-import rl "../raylib"
+import rl "../../raylib"
 
 
 /// Global Player variable

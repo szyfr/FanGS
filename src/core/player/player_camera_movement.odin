@@ -7,7 +7,7 @@ package player
 
 
 import math "core:math/linalg/glsl"
-import rl   "../raylib"
+import rl   "../../raylib"
 
 
 // Updates the players camera
