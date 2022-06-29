@@ -43,19 +43,19 @@ free_player :: proc() {
 update_player_movement :: proc() {
 
 	// Movement
-	if raylib.is_key_down(raylib.Keyboard_Key.KEY_W) {
+	if raylib.is_key_down(.KEY_W) {
 		player.camera.position.z += MOVE_SPD * (player.camera.fovy / ZOOM_MAX);
 		player.camera.target.z   += MOVE_SPD * (player.camera.fovy / ZOOM_MAX);
 	}
-	if raylib.is_key_down(raylib.Keyboard_Key.KEY_S) {
+	if raylib.is_key_down(.KEY_S) {
 		player.camera.position.z -= MOVE_SPD * (player.camera.fovy / ZOOM_MAX);
 		player.camera.target.z   -= MOVE_SPD * (player.camera.fovy / ZOOM_MAX);
 	}
-	if raylib.is_key_down(raylib.Keyboard_Key.KEY_A) {
+	if raylib.is_key_down(.KEY_A) {
 		player.camera.position.x += MOVE_SPD * (player.camera.fovy / ZOOM_MAX);
 		player.camera.target.x   += MOVE_SPD * (player.camera.fovy / ZOOM_MAX);
 	}
-	if raylib.is_key_down(raylib.Keyboard_Key.KEY_D) {
+	if raylib.is_key_down(.KEY_D) {
 		player.camera.position.x -= MOVE_SPD * (player.camera.fovy / ZOOM_MAX);
 		player.camera.target.x   -= MOVE_SPD * (player.camera.fovy / ZOOM_MAX);
 	}
