@@ -1,5 +1,6 @@
 
 # FanGS
+## Fantasy Grande Strategy
 ### Language: Odin
 
 A grand strategy game inspired by Europa Universalis 4 and its extremely popular fantasy total conversion mod Anbennar using Odin and Raylib.
