@@ -4,6 +4,7 @@ package main
 
 //= Imports
 import "core:fmt"
+import "core:os"
 
 import "raylib"
 
@@ -37,6 +38,8 @@ init_settings :: proc() {
 	settings = new(SettingsStorage);
 
 	if !raylib.file_exists("data/settings.bin") do create_settings();
+
+	if 
 
 	bytes: u32 = 0;
 	rawData: [^]u8 = (raylib.load_file_data("data/settings.bin", &bytes));
