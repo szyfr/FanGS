@@ -8,6 +8,8 @@ import "core:fmt"
 import "raylib"
 
 //= Constants
+SETTINGS_FILE_SIZE :: 16
+
 
 //= Global Variables
 settings: ^SettingsStorage;
@@ -25,7 +27,7 @@ SettingsStorage :: struct {
 
 
 //= Enumerations
-Languages :: enum { english = 0, spanish, german, french, }
+Languages :: enum i32 { english = 0, spanish, german, french, }
 
 
 //= Procedures
@@ -34,13 +36,7 @@ Languages :: enum { english = 0, spanish, german, french, }
 init_settings :: proc() {
 	settings = new(SettingsStorage);
 
-	if !raylib.file_exists("data/settings.bin") {
-		settings.windowHeight = 1280;
-		settings.windowWidth  =  720;
-		settings.targetFPS    =   80;
-		settings.language     = .english;
-		// TODO: Create new file
-	}
+	if !raylib.file_exists("data/settings.bin") do create_settings();
 
 	bytes: u32 = 0;
 	rawData: [^]u8 = (raylib.load_file_data("data/settings.bin", &bytes));
@@ -54,4 +50,15 @@ init_settings :: proc() {
 }
 free_settings :: proc() {
 	free(settings);
+}
+
+create_settings :: proc() {
+	array: [SETTINGS_FILE_SIZE]u8;
+
+	unfuse(1280, array[0:4]);
+	unfuse( 720, array[4:8]);
+	unfuse(  80, array[8:12]);
+	unfuse(   0, array[12:16]);
+
+	raylib.save_file_data("data/settings.bin", rawptr(&array), SETTINGS_FILE_SIZE);
 }
