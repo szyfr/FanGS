@@ -3,12 +3,15 @@ package main
 
 
 //= Imports
+import "core:fmt"
+
 import "raylib"
 
 //= Constants
 MOVE_SPD ::   0.05
 ZOOM_MAX :: 100
 ZOOM_MIN ::  40
+EDGE_DIS ::  50
 
 
 //= Global Variables
@@ -18,6 +21,8 @@ player: ^Player;
 //= Structures
 Player :: struct {
 	camera: raylib.Camera3d,
+
+	lastMousePos: raylib.Vector2,
 }
 
 
@@ -42,22 +47,52 @@ free_player :: proc() {
 
 update_player_movement :: proc() {
 
-	// Movement
-	if raylib.is_key_down(.KEY_W) {
+	// Key Movement
+	// TODO: check origin of each key
+	if raylib.is_key_down(raylib.Keyboard_Key(settings.keybindings["up"].key)) {
 		player.camera.position.z += MOVE_SPD * (player.camera.fovy / ZOOM_MAX);
 		player.camera.target.z   += MOVE_SPD * (player.camera.fovy / ZOOM_MAX);
 	}
-	if raylib.is_key_down(.KEY_S) {
+	if raylib.is_key_down(raylib.Keyboard_Key(settings.keybindings["down"].key)) {
 		player.camera.position.z -= MOVE_SPD * (player.camera.fovy / ZOOM_MAX);
 		player.camera.target.z   -= MOVE_SPD * (player.camera.fovy / ZOOM_MAX);
 	}
-	if raylib.is_key_down(.KEY_A) {
+	if raylib.is_key_down(raylib.Keyboard_Key(settings.keybindings["left"].key)) {
 		player.camera.position.x += MOVE_SPD * (player.camera.fovy / ZOOM_MAX);
 		player.camera.target.x   += MOVE_SPD * (player.camera.fovy / ZOOM_MAX);
 	}
-	if raylib.is_key_down(.KEY_D) {
+	if raylib.is_key_down(raylib.Keyboard_Key(settings.keybindings["right"].key)) {
 		player.camera.position.x -= MOVE_SPD * (player.camera.fovy / ZOOM_MAX);
 		player.camera.target.x   -= MOVE_SPD * (player.camera.fovy / ZOOM_MAX);
+	}
+
+	// Drag movement
+	if raylib.is_mouse_button_down(.MOUSE_BUTTON_RIGHT) {
+		mouseDelta: raylib.Vector2 = raylib.get_mouse_delta();
+
+		player.camera.position.x += mouseDelta.x * 0.01;
+		player.camera.position.z += mouseDelta.y * 0.01;
+
+		player.camera.target.x += mouseDelta.x * 0.01;
+		player.camera.target.z += mouseDelta.y * 0.01;
+	}
+
+	// Edge scrolling
+	if raylib.get_mouse_x() <= EDGE_DIS {
+		player.camera.position.x += MOVE_SPD;
+		player.camera.target.x   += MOVE_SPD;
+	}
+	if raylib.get_mouse_x() >= settings.windowWidth - EDGE_DIS {
+		player.camera.position.x -= MOVE_SPD;
+		player.camera.target.x   -= MOVE_SPD;
+	}
+	if raylib.get_mouse_y() <= EDGE_DIS {
+		player.camera.position.z += MOVE_SPD;
+		player.camera.target.z   += MOVE_SPD;
+	}
+	if raylib.get_mouse_y() >= settings.windowHeight - EDGE_DIS {
+		player.camera.position.z -= MOVE_SPD;
+		player.camera.target.z   -= MOVE_SPD;
 	}
 
 

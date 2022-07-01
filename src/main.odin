@@ -46,7 +46,7 @@ main_initialization :: proc() {
 	init_player();
 	init_localization();
 
-	raylib.init_window(settings.windowHeight, settings.windowWidth, "FanGS: Fantasy Grande Strategy");
+	raylib.init_window(settings.windowWidth, settings.windowHeight, "FanGS: Fantasy Grande Strategy");
 	raylib.set_target_fps(settings.targetFPS);
 
 }

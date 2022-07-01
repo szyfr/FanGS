@@ -18,8 +18,8 @@ settings: ^SettingsStorage;
 
 //= Structures
 SettingsStorage :: struct {
-	windowHeight: i32,
-	windowWidth:  i32,
+	windowWidth: i32,
+	windowHeight:  i32,
 
 	targetFPS:    i32,
 
@@ -48,8 +48,8 @@ init_settings :: proc() {
 	bytes: u32 = 0;
 	rawData, err := os.read_entire_file_from_filename("data/settings.bin");
 
-	settings.windowHeight = fuse_i32(rawData,  0);
-	settings.windowWidth  = fuse_i32(rawData,  4);
+	settings.windowWidth  = fuse_i32(rawData,  0);
+	settings.windowHeight = fuse_i32(rawData,  4);
 	settings.targetFPS    = fuse_i32(rawData,  8);
 	settings.language     = Languages(fuse_i32(rawData, 12));
 
@@ -76,6 +76,25 @@ create_settings :: proc() {
 	unfuse_keybind(Keybinding{0,264}, array[20:24]);
 	unfuse_keybind(Keybinding{0,263}, array[24:28]);
 	unfuse_keybind(Keybinding{0,262}, array[28:32]);
+
+	res := os.write_entire_file("data/settings.bin", array[:]);
+	if !res do add_to_log("[MAJOR]: Failed to save settings.");
+}
+
+save_setting :: proc() {
+	os.remove("data/settings.bin");
+
+	array: [SETTINGS_FILE_SIZE]u8;
+
+	unfuse_i32(settings.windowWidth,   array[0:4]);
+	unfuse_i32(settings.windowHeight,  array[4:8]);
+	unfuse_i32(settings.targetFPS,     array[8:12]);
+	unfuse_i32(i32(settings.language), array[12:16]);
+
+	unfuse_keybind(settings.keybindings["up"],    array[16:20]);
+	unfuse_keybind(settings.keybindings["down"],  array[20:24]);
+	unfuse_keybind(settings.keybindings["left"],  array[24:28]);
+	unfuse_keybind(settings.keybindings["right"], array[28:32]);
 
 	res := os.write_entire_file("data/settings.bin", array[:]);
 	if !res do add_to_log("[MAJOR]: Failed to save settings.");
