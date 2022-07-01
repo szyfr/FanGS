@@ -9,7 +9,7 @@ import "core:os"
 import "raylib"
 
 //= Constants
-SETTINGS_FILE_SIZE :: 16
+SETTINGS_FILE_SIZE :: 32
 
 
 //= Global Variables
@@ -24,11 +24,17 @@ SettingsStorage :: struct {
 	targetFPS:    i32,
 
 	language:     Languages,
+
+	keybindings: map[string]Keybinding,
+}
+Keybinding :: struct {
+	origin: u8,
+	key:    u32,
 }
 
 
 //= Enumerations
-Languages :: enum i32 { english = 0, spanish, german, french, }
+Languages   :: enum i32 { english = 0, spanish, german, french, }
 
 
 //= Procedures
@@ -42,10 +48,15 @@ init_settings :: proc() {
 	bytes: u32 = 0;
 	rawData, err := os.read_entire_file_from_filename("data/settings.bin");
 
-	settings.windowHeight = fuse(rawData,  0);
-	settings.windowWidth  = fuse(rawData,  4);
-	settings.targetFPS    = fuse(rawData,  8);
-	settings.language     = Languages(fuse(rawData, 12));
+	settings.windowHeight = fuse_i32(rawData,  0);
+	settings.windowWidth  = fuse_i32(rawData,  4);
+	settings.targetFPS    = fuse_i32(rawData,  8);
+	settings.language     = Languages(fuse_i32(rawData, 12));
+
+	settings.keybindings["up"]    = fuse_keybind(rawData, 16);
+	settings.keybindings["down"]  = fuse_keybind(rawData, 20);
+	settings.keybindings["left"]  = fuse_keybind(rawData, 24);
+	settings.keybindings["right"] = fuse_keybind(rawData, 28);
 
 	delete(rawData);
 }
@@ -56,10 +67,15 @@ free_settings :: proc() {
 create_settings :: proc() {
 	array: [SETTINGS_FILE_SIZE]u8;
 
-	unfuse(1280, array[0:4]);
-	unfuse( 720, array[4:8]);
-	unfuse(  80, array[8:12]);
-	unfuse(   0, array[12:16]);
+	unfuse_i32(1280, array[0:4]);
+	unfuse_i32( 720, array[4:8]);
+	unfuse_i32(  80, array[8:12]);
+	unfuse_i32(   0, array[12:16]);
+
+	unfuse_keybind(Keybinding{0,265}, array[16:20]);
+	unfuse_keybind(Keybinding{0,264}, array[20:24]);
+	unfuse_keybind(Keybinding{0,263}, array[24:28]);
+	unfuse_keybind(Keybinding{0,262}, array[28:32]);
 
 	res := os.write_entire_file("data/settings.bin", array[:]);
 	if !res do add_to_log("[MAJOR]: Failed to save settings.");
