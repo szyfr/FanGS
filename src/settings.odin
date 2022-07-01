@@ -37,19 +37,17 @@ Languages :: enum i32 { english = 0, spanish, german, french, }
 init_settings :: proc() {
 	settings = new(SettingsStorage);
 
-	if !raylib.file_exists("data/settings.bin") do create_settings();
-
-	if 
+	if !os.is_file("data/settings.bin") do create_settings();
 
 	bytes: u32 = 0;
-	rawData: [^]u8 = (raylib.load_file_data("data/settings.bin", &bytes));
+	rawData, err := os.read_entire_file_from_filename("data/settings.bin");
 
 	settings.windowHeight = fuse(rawData,  0);
 	settings.windowWidth  = fuse(rawData,  4);
 	settings.targetFPS    = fuse(rawData,  8);
 	settings.language     = Languages(fuse(rawData, 12));
 
-	raylib.unload_file_data(rawData);
+	delete(rawData);
 }
 free_settings :: proc() {
 	free(settings);
@@ -63,5 +61,6 @@ create_settings :: proc() {
 	unfuse(  80, array[8:12]);
 	unfuse(   0, array[12:16]);
 
-	raylib.save_file_data("data/settings.bin", rawptr(&array), SETTINGS_FILE_SIZE);
+	res := os.write_entire_file("data/settings.bin", array[:]);
+	if !res do add_to_log("[MAJOR]: Failed to save settings.");
 }

@@ -13,12 +13,6 @@ main :: proc() {
 
 	main_initialization();
 
-	add_to_log("[MAJOR]: Fuck");
-	add_to_log("fuck");
-	add_to_log("fuck");
-	add_to_log("fuck");
-	print_log();
-
 
 	for !raylib.window_should_close() {
 		// Updating
@@ -63,5 +57,7 @@ main_free :: proc() {
 	free_settings();
 	free_player();
 	free_localization();
+
+	print_log();
 
 }

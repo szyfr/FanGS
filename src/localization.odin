@@ -5,6 +5,7 @@ package main
 //= Imports
 import "core:fmt"
 import "core:strings"
+import "core:os"
 
 import "raylib"
 
@@ -25,34 +26,34 @@ Localization :: struct {
 //= Procedures
 init_localization :: proc() {
 	localization = new(Localization);
-	rawData: [^]u8;
+	rawData: []u8;
+	success: bool;
 
 	switch settings.language {
 		case .english:
-			if raylib.file_exists("data/localization/english.bin") {
-				rawData = raylib.load_file_text("data/localization/english.bin");
+			if os.is_file("data/localization/english.bin") {
+				rawData, success = os.read_entire_file_from_filename("data/localization/english.bin");
 			}
 			break;
 		case .spanish:
-			if raylib.file_exists("data/localization/spanish.bin") {
-				rawData = raylib.load_file_text("data/localization/spanish.bin");
+			if os.is_file("data/localization/spanish.bin") {
+				rawData, success = os.read_entire_file_from_filename("data/localization/spanish.bin");
 			}
 			break;
 		case .german:
-			if raylib.file_exists("data/localization/german.bin") {
-				rawData = raylib.load_file_text("data/localization/german.bin");
+			if os.is_file("data/localization/german.bin") {
+				rawData, success = os.read_entire_file_from_filename("data/localization/german.bin");
 			}
 			break;
 		case .french:
-			if raylib.file_exists("data/localization/french.bin") {
-				rawData = raylib.load_file_text("data/localization/french.bin");
+			if os.is_file("data/localization/french.bin") {
+				rawData, success = os.read_entire_file_from_filename("data/localization/french.bin");
 			}
 			break;
 	}
 
-	if rawData == nil {
-		// TODO: report problem in log
-		fmt.printf("Failed to load localization\n");
+	if rawData == nil || success == false {
+		add_to_log("[Major]: Failed to load localization.");
 		return;
 	}
 
@@ -74,7 +75,7 @@ free_localization :: proc() {
 	free(localization);
 }
 
-copy_string :: proc(array: [^]u8, offset: ^int) -> (string, int) {
+copy_string :: proc(array: []u8, offset: ^int) -> (string, int) {
 	builder: strings.Builder;
 
 	for i:=offset^; array[i]!=0; i+=1 {
