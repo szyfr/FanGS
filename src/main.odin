@@ -25,9 +25,22 @@ main :: proc() {
 			raylib.begin_drawing();
 				raylib.clear_background(raylib.RAYWHITE);
 
-				raylib.begin_mode3d(player.camera);
+				if !gamestate.titleScreen {
+
+					raylib.begin_mode3d(player.camera);
 					raylib.draw_grid(100, 1);
-				raylib.end_mode3d();
+					raylib.end_mode3d();
+
+				} else {
+					//draw_texture_n_patch :: proc(
+					//	texture: Texture2d,
+					//	n_patch_info: N_Patch_Info,
+					//	dest: Rectangle,
+					//	origin: Vector2,
+					//	rotation: f32,
+					//	tint: Color) ---;
+					draw_button(raylib.Rectangle{20,100,160,40}, "Click me");
+				}
 
 				raylib.draw_fps(0,0);
 
@@ -45,11 +58,14 @@ main_initialization :: proc() {
 	raylib.set_trace_log_level(i32(raylib.Trace_Log_Level.LOG_NONE));
 
 	init_settings();
-	init_player();
 	init_localization();
+	init_gamestate();
+	init_player();
 
 	raylib.init_window(settings.windowWidth, settings.windowHeight, "FanGS: Fantasy Grande Strategy");
 	raylib.set_target_fps(settings.targetFPS);
+	
+	init_graphics();
 
 }
 main_free :: proc() {
@@ -57,8 +73,10 @@ main_free :: proc() {
 	raylib.close_window();
 
 	free_settings();
-	free_player();
 	free_localization();
+	free_graphics();
+	free_gamestate();
+	free_player();
 
 	print_log();
 
