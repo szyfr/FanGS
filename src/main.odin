@@ -18,6 +18,7 @@ main :: proc() {
 		// Updating
 		{
 			update_player_movement();
+			update_elements(gui.elements);
 		}
 
 		// Drawing

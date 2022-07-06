@@ -36,6 +36,12 @@ Element :: struct {
 	backgroundNPatch: ^raylib.N_Patch_Info,
 	backgroundColor:   raylib.Color,        //TODO:
 
+	// Button, Toggle
+	effect: proc(),
+
+	// Toggle
+	checked: bool,
+
 	// Windows
 	selections: [dynamic]Element,
 }
@@ -62,6 +68,7 @@ init_gui :: proc() {
 	append(&but.text,"button");
 	but.background       = &graphics.box;
 	but.backgroundNPatch = &graphics.box_nPatch;
+	but.backgroundColor  = raylib.WHITE;
 
 	tog: Element = {};
 	tog.type = .toggle;
@@ -70,6 +77,7 @@ init_gui :: proc() {
 	append(&tog.text,"toggle");
 	tog.background       = &graphics.box;
 	tog.backgroundNPatch = &graphics.box_nPatch;
+	tog.backgroundColor  = raylib.WHITE;
 
 	tot: Element = {};
 	tot.type = .tooltip;
@@ -78,6 +86,7 @@ init_gui :: proc() {
 	append(&tot.text,"tooltip","Line2","Line3");
 	tot.background       = &graphics.box;
 	tot.backgroundNPatch = &graphics.box_nPatch;
+	tot.backgroundColor  = raylib.WHITE;
 
 	win: Element = {};
 	win.type = .window;
@@ -86,6 +95,7 @@ init_gui :: proc() {
 	append(&win.text,"window");
 	win.background       = &graphics.box;
 	win.backgroundNPatch = &graphics.box_nPatch;
+	win.backgroundColor  = raylib.WHITE;
 
 	winEle: Element = {};
 	winEle.type = .button;
@@ -94,12 +104,31 @@ init_gui :: proc() {
 	append(&winEle.text,"button");
 	winEle.background       = &graphics.box;
 	winEle.backgroundNPatch = &graphics.box_nPatch;
+	winEle.backgroundColor     = raylib.WHITE;
 
 	append(&win.selections,winEle);
 
 	append(&gui.elements, lab, but, tog, tot, win);
 }
 
+update_elements :: proc(elements: [dynamic]Element) {
+	for i:=0; i<len(elements); i+=1 {
+		#partial switch elements[i].type {
+			case .button:
+				update_button(&elements[i]);
+				break;
+			case .toggle:
+				update_toggle(&elements[i]);
+				break;
+			case .tooltip:
+				update_tooltip(&elements[i]);
+				break;
+			case .window:
+				update_window(&elements[i]);
+				break;
+		}
+	}
+}
 draw_elements :: proc(elements: [dynamic]Element) {
 	for i:=0; i<len(elements); i+=1 {
 		#partial switch elements[i].type {
@@ -122,6 +151,59 @@ draw_elements :: proc(elements: [dynamic]Element) {
 	}
 }
 
+// - Update
+update_button :: proc(button: ^Element) {
+	mousePosition: raylib.Vector2 = raylib.get_mouse_position();
+
+	if test_bounds(mousePosition, button.rect) {
+		button.backgroundColor = raylib.GRAY;
+
+		if raylib.is_mouse_button_released(.MOUSE_BUTTON_LEFT) {
+			fmt.printf("fuck")
+		}
+	} else {
+		button.backgroundColor = raylib.WHITE;
+	}
+}
+update_toggle :: proc(toggle: ^Element) {
+	mousePosition: raylib.Vector2 = raylib.get_mouse_position();
+	toggleRect: raylib.Rectangle = {toggle.x,toggle.y,toggle.height,toggle.height};
+
+	if test_bounds(mousePosition, toggleRect) {
+		toggle.backgroundColor = raylib.GRAY;
+
+		if raylib.is_mouse_button_released(.MOUSE_BUTTON_LEFT) {
+			fmt.printf("fuck")
+			toggle.checked = !toggle.checked;
+		}
+	} else {
+		toggle.backgroundColor = raylib.WHITE;
+	}
+}
+update_tooltip :: proc(tooltip: ^Element) {
+	mousePosition: raylib.Vector2 = raylib.get_mouse_position();
+
+	tooltip.x = mousePosition.x + 10;
+	tooltip.y = mousePosition.y -  5;
+}
+update_window :: proc(window: ^Element) {
+	mousePosition: raylib.Vector2 = raylib.get_mouse_position();
+	mouseDelta:    raylib.Vector2 = raylib.get_mouse_delta();
+
+	if test_bounds(mousePosition, window.rect) && raylib.is_mouse_button_down(.MOUSE_BUTTON_LEFT) {
+		window.x += mouseDelta.x;
+		window.y += mouseDelta.y;
+
+		for i:=0; i<len(window.selections); i+=1 {
+			window.selections[i].x += mouseDelta.x;
+			window.selections[i].y += mouseDelta.y;
+		}
+	}
+
+	update_elements(window.selections);
+}
+
+// - Draw
 draw_label :: proc(label: ^Element) {
 	size: f32 = 16;
 
@@ -142,7 +224,7 @@ draw_button :: proc(button: ^Element) {
 		graphics.box_nPatch,
 		button.rect,
 		raylib.Vector2{0,0}, 0,
-		raylib.WHITE);
+		button.backgroundColor);
 
 	size: f32 = 16;
 
@@ -160,7 +242,7 @@ draw_toggle :: proc(toggle: ^Element) {
 		graphics.box_nPatch,
 		toggleRect,
 		raylib.Vector2{0,0}, 0,
-		raylib.WHITE);
+		toggle.backgroundColor);
 
 	size: f32 = 16;
 
@@ -169,6 +251,8 @@ draw_toggle :: proc(toggle: ^Element) {
 	textPosition.y = ((f32(toggle.height) / 2) - size/2) + toggle.y;
 
 	raylib.draw_text_ex(graphics.font, toggle.text[0], textPosition, size, 1, raylib.BLACK);
+
+	if toggle.checked do raylib.draw_text_ex(graphics.font, "X", {toggle.x+2.5, toggle.y+2.5}, toggle.height-5, 1, raylib.BLACK);
 }
 draw_tooltip :: proc(tooltip: ^Element) {
 	raylib.draw_texture_n_patch(
@@ -176,7 +260,7 @@ draw_tooltip :: proc(tooltip: ^Element) {
 		graphics.box_nPatch,
 		tooltip.rect,
 		raylib.Vector2{0,0}, 0,
-		raylib.WHITE);
+		tooltip.backgroundColor);
 
 	size: f32 = 16;
 
@@ -194,7 +278,7 @@ draw_window :: proc(window: ^Element) {
 		graphics.box_nPatch,
 		window.rect,
 		raylib.Vector2{0,0}, 0,
-		raylib.WHITE);
+		window.backgroundColor);
 
 	size: f32 = 16;
 
