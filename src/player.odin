@@ -78,21 +78,23 @@ update_player_movement :: proc() {
 	}
 
 	// Edge scrolling
-	if raylib.get_mouse_x() <= EDGE_DIS {
-		player.camera.position.x += MOVE_SPD;
-		player.camera.target.x   += MOVE_SPD;
-	}
-	if raylib.get_mouse_x() >= settings.windowWidth - EDGE_DIS {
-		player.camera.position.x -= MOVE_SPD;
-		player.camera.target.x   -= MOVE_SPD;
-	}
-	if raylib.get_mouse_y() <= EDGE_DIS {
-		player.camera.position.z += MOVE_SPD;
-		player.camera.target.z   += MOVE_SPD;
-	}
-	if raylib.get_mouse_y() >= settings.windowHeight - EDGE_DIS {
-		player.camera.position.z -= MOVE_SPD;
-		player.camera.target.z   -= MOVE_SPD;
+	if settings.edgeScrolling {
+		if raylib.get_mouse_x() <= EDGE_DIS {
+			player.camera.position.x += MOVE_SPD;
+			player.camera.target.x   += MOVE_SPD;
+		}
+		if raylib.get_mouse_x() >= settings.windowWidth - EDGE_DIS {
+			player.camera.position.x -= MOVE_SPD;
+			player.camera.target.x   -= MOVE_SPD;
+		}
+		if raylib.get_mouse_y() <= EDGE_DIS {
+			player.camera.position.z += MOVE_SPD;
+			player.camera.target.z   += MOVE_SPD;
+		}
+		if raylib.get_mouse_y() >= settings.windowHeight - EDGE_DIS {
+			player.camera.position.z -= MOVE_SPD;
+			player.camera.target.z   -= MOVE_SPD;
+		}
 	}
 
 

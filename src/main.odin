@@ -29,6 +29,8 @@ main :: proc() {
 					raylib.draw_grid(100, 1);
 				raylib.end_mode3d();
 
+				raylib.draw_fps(0,0);
+
 			raylib.end_drawing();
 		}
 	}
