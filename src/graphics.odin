@@ -43,20 +43,3 @@ free_graphics :: proc() {
 
 	free(graphics);
 }
-
-draw_button :: proc(rect: raylib.Rectangle, str: cstring) {
-	raylib.draw_texture_n_patch(
-		graphics.box,
-		graphics.box_nPatch,
-		rect,
-		raylib.Vector2{0,0}, 0,
-		raylib.WHITE);
-
-	size: f32 = 16;
-
-	textPosition: raylib.Vector2;
-	textPosition.x = ((f32(rect.width) / 2) - ((size * f32(len(str))) / 2)) + rect.x;
-	textPosition.y = ((f32(rect.height) / 2) - size/2) + rect.y;
-
-	raylib.draw_text_ex(graphics.font, str, textPosition,size,1,raylib.BLACK);
-}

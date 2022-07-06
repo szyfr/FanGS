@@ -32,14 +32,7 @@ main :: proc() {
 					raylib.end_mode3d();
 
 				} else {
-					//draw_texture_n_patch :: proc(
-					//	texture: Texture2d,
-					//	n_patch_info: N_Patch_Info,
-					//	dest: Rectangle,
-					//	origin: Vector2,
-					//	rotation: f32,
-					//	tint: Color) ---;
-					draw_button(raylib.Rectangle{20,100,160,40}, "Click me");
+					draw_elements(gui.elements);
 				}
 
 				raylib.draw_fps(0,0);
@@ -66,6 +59,7 @@ main_initialization :: proc() {
 	raylib.set_target_fps(settings.targetFPS);
 	
 	init_graphics();
+	init_gui();
 
 }
 main_free :: proc() {
