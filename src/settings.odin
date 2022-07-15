@@ -27,7 +27,9 @@ SettingsStorage :: struct {
 
 	edgeScrolling: bool,
 
-	keybindings: map[string]Keybinding,
+	fontSize:      f32,
+
+	keybindings:   map[string]Keybinding,
 }
 Keybinding :: struct {
 	origin: u8,
@@ -58,6 +60,12 @@ init_settings :: proc() {
 	settings.language      = Languages(fuse_i32(rawData, 0x0C));
 	settings.edgeScrolling = bool(rawData[0x10]);
 
+	switch rawData[0x11] {
+		case 0: settings.fontSize = 12; break;
+		case 1: settings.fontSize = 16; break;
+		case 2: settings.fontSize = 20; break;
+	}
+
 	// Grab keybindings
 	settings.keybindings["up"]    = fuse_keybind(rawData, 0x30);
 	settings.keybindings["down"]  = fuse_keybind(rawData, 0x34);
@@ -80,6 +88,12 @@ create_settings :: proc() {
 	unfuse_i32(   0, array[0x0C:0x0F]);
 	array[0x10] = u8(settings.edgeScrolling);
 
+	switch settings.fontSize {
+		case 12: array[0x10] = 0; break;
+		case 16: array[0x10] = 1; break;
+		case 20: array[0x10] = 2; break;
+	}
+
 	unfuse_keybind(Keybinding{0,265}, array[0x30:0x34]);
 	unfuse_keybind(Keybinding{0,264}, array[0x34:0x38]);
 	unfuse_keybind(Keybinding{0,263}, array[0x38:0x3C]);
@@ -99,6 +113,12 @@ save_setting :: proc() {
 	unfuse_i32(settings.targetFPS,     array[0x08:0x0C]);
 	unfuse_i32(i32(settings.language), array[0x0C:0x0F]);
 	array[0x10] = u8(settings.edgeScrolling);
+
+	switch settings.fontSize {
+		case 12: array[0x10] = 0; break;
+		case 16: array[0x10] = 1; break;
+		case 20: array[0x10] = 2; break;
+	}
 
 
 	unfuse_keybind(settings.keybindings["up"],    array[0x30:0x34]);

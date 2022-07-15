@@ -8,6 +8,7 @@ import "core:strings"
 import "raylib"
 
 
+
 //= Main
 main :: proc() {
 
@@ -70,6 +71,7 @@ main_free :: proc() {
 	free_settings();
 	free_localization();
 	free_graphics();
+	free_gui();
 	free_gamestate();
 	free_player();
 

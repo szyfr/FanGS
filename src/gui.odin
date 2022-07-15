@@ -25,11 +25,11 @@ Element :: struct {
 
 	// All
 	text:       [dynamic]cstring,
-	font:       ^raylib.Font,      //TODO:
-	fontSize:   f32,               //TODO:
-	alignement: u8,                //TODO:
-	offset:     raylib.Vector2,    //TODO:
-	textColor:  raylib.Color,      //TODO:
+	font:       ^raylib.Font,
+	fontSize:   f32,
+	fontColor:  raylib.Color,
+	halignment: HAlignment,
+	valignment: VAlignment,
 
 	// Button, Toggle, Tooltip, Window
 	background:       ^raylib.Texture,
@@ -49,17 +49,16 @@ Element :: struct {
 
 //= Enumerations
 ElementType :: enum { none, label, button, toggle, tooltip, window, };
+HAlignment  :: enum { left, center, right, };
+VAlignment  :: enum { top,  center, bottom, };
 
 
 //= Procedures
 init_gui :: proc() {
 	gui = new(Gui);
 
-	lab: Element = {};
-	lab.type = .label;
-	lab.x,      lab.y     = 10,10;
-	lab.height, lab.width = 50,200;
-	append(&lab.text,"label");
+	// TEST ELEMENTS
+	create_label(rectangle={10,10,200,50}, text="TEST", fontColor=raylib.RED);
 
 	but: Element = {};
 	but.type = .button;
@@ -108,7 +107,11 @@ init_gui :: proc() {
 
 	append(&win.selections,winEle);
 
-	append(&gui.elements, lab, but, tog, tot, win);
+	append(&gui.elements, but, tog, tot, win);
+}
+free_gui :: proc() {
+	delete(gui.elements);
+	free(gui);
 }
 
 update_elements :: proc(elements: [dynamic]Element) {
@@ -129,7 +132,7 @@ update_elements :: proc(elements: [dynamic]Element) {
 		}
 	}
 }
-draw_elements :: proc(elements: [dynamic]Element) {
+draw_elements   :: proc(elements: [dynamic]Element) {
 	for i:=0; i<len(elements); i+=1 {
 		#partial switch elements[i].type {
 			case .label:
@@ -152,7 +155,7 @@ draw_elements :: proc(elements: [dynamic]Element) {
 }
 
 // - Update
-update_button :: proc(button: ^Element) {
+update_button  :: proc(button: ^Element) {
 	mousePosition: raylib.Vector2 = raylib.get_mouse_position();
 
 	if test_bounds(mousePosition, button.rect) {
@@ -165,7 +168,7 @@ update_button :: proc(button: ^Element) {
 		button.backgroundColor = raylib.WHITE;
 	}
 }
-update_toggle :: proc(toggle: ^Element) {
+update_toggle  :: proc(toggle: ^Element) {
 	mousePosition: raylib.Vector2 = raylib.get_mouse_position();
 	toggleRect: raylib.Rectangle = {toggle.x,toggle.y,toggle.height,toggle.height};
 
@@ -186,7 +189,7 @@ update_tooltip :: proc(tooltip: ^Element) {
 	tooltip.x = mousePosition.x + 10;
 	tooltip.y = mousePosition.y -  5;
 }
-update_window :: proc(window: ^Element) {
+update_window  :: proc(window: ^Element) {
 	mousePosition: raylib.Vector2 = raylib.get_mouse_position();
 	mouseDelta:    raylib.Vector2 = raylib.get_mouse_delta();
 
@@ -204,21 +207,32 @@ update_window :: proc(window: ^Element) {
 }
 
 // - Draw
-draw_label :: proc(label: ^Element) {
+draw_label   :: proc(label: ^Element) {
 	size: f32 = 16;
+	
+	longestString: int = 0;
+	for i:=0; i<len(label.text); i+=1 do if longestString < len(label.text[i]) do longestString = len(label.text[i]);
 
 	textPosition: raylib.Vector2;
-	textPosition.x = ((f32(label.width) / 2) - ((size * f32(len(label.text[0]))) / 2)) + label.x;
-	textPosition.y = ((f32(label.height) / 2) - size/2) + label.y;
+	switch label.halignment {
+		case .left:   textPosition.x = label.x; break;
+		case .center: textPosition.x = ((label.width / 2) + label.x) - (((label.fontSize * f32(longestString)) * 1.1) / 2); break;
+		case .right:  textPosition.x = (label.x + label.width) - (label.fontSize * f32(longestString)) * 1.1; break;
+	}
+	switch label.valignment {
+		case .top:    textPosition.y = label.y; break;
+		case .center: textPosition.y = ((label.height / 2) + label.y) - (((label.fontSize * f32(len(label.text))) * 1.1) / 2); break;
+		case .bottom: textPosition.y = (label.y + label.height) - (label.fontSize * f32(len(label.text))) * 1.1; break;
+	}
 
 	raylib.draw_text_ex(
-		graphics.font,
+		label.font^,
 		label.text[0],
 		textPosition,
-		size, 1,
-		raylib.BLACK);
+		label.fontSize, 1,
+		label.fontColor);
 }
-draw_button :: proc(button: ^Element) {
+draw_button  :: proc(button: ^Element) {
 	raylib.draw_texture_n_patch(
 		graphics.box,
 		graphics.box_nPatch,
@@ -234,7 +248,7 @@ draw_button :: proc(button: ^Element) {
 
 	raylib.draw_text_ex(graphics.font, button.text[0], textPosition, size, 1, raylib.BLACK);
 }
-draw_toggle :: proc(toggle: ^Element) {
+draw_toggle  :: proc(toggle: ^Element) {
 	toggleRect: raylib.Rectangle = {toggle.x,toggle.y,toggle.height,toggle.height};
 
 	raylib.draw_texture_n_patch(
@@ -272,7 +286,7 @@ draw_tooltip :: proc(tooltip: ^Element) {
 		raylib.draw_text_ex(graphics.font, tooltip.text[i], textPosition, size, 1, raylib.BLACK);
 	}
 }
-draw_window :: proc(window: ^Element) {
+draw_window  :: proc(window: ^Element) {
 	raylib.draw_texture_n_patch(
 		graphics.box,
 		graphics.box_nPatch,
@@ -292,3 +306,74 @@ draw_window :: proc(window: ^Element) {
 
 	draw_elements(window.selections);
 }
+
+// - Create Label
+create_label :: proc{ create_label_single, create_label_dynamic, };
+create_label_single :: proc(
+		rectangle: raylib.Rectangle={0,0,100,50},
+		text: cstring=nil,
+		font: ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
+		halignment: HAlignment=.center,
+		valignment: VAlignment=.center) {
+
+	create_label_full(
+		rectangle=rectangle, textsingle=text,
+		font=font, fontSize=fontSize, fontColor=fontColor,
+		halignment=halignment, valignment=valignment);
+}
+create_label_dynamic :: proc(
+		rectangle: raylib.Rectangle={0,0,100,50},
+		text: [dynamic]cstring=nil,
+		font: ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
+		halignment: HAlignment=.center,
+		valignment: VAlignment=.center) {
+
+	create_label_full(
+		rectangle=rectangle, textdynamic=text,
+		font=font, fontSize=fontSize, fontColor=fontColor,
+		halignment=halignment, valignment=valignment);
+}
+create_label_full :: proc(
+		rectangle: raylib.Rectangle={0,0,100,50},
+		textsingle:           cstring=nil,
+		textdynamic: [dynamic]cstring=nil,
+		font: ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
+		halignment: HAlignment=.center,
+		valignment: VAlignment=.center) {
+
+	// General
+	label: Element = {};
+	label.type = .label;
+
+	// Rectangle
+	label.rect = rectangle;
+
+	// Text
+	if textsingle == "" && textdynamic == nil {
+		strs: [dynamic]cstring;
+		append(&strs, "NO INPUT");
+		label.text = strs;
+	} else {
+		if textsingle != "" {
+			strs: [dynamic]cstring;
+			append(&strs, textsingle);
+			label.text = strs;
+		}
+		if textdynamic != nil do label.text = textdynamic;
+	}
+	
+	// Font / Font Size / Font Color
+	if font == {}    do label.font = &graphics.font;
+	else             do label.font = font;
+	if fontSize == 0 do label.fontSize = settings.fontSize;
+	else             do label.fontSize = fontSize;
+	label.fontColor = fontColor;
+
+	// Alignment
+	label.halignment = halignment;
+	label.valignment = valignment;
+
+	append(&gui.elements, label);
+}
+
+//
