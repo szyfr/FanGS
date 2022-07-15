@@ -34,12 +34,13 @@ Element :: struct {
 	// Button, Toggle, Tooltip, Window
 	background:       ^raylib.Texture,
 	backgroundNPatch: ^raylib.N_Patch_Info,
-	backgroundColor:   raylib.Color,        //TODO:
+	backgroundColor:   raylib.Color,
 
 	// Button, Toggle
 	effect: proc(),
 
 	// Toggle
+	// TODO: Customizable icon for inside toggle
 	checked: bool,
 
 	// Windows
@@ -58,34 +59,12 @@ init_gui :: proc() {
 	gui = new(Gui);
 
 	// TEST ELEMENTS
-	create_label(rectangle={10,10,200,50}, text="TEST", fontColor=raylib.RED);
-
-	but: Element = {};
-	but.type = .button;
-	but.x,      but.y     = 10,60;
-	but.height, but.width = 50,200;
-	append(&but.text,"button");
-	but.background       = &graphics.box;
-	but.backgroundNPatch = &graphics.box_nPatch;
-	but.backgroundColor  = raylib.WHITE;
-
-	tog: Element = {};
-	tog.type = .toggle;
-	tog.x,      tog.y     = 10,110;
-	tog.height, tog.width = 50,200;
-	append(&tog.text,"toggle");
-	tog.background       = &graphics.box;
-	tog.backgroundNPatch = &graphics.box_nPatch;
-	tog.backgroundColor  = raylib.WHITE;
-
-	tot: Element = {};
-	tot.type = .tooltip;
-	tot.x,      tot.y     = 10,160;
-	tot.height, tot.width = 100,200;
-	append(&tot.text,"tooltip","Line2","Line3");
-	tot.background       = &graphics.box;
-	tot.backgroundNPatch = &graphics.box_nPatch;
-	tot.backgroundColor  = raylib.WHITE;
+	append(&gui.elements, create_label(  rectangle={10, 10,200, 50}, text="Label", fontColor=raylib.RED));
+	append(&gui.elements, create_button( rectangle={10, 60,200, 50}, text="Button"));
+	append(&gui.elements, create_toggle( rectangle={10,110,200, 50}, text="Toggle"));
+	str: [dynamic]cstring;
+	append(&str,"tooltip","Line2","Line3");
+	append(&gui.elements, create_tooltip(rectangle={10,160,200,100}, text=str));
 
 	win: Element = {};
 	win.type = .window;
@@ -96,18 +75,9 @@ init_gui :: proc() {
 	win.backgroundNPatch = &graphics.box_nPatch;
 	win.backgroundColor  = raylib.WHITE;
 
-	winEle: Element = {};
-	winEle.type = .button;
-	winEle.x,      winEle.y     = 10,360;
-	winEle.height, winEle.width = 50,200;
-	append(&winEle.text,"button");
-	winEle.background       = &graphics.box;
-	winEle.backgroundNPatch = &graphics.box_nPatch;
-	winEle.backgroundColor     = raylib.WHITE;
+	append(&win.selections, create_button(rectangle={10,0,200,50}, text="Selection 1"));
 
-	append(&win.selections,winEle);
-
-	append(&gui.elements, but, tog, tot, win);
+	append(&gui.elements, win);
 }
 free_gui :: proc() {
 	delete(gui.elements);
@@ -135,21 +105,11 @@ update_elements :: proc(elements: [dynamic]Element) {
 draw_elements   :: proc(elements: [dynamic]Element) {
 	for i:=0; i<len(elements); i+=1 {
 		#partial switch elements[i].type {
-			case .label:
-				draw_label(&elements[i]);
-				break;
-			case .button:
-				draw_button(&elements[i]);
-				break;
-			case .toggle:
-				draw_toggle(&elements[i]);
-				break;
-			case .tooltip:
-				draw_tooltip(&elements[i]);
-				break;
-			case .window:
-				draw_window(&elements[i]);
-				break;
+			case .label:   draw_label(&elements[i]);   break;
+			case .button:  draw_button(&elements[i]);  break;
+			case .toggle:  draw_toggle(&elements[i]);  break;
+			case .tooltip: draw_tooltip(&elements[i]); break;
+			case .window:  draw_window(&elements[i]);  break;
 		}
 	}
 }
@@ -162,7 +122,7 @@ update_button  :: proc(button: ^Element) {
 		button.backgroundColor = raylib.GRAY;
 
 		if raylib.is_mouse_button_released(.MOUSE_BUTTON_LEFT) {
-			fmt.printf("fuck")
+			button.effect();
 		}
 	} else {
 		button.backgroundColor = raylib.WHITE;
@@ -234,56 +194,105 @@ draw_label   :: proc(label: ^Element) {
 }
 draw_button  :: proc(button: ^Element) {
 	raylib.draw_texture_n_patch(
-		graphics.box,
-		graphics.box_nPatch,
+		button.background^,
+		button.backgroundNPatch^,
 		button.rect,
 		raylib.Vector2{0,0}, 0,
 		button.backgroundColor);
 
 	size: f32 = 16;
+	
+	longestString: int = 0;
+	for i:=0; i<len(button.text); i+=1 do if longestString < len(button.text[i]) do longestString = len(button.text[i]);
 
 	textPosition: raylib.Vector2;
-	textPosition.x = ((f32(button.width) / 2) - ((size * f32(len(button.text[0]))) / 2)) + button.x;
-	textPosition.y = ((f32(button.height) / 2) - size/2) + button.y;
+	switch button.halignment {
+		case .left:   textPosition.x = button.x; break;
+		case .center: textPosition.x = ((button.width / 2) + button.x) - (((button.fontSize * f32(longestString)) * 1.1) / 2); break;
+		case .right:  textPosition.x = (button.x + button.width) - (button.fontSize * f32(longestString)) * 1.1; break;
+	}
+	switch button.valignment {
+		case .top:    textPosition.y = button.y; break;
+		case .center: textPosition.y = ((button.height / 2) + button.y) - (((button.fontSize * f32(len(button.text))) * 1.1) / 2); break;
+		case .bottom: textPosition.y = (button.y + button.height) - (button.fontSize * f32(len(button.text))) * 1.1; break;
+	}
 
-	raylib.draw_text_ex(graphics.font, button.text[0], textPosition, size, 1, raylib.BLACK);
+	raylib.draw_text_ex(
+		button.font^,
+		button.text[0],
+		textPosition,
+		button.fontSize, 1,
+		button.fontColor);
 }
 draw_toggle  :: proc(toggle: ^Element) {
 	toggleRect: raylib.Rectangle = {toggle.x,toggle.y,toggle.height,toggle.height};
 
 	raylib.draw_texture_n_patch(
-		graphics.box,
-		graphics.box_nPatch,
+		toggle.background^,
+		toggle.backgroundNPatch^,
 		toggleRect,
 		raylib.Vector2{0,0}, 0,
 		toggle.backgroundColor);
 
 	size: f32 = 16;
 
-	textPosition: raylib.Vector2;
-	textPosition.x = ((f32(toggleRect.width + toggle.width) / 2) - ((size * f32(len(toggle.text[0]))) / 2)) + toggle.x;
-	textPosition.y = ((f32(toggle.height) / 2) - size/2) + toggle.y;
+	longestString: int = 0;
+	for i:=0; i<len(toggle.text); i+=1 do if longestString < len(toggle.text[i]) do longestString = len(toggle.text[i]);
 
-	raylib.draw_text_ex(graphics.font, toggle.text[0], textPosition, size, 1, raylib.BLACK);
+	textPosition: raylib.Vector2;
+	switch toggle.halignment {
+		case .left:   textPosition.x = (toggle.x + toggleRect.width); break;
+		case .center: textPosition.x = (((toggle.width - toggleRect.width) / 2) + (toggle.x + toggleRect.width)) - (((toggle.fontSize * f32(longestString)) * 1.1) / 2); break;
+		case .right:  textPosition.x = (toggle.x + toggle.width) - (toggle.fontSize * f32(longestString)) * 1.1; break;
+	}
+	switch toggle.valignment {
+		case .top:    textPosition.y = toggle.y; break;
+		case .center: textPosition.y = ((toggle.height / 2) + toggle.y) - (((toggle.fontSize * f32(len(toggle.text))) * 1.1) / 2); break;
+		case .bottom: textPosition.y = (toggle.y + toggle.height) - (toggle.fontSize * f32(len(toggle.text))) * 1.1; break;
+	}
+	
+	raylib.draw_text_ex(
+		toggle.font^,
+		toggle.text[0],
+		textPosition,
+		toggle.fontSize, 1,
+		toggle.fontColor);
 
 	if toggle.checked do raylib.draw_text_ex(graphics.font, "X", {toggle.x+2.5, toggle.y+2.5}, toggle.height-5, 1, raylib.BLACK);
 }
 draw_tooltip :: proc(tooltip: ^Element) {
 	raylib.draw_texture_n_patch(
-		graphics.box,
-		graphics.box_nPatch,
+		tooltip.background^,
+		tooltip.backgroundNPatch^,
 		tooltip.rect,
 		raylib.Vector2{0,0}, 0,
 		tooltip.backgroundColor);
 
 	size: f32 = 16;
 
-	for i:=0; i<len(tooltip.text); i+=1 {
-		textPosition: raylib.Vector2 = {};
-		textPosition.x = 16 + tooltip.x;
-		textPosition.y = 16 + tooltip.y + (f32(i) * (16 + 10));
+	longestString: int = 0;
+	for i:=0; i<len(tooltip.text); i+=1 do if longestString < len(tooltip.text[i]) do longestString = len(tooltip.text[i]);
 
-		raylib.draw_text_ex(graphics.font, tooltip.text[i], textPosition, size, 1, raylib.BLACK);
+	textPosition: raylib.Vector2;
+	switch tooltip.halignment {
+		case .left:   textPosition.x = tooltip.x; break;
+		case .center: textPosition.x = ((tooltip.width / 2) + tooltip.x) - (((tooltip.fontSize * f32(longestString)) * 1.1) / 2); break;
+		case .right:  textPosition.x = (tooltip.x + tooltip.width) - (tooltip.fontSize * f32(longestString)) * 1.1; break;
+	}
+
+	for i:=0; i<len(tooltip.text); i+=1 {
+		switch tooltip.valignment {
+			case .top:    textPosition.y = tooltip.y + (f32(i) * (tooltip.fontSize + tooltip.fontSize/2)); break;
+			case .center: textPosition.y = ((tooltip.height / 2) + tooltip.y) - (((tooltip.fontSize * f32(len(tooltip.text))) * 1.1) / 2) + (f32(i) * (tooltip.fontSize + tooltip.fontSize/2)); break;
+			case .bottom: textPosition.y = (tooltip.y + tooltip.height) - (tooltip.fontSize * f32(len(tooltip.text))) * 1.1; break;
+		}
+
+		raylib.draw_text_ex(
+			tooltip.font^,
+			tooltip.text[i],
+			textPosition,
+			tooltip.fontSize, 1,
+			tooltip.fontColor);
 	}
 }
 draw_window  :: proc(window: ^Element) {
@@ -314,9 +323,9 @@ create_label_single :: proc(
 		text: cstring=nil,
 		font: ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
 		halignment: HAlignment=.center,
-		valignment: VAlignment=.center) {
+		valignment: VAlignment=.center) -> Element  {
 
-	create_label_full(
+	return create_label_full(
 		rectangle=rectangle, textsingle=text,
 		font=font, fontSize=fontSize, fontColor=fontColor,
 		halignment=halignment, valignment=valignment);
@@ -326,9 +335,9 @@ create_label_dynamic :: proc(
 		text: [dynamic]cstring=nil,
 		font: ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
 		halignment: HAlignment=.center,
-		valignment: VAlignment=.center) {
+		valignment: VAlignment=.center) -> Element {
 
-	create_label_full(
+	return create_label_full(
 		rectangle=rectangle, textdynamic=text,
 		font=font, fontSize=fontSize, fontColor=fontColor,
 		halignment=halignment, valignment=valignment);
@@ -339,7 +348,7 @@ create_label_full :: proc(
 		textdynamic: [dynamic]cstring=nil,
 		font: ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
 		halignment: HAlignment=.center,
-		valignment: VAlignment=.center) {
+		valignment: VAlignment=.center) -> Element {
 
 	// General
 	label: Element = {};
@@ -373,7 +382,302 @@ create_label_full :: proc(
 	label.halignment = halignment;
 	label.valignment = valignment;
 
-	append(&gui.elements, label);
+	return label;
 }
 
-//
+// - Create Button
+create_button :: proc{ create_button_single, create_button_dynamic, };
+create_button_single :: proc(
+		rectangle: raylib.Rectangle={0,0,100,50},
+		text: cstring="",
+		font: ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
+		halignment: HAlignment=.center,
+		valignment: VAlignment=.center,
+		background:       ^raylib.Texture={},
+		backgroundNPatch: ^raylib.N_Patch_Info={},
+		backgroundColor:  raylib.Color=raylib.WHITE,
+		effect:           proc()=default_proc) -> Element  {
+
+	return create_button_full(
+		rectangle=rectangle, textsingle=text,
+		font=font, fontSize=fontSize, fontColor=fontColor,
+		halignment=halignment, valignment=valignment,
+		background=background, backgroundNPatch=backgroundNPatch,
+		backgroundColor=backgroundColor,
+		effect=effect);
+}
+create_button_dynamic :: proc(
+		rectangle: raylib.Rectangle={0,0,100,50},
+		text: [dynamic]cstring=nil,
+		font: ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
+		halignment: HAlignment=.center,
+		valignment: VAlignment=.center,
+		background:       ^raylib.Texture={},
+		backgroundNPatch: ^raylib.N_Patch_Info={},
+		backgroundColor:  raylib.Color=raylib.WHITE,
+		effect:           proc()=default_proc) -> Element  {
+
+	return create_button_full(
+		rectangle=rectangle, textdynamic=text,
+		font=font, fontSize=fontSize, fontColor=fontColor,
+		halignment=halignment, valignment=valignment,
+		background=background, backgroundNPatch=backgroundNPatch,
+		backgroundColor=backgroundColor,
+		effect=effect);
+}
+create_button_full :: proc(
+		rectangle: raylib.Rectangle={0,0,100,50},
+		textsingle:           cstring=nil,
+		textdynamic: [dynamic]cstring=nil,
+		font: ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
+		halignment:       HAlignment=.center,
+		valignment:       VAlignment=.center,
+		background:       ^raylib.Texture={},
+		backgroundNPatch: ^raylib.N_Patch_Info={},
+		backgroundColor:  raylib.Color=raylib.WHITE,
+		effect:           proc()=default_proc) -> Element {
+
+	// General
+	element: Element = {};
+	element.type = .button;
+
+	// Rectangle
+	element.rect = rectangle;
+
+	// Text
+	if textsingle == "" && textdynamic == nil {
+		strs: [dynamic]cstring;
+		append(&strs, "NO INPUT");
+		element.text = strs;
+	} else {
+		if textsingle != "" {
+			strs: [dynamic]cstring;
+			append(&strs, textsingle);
+			element.text = strs;
+		}
+		if textdynamic != nil do element.text = textdynamic;
+	}
+	
+	// Font / Font Size / Font Color
+	if font == {}    do element.font = &graphics.font;
+	else             do element.font = font;
+	if fontSize == 0 do element.fontSize = settings.fontSize;
+	else             do element.fontSize = fontSize;
+	element.fontColor = fontColor;
+
+	// Alignment
+	element.halignment = halignment;
+	element.valignment = valignment;
+
+	// Background
+	if background == {}       do element.background = &graphics.box;
+	else                      do element.background = background;
+	if backgroundNPatch == {} do element.backgroundNPatch = &graphics.box_nPatch;
+	else                      do element.backgroundNPatch = backgroundNPatch;
+	element.backgroundColor = backgroundColor;
+
+	// Procedure
+	element.effect = effect;
+
+	return element;
+}
+
+// - Create Toggle
+create_toggle :: proc{ create_toggle_single, create_toggle_dynamic, };
+create_toggle_single :: proc(
+		rectangle: raylib.Rectangle={0,0,100,50},
+		text: cstring=nil,
+		font: ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
+		halignment: HAlignment=.center,
+		valignment: VAlignment=.center,
+		background:       ^raylib.Texture={},
+		backgroundNPatch: ^raylib.N_Patch_Info={},
+		backgroundColor:  raylib.Color=raylib.WHITE,
+		effect:           proc()=default_proc,
+		checked:          bool=false) -> Element  {
+
+	return create_toggle_full(
+		rectangle=rectangle, textsingle=text,
+		font=font, fontSize=fontSize, fontColor=fontColor,
+		halignment=halignment, valignment=valignment,
+		background=background, backgroundNPatch=backgroundNPatch,
+		backgroundColor=backgroundColor,
+		effect=effect, checked=checked);
+}
+create_toggle_dynamic :: proc(
+		rectangle: raylib.Rectangle={0,0,100,50},
+		text: [dynamic]cstring=nil,
+		font: ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
+		halignment: HAlignment=.center,
+		valignment: VAlignment=.center,
+		background:       ^raylib.Texture={},
+		backgroundNPatch: ^raylib.N_Patch_Info={},
+		backgroundColor:  raylib.Color=raylib.WHITE,
+		effect:           proc()=default_proc,
+		checked:          bool=false) -> Element  {
+
+	return create_toggle_full(
+		rectangle=rectangle, textdynamic=text,
+		font=font, fontSize=fontSize, fontColor=fontColor,
+		halignment=halignment, valignment=valignment,
+		background=background, backgroundNPatch=backgroundNPatch,
+		backgroundColor=backgroundColor,
+		effect=effect, checked=checked);
+}
+create_toggle_full :: proc(
+		rectangle: raylib.Rectangle={0,0,100,50},
+		textsingle:           cstring=nil,
+		textdynamic: [dynamic]cstring=nil,
+		font: ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
+		halignment:       HAlignment=.center,
+		valignment:       VAlignment=.center,
+		background:       ^raylib.Texture={},
+		backgroundNPatch: ^raylib.N_Patch_Info={},
+		backgroundColor:  raylib.Color=raylib.WHITE,
+		effect:           proc()=default_proc,
+		checked:          bool=false) -> Element {
+
+	// General
+	element: Element = {};
+	element.type = .toggle;
+
+	// Rectangle
+	element.rect = rectangle;
+
+	// Text
+	if textsingle == "" && textdynamic == nil {
+		strs: [dynamic]cstring;
+		append(&strs, "NO INPUT");
+		element.text = strs;
+	} else {
+		if textsingle != "" {
+			strs: [dynamic]cstring;
+			append(&strs, textsingle);
+			element.text = strs;
+		}
+		if textdynamic != nil do element.text = textdynamic;
+	}
+	
+	// Font / Font Size / Font Color
+	if font == {}    do element.font = &graphics.font;
+	else             do element.font = font;
+	if fontSize == 0 do element.fontSize = settings.fontSize;
+	else             do element.fontSize = fontSize;
+	element.fontColor = fontColor;
+
+	// Alignment
+	element.halignment = halignment;
+	element.valignment = valignment;
+
+	// Background
+	if background == {}       do element.background = &graphics.box;
+	else                      do element.background = background;
+	if backgroundNPatch == {} do element.backgroundNPatch = &graphics.box_nPatch;
+	else                      do element.backgroundNPatch = backgroundNPatch;
+	element.backgroundColor = backgroundColor;
+
+	// Procedure
+	element.effect = effect;
+
+	// Checked
+	element.checked = checked;
+
+	return element;
+}
+
+// - Create Tooltip
+// TODO: have creation function have default nil rectangle and have it instead calculate the needed size
+create_tooltip :: proc{ create_tooltip_single, create_tooltip_dynamic, };
+create_tooltip_single :: proc(
+		rectangle: raylib.Rectangle={0,0,100,50},
+		text: cstring="",
+		font: ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
+		halignment: HAlignment=.center,
+		valignment: VAlignment=.center,
+		background:       ^raylib.Texture={},
+		backgroundNPatch: ^raylib.N_Patch_Info={},
+		backgroundColor:  raylib.Color=raylib.WHITE) -> Element  {
+
+	return create_tooltip_full(
+		rectangle=rectangle, textsingle=text,
+		font=font, fontSize=fontSize, fontColor=fontColor,
+		halignment=halignment, valignment=valignment,
+		background=background, backgroundNPatch=backgroundNPatch,
+		backgroundColor=backgroundColor);
+}
+create_tooltip_dynamic :: proc(
+		rectangle: raylib.Rectangle={0,0,100,50},
+		text: [dynamic]cstring=nil,
+		font: ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
+		halignment: HAlignment=.center,
+		valignment: VAlignment=.center,
+		background:       ^raylib.Texture={},
+		backgroundNPatch: ^raylib.N_Patch_Info={},
+		backgroundColor:  raylib.Color=raylib.WHITE) -> Element  {
+
+	return create_tooltip_full(
+		rectangle=rectangle, textdynamic=text,
+		font=font, fontSize=fontSize, fontColor=fontColor,
+		halignment=halignment, valignment=valignment,
+		background=background, backgroundNPatch=backgroundNPatch,
+		backgroundColor=backgroundColor);
+}
+create_tooltip_full :: proc(
+		rectangle: raylib.Rectangle={0,0,100,50},
+		textsingle:           cstring=nil,
+		textdynamic: [dynamic]cstring=nil,
+		font: ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
+		halignment:       HAlignment=.center,
+		valignment:       VAlignment=.center,
+		background:       ^raylib.Texture={},
+		backgroundNPatch: ^raylib.N_Patch_Info={},
+		backgroundColor:  raylib.Color=raylib.WHITE) -> Element {
+
+	// General
+	element: Element = {};
+	element.type = .tooltip;
+
+	// Rectangle
+	element.rect = rectangle;
+
+	// Text
+	if textsingle == "" && textdynamic == nil {
+		strs: [dynamic]cstring;
+		append(&strs, "NO INPUT");
+		element.text = strs;
+	} else {
+		if textsingle != "" {
+			strs: [dynamic]cstring;
+			append(&strs, textsingle);
+			element.text = strs;
+		}
+		if textdynamic != nil do element.text = textdynamic;
+	}
+	
+	// Font / Font Size / Font Color
+	if font == {}    do element.font = &graphics.font;
+	else             do element.font = font;
+	if fontSize == 0 do element.fontSize = settings.fontSize;
+	else             do element.fontSize = fontSize;
+	element.fontColor = fontColor;
+
+	// Alignment
+	element.halignment = halignment;
+	element.valignment = valignment;
+
+	// Background
+	if background == {}       do element.background = &graphics.box;
+	else                      do element.background = background;
+	if backgroundNPatch == {} do element.backgroundNPatch = &graphics.box_nPatch;
+	else                      do element.backgroundNPatch = backgroundNPatch;
+	element.backgroundColor = backgroundColor;
+
+	return element;
+}
+
+// - Create Window
+
+
+
+// - Default proc
+default_proc :: proc() {}
