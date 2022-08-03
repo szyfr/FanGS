@@ -35,20 +35,16 @@ fuse_keybind :: proc(array: []u8, offset: u32) -> Keybinding {
 
 // Seperate larger datatypes into bytes
 unfuse_i32 :: proc(var: i32, array: []u8) {
-
 	array[0] = u8(var);
 	array[1] = u8(var >> 8);
 	array[2] = u8(var >> 16);
 	array[3] = u8(var >> 24);
-
 }
 unfuse_keybind :: proc(var: Keybinding, array: []u8) {
-
 	array[0] = u8(var.key);
 	array[1] = u8(var.key >> 8);
 	array[2] = 0;
 	array[3] = var.origin;
-
 }
 
 // Bounds testing
