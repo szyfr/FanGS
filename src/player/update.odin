@@ -1,51 +1,28 @@
-package main
-
+package player
 
 
 //= Imports
-import "core:fmt"
+import "../raylib"
 
-import "raylib"
+import "../settings"
 
-//= Constants
-MOVE_SPD ::   0.05
-ZOOM_MAX :: 100
-ZOOM_MIN ::  40
-EDGE_DIS ::  50
-
-
-//= Global Variables
-player: ^Player;
-
-
-//= Structures
-Player :: struct {
-	camera: raylib.Camera3d,
-
-	lastMousePos: raylib.Vector2,
-}
-
-
-//= Enumerations
 
 //= Procedures
 
-init_player :: proc() {
-	player = new(Player);
-
-	player.camera.position   = raylib.Vector3{  0,  5, -1};
-	player.camera.target     = raylib.Vector3{  0,  0,  0};
-	player.camera.up         = raylib.Vector3{  0,  1,  0};
-	player.camera.fovy       = 60;
-	player.camera.projection = .CAMERA_PERSPECTIVE;
+//* Logic update
+update :: proc(
+	player : ^PlayerData,
+	settings : ^settings.SettingsData,
+	) {
+	
+	update_player_movement(player, settings)
 }
 
-free_player :: proc() {
-	free(player);
-}
-
-
-update_player_movement :: proc() {
+//* Player controls
+update_player_movement :: proc(
+	player : ^PlayerData,
+	settings : ^settings.SettingsData,
+	) {
 
 	// Key Movement
 	// TODO: check origin of each key

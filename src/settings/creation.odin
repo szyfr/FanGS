@@ -4,6 +4,8 @@ package settings
 //= Imports
 import "core:os"
 
+import "../logging"
+
 
 //= Procedures
 
@@ -29,8 +31,7 @@ create_settings :: proc(settings : ^SettingsData) {
 	unfuse_keybind(Keybinding{0,262}, array[0x3C:0x3F]);
 
 	res := os.write_entire_file("data/settings.bin", array[:]);
-	//TODO: Fix
-//	if !res do add_to_log("[MAJOR]: Failed to save settings.");
+	if !res do logging.add_to_log("[MAJOR]: Failed to save settings.");
 }
 
 //* Save settings to file using current values
@@ -58,6 +59,5 @@ save_setting :: proc(settings : ^SettingsData) {
 	unfuse_keybind(settings.keybindings["right"], array[0x3C:0x3F]);
 
 	res := os.write_entire_file("data/settings.bin", array[:]);
-	//TODO: Fix
-//	if !res do add_to_log("[MAJOR]: Failed to save settings.");
+	if !res do logging.add_to_log("[MAJOR]: Failed to save settings.");
 }

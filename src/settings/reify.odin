@@ -39,6 +39,6 @@ init :: proc() -> ^SettingsData {
 
 	return settings
 }
-free :: proc(settings : ^SettingsData) {
+free_data :: proc(settings : ^SettingsData) {
 	free(settings)
 }

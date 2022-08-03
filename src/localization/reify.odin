@@ -50,7 +50,7 @@ init :: proc(lang : i32) -> ^LocalizationData {
 
 	return localization
 }
-free:: proc(localization : ^LocalizationData) {
+free_data :: proc(localization : ^LocalizationData) {
 	delete(localization.newGame)
 	delete(localization.loadGame)
 	delete(localization.mods)

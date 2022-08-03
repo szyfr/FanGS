@@ -4,7 +4,11 @@ package main
 //= Imports
 import "raylib"
 
+import "graphics"
+import "gui"
+import "player"
 import "localization"
+import "logging"
 import "settings"
 
 
@@ -14,8 +18,13 @@ gamedata : ^GameData
 
 //= Structures
 GameData :: struct {
-	settings     : ^settings.SettingsData,
-	localization : ^localization.LocalizationData,
+	settingsdata     : ^settings.SettingsData,
+	localizationdata : ^localization.LocalizationData,
+	playerdata       : ^player.PlayerData,
+	graphicsdata     : ^graphics.GraphicsData,
+	guidata          : ^gui.GuiData,
+
+	titleScreen      : bool,
 }
 
 
@@ -28,33 +37,81 @@ main_initialization :: proc() {
 
 	gamedata = new(GameData)
 
-	gamedata.settings     = settings.init()
-	gamedata.localization = localization.init(i32(gamedata.settings.language))
-//	init_gamestate()
-//	init_player()
+	gamedata.settingsdata     = settings.init()
+	gamedata.localizationdata = localization.init(i32(gamedata.settingsdata.language))
+	gamedata.playerdata       = player.init()
 
 	raylib.init_window(
-		gamedata.settings.windowWidth,
-		gamedata.settings.windowHeight,
+		gamedata.settingsdata.windowWidth,
+		gamedata.settingsdata.windowHeight,
 		"FanGS: Fantasy Grande Strategy",
 	)
-	raylib.set_target_fps(gamedata.settings.targetFPS)
+	raylib.set_target_fps(gamedata.settingsdata.targetFPS)
 	
-//	init_graphics()
-//	init_gui()
+	gamedata.graphicsdata = graphics.init()
+	gamedata.guidata      = gui.init()
+
+	// TEST ELEMENTS
+	append(&gamedata.guidata.elements, gui.create_label(
+		graphicsdata=gamedata.graphicsdata,
+		settingsdata=gamedata.settingsdata,
+		rectangle={10, 10,200, 50},
+		text="Label",
+		fontColor=raylib.RED,
+	))
+	append(&gamedata.guidata.elements, gui.create_button(
+		graphicsdata=gamedata.graphicsdata,
+		settingsdata=gamedata.settingsdata,
+		rectangle={10, 60,200, 50},
+		text="Button",
+	))
+	append(&gamedata.guidata.elements, gui.create_toggle(
+		graphicsdata=gamedata.graphicsdata,
+		settingsdata=gamedata.settingsdata,
+		rectangle={10,110,200, 50},
+		text="Toggle",
+	))
+	str: [dynamic]cstring
+	append(&str,"tooltip","Line2","Line3")
+	append(&gamedata.guidata.elements, gui.create_tooltip(
+		graphicsdata=gamedata.graphicsdata,
+		settingsdata=gamedata.settingsdata,
+		rectangle={10,160,200,100},
+		text=str,
+	))
+
+	// TODO: Finish windows
+//	win: gui.Element = {}
+//	win.type = .window;
+//	win.x,      win.y     = 10,260
+//	win.height, win.width = 150,200
+//	append(&win.text,"window")
+//	win.background       = &gamedata.graphicsdata.box
+//	win.backgroundNPatch = &gamedata.graphicsdata.box_nPatch
+//	win.backgroundColor  = raylib.WHITE
+
+//	append(&win.selections, gui.create_button(
+//		graphicsdata=gamedata.graphicsdata,
+//		settingsdata=gamedata.settingsdata,
+//		rectangle={10,0,200,50},
+//		text="Selection 1",
+//	))
+//	append(&gamedata.guidata.elements, win)
+
+
+	gamedata.titleScreen = true
 
 }
 main_free :: proc() {
 
-	raylib.close_window();
+	raylib.close_window()
 
-	settings.free(gamedata.settings);
-	localization.free(gamedata.localization);
-//	free_graphics();
-//	free_gui();
-//	free_gamestate();
-//	free_player();
+	settings.free_data(gamedata.settingsdata)
+	localization.free_data(gamedata.localizationdata)
+	graphics.free_data(gamedata.graphicsdata)
+	gui.free_data(gamedata.guidata);
+	player.free_data(gamedata.playerdata)
 
-//	print_log();
+	logging.print_log()
 
 }
