@@ -56,6 +56,7 @@ main_initialization :: proc() {
 		graphicsdata=gamedata.graphicsdata,
 		settingsdata=gamedata.settingsdata,
 		rectangle={10, 10,200, 50},
+		halignment=.left,
 		text="Label",
 		fontColor=raylib.RED,
 	))
@@ -63,12 +64,14 @@ main_initialization :: proc() {
 		graphicsdata=gamedata.graphicsdata,
 		settingsdata=gamedata.settingsdata,
 		rectangle={10, 60,200, 50},
+		halignment=.left,
 		text="Button",
 	))
 	append(&gamedata.guidata.elements, gui.create_toggle(
 		graphicsdata=gamedata.graphicsdata,
 		settingsdata=gamedata.settingsdata,
 		rectangle={10,110,200, 50},
+		halignment=.left,
 		text="Toggle",
 	))
 	str: [dynamic]cstring
@@ -78,6 +81,7 @@ main_initialization :: proc() {
 		settingsdata=gamedata.settingsdata,
 		rectangle={10,160,200,100},
 		halignment=.left,
+		valignment=.top,
 		text=str,
 	))
 	append(&gamedata.guidata.elements, gui.create_window(

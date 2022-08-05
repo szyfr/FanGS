@@ -132,14 +132,14 @@ draw_tooltip :: proc(tooltip: ^Element) {
 
 	textPosition: raylib.Vector2;
 	switch tooltip.halignment {
-		case .left:   textPosition.x = tooltip.x; break;
+		case .left:   textPosition.x = tooltip.x + 16; break;
 		case .center: textPosition.x = ((tooltip.width / 2) + tooltip.x) - (((tooltip.fontSize * f32(longestString)) * 1.1) / 2); break;
 		case .right:  textPosition.x = (tooltip.x + tooltip.width) - (tooltip.fontSize * f32(longestString)) * 1.1; break;
 	}
 
 	for i:=0; i<len(tooltip.text); i+=1 {
 		switch tooltip.valignment {
-			case .top:    textPosition.y = tooltip.y + (f32(i) * (tooltip.fontSize + tooltip.fontSize/2)); break;
+			case .top:    textPosition.y = tooltip.y + (f32(i) * (tooltip.fontSize + tooltip.fontSize/2)) + 16; break;
 			case .center: textPosition.y = ((tooltip.height / 2) + tooltip.y) - (((tooltip.fontSize * f32(len(tooltip.text))) * 1.1) / 2) + (f32(i) * (tooltip.fontSize + tooltip.fontSize/2)); break;
 			case .bottom: textPosition.y = (tooltip.y + tooltip.height) - (tooltip.fontSize * f32(len(tooltip.text))) * 1.1; break;
 		}

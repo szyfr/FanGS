@@ -75,7 +75,8 @@ create_toggle_full :: proc(
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
 		effect           :  proc(guidata : ^GuiData, index : i32)=default_proc,
-		checked          :  bool=false) -> Element {
+		checked          :  bool=false,
+	) -> Element {
 
 	// General
 	element: Element = {};
@@ -134,7 +135,6 @@ update_toggle  :: proc(toggle: ^Element) {
 		toggle.backgroundColor = raylib.GRAY;
 
 		if raylib.is_mouse_button_released(.MOUSE_BUTTON_LEFT) {
-			fmt.printf("fuck")
 			toggle.checked = !toggle.checked;
 		}
 	} else {

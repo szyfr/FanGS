@@ -123,7 +123,7 @@ create_button_full :: proc(
 update_button  :: proc{ update_main_button, update_sub_button, }
 update_main_button  :: proc(guidata: ^GuiData, index : i32) {
 	mousePosition: raylib.Vector2 = raylib.get_mouse_position();
-	button := guidata.elements[index]
+	button : ^Element = &guidata.elements[index]
 
 	if test_bounds(mousePosition, button.rect) {
 		button.backgroundColor = raylib.GRAY;
@@ -163,12 +163,12 @@ draw_button  :: proc(button: ^Element) {
 
 	textPosition: raylib.Vector2;
 	switch button.halignment {
-		case .left:   textPosition.x = button.x; break;
+		case .left:   textPosition.x = button.x + 16; break;
 		case .center: textPosition.x = ((button.width / 2) + button.x) - (((button.fontSize * f32(longestString)) * 1.1) / 2); break;
 		case .right:  textPosition.x = (button.x + button.width) - (button.fontSize * f32(longestString)) * 1.1; break;
 	}
 	switch button.valignment {
-		case .top:    textPosition.y = button.y; break;
+		case .top:    textPosition.y = button.y + 16; break;
 		case .center: textPosition.y = ((button.height / 2) + button.y) - (((button.fontSize * f32(len(button.text))) * 1.1) / 2); break;
 		case .bottom: textPosition.y = (button.y + button.height) - (button.fontSize * f32(len(button.text))) * 1.1; break;
 	}
