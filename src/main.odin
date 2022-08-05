@@ -19,7 +19,7 @@ main :: proc() {
 	for !raylib.window_should_close() {
 		//* Logic
 		player.update(gamedata.playerdata, gamedata.settingsdata)
-		gui.update_elements(gamedata.guidata.elements)
+		gui.update_elements(gamedata.guidata)
 
 		//* Graphics
 		raylib.begin_drawing()

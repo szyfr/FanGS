@@ -25,7 +25,7 @@ create_toggle_single :: proc(
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-		effect           :  proc()=default_proc,
+		effect           :  proc(guidata : ^GuiData, index : i32)=default_proc,
 		checked          :  bool=false,
 	) -> Element  {
 
@@ -49,7 +49,7 @@ create_toggle_dynamic :: proc(
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-		effect           :  proc()=default_proc,
+		effect           :  proc(guidata : ^GuiData, index : i32)=default_proc,
 		checked          :  bool=false,
 	) -> Element  {
 
@@ -74,7 +74,7 @@ create_toggle_full :: proc(
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-		effect           :  proc()=default_proc,
+		effect           :  proc(guidata : ^GuiData, index : i32)=default_proc,
 		checked          :  bool=false) -> Element {
 
 	// General

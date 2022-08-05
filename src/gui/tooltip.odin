@@ -23,7 +23,7 @@ create_tooltip_single :: proc(
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-	) -> Element  {
+	) -> Element {
 
 	return create_tooltip_full(
 		graphicsdata=graphicsdata, settingsdata=settingsdata,
@@ -43,7 +43,8 @@ create_tooltip_dynamic :: proc(
 		valignment       :  VAlignment=.center,
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
-		backgroundColor  :  raylib.Color=raylib.WHITE) -> Element  {
+		backgroundColor  :  raylib.Color=raylib.WHITE,
+	) -> Element  {
 
 	return create_tooltip_full(
 		graphicsdata=graphicsdata, settingsdata=settingsdata,
@@ -64,7 +65,8 @@ create_tooltip_full :: proc(
 		valignment       :  VAlignment=.center,
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
-		backgroundColor  :  raylib.Color=raylib.WHITE) -> Element {
+		backgroundColor  :  raylib.Color=raylib.WHITE,
+	) -> Element {
 
 	// General
 	element: Element = {};

@@ -25,7 +25,7 @@ create_button_single :: proc(
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-		effect           :  proc()=default_proc,
+		effect           :  proc(guidata : ^GuiData, index : i32)=default_proc,
 	) -> Element  {
 
 	return create_button_full(
@@ -48,7 +48,7 @@ create_button_dynamic :: proc(
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-		effect           :  proc()=default_proc) -> Element  {
+		effect           :  proc(guidata : ^GuiData, index : i32)=default_proc) -> Element  {
 
 	return create_button_full(
 		graphicsdata=graphicsdata, settingsdata=settingsdata,
@@ -71,7 +71,7 @@ create_button_full :: proc(
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-		effect           :  proc()=default_proc,
+		effect           :  proc(guidata : ^GuiData, index : i32)=default_proc,
 	) -> Element {
 
 	// General
@@ -120,14 +120,29 @@ create_button_full :: proc(
 }
 
 //* Button logic
-update_button  :: proc(button: ^Element) {
+update_button  :: proc{ update_main_button, update_sub_button, }
+update_main_button  :: proc(guidata: ^GuiData, index : i32) {
+	mousePosition: raylib.Vector2 = raylib.get_mouse_position();
+	button := guidata.elements[index]
+
+	if test_bounds(mousePosition, button.rect) {
+		button.backgroundColor = raylib.GRAY;
+
+		if raylib.is_mouse_button_released(.MOUSE_BUTTON_LEFT) {
+			button.effect(guidata, index);
+		}
+	} else {
+		button.backgroundColor = raylib.WHITE;
+	}
+}
+update_sub_button  :: proc(button: ^Element, guidata : ^GuiData, owner : i32) {
 	mousePosition: raylib.Vector2 = raylib.get_mouse_position();
 
 	if test_bounds(mousePosition, button.rect) {
 		button.backgroundColor = raylib.GRAY;
 
 		if raylib.is_mouse_button_released(.MOUSE_BUTTON_LEFT) {
-			button.effect();
+			button.effect(guidata, owner);
 		}
 	} else {
 		button.backgroundColor = raylib.WHITE;

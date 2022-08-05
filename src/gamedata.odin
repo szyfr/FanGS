@@ -77,26 +77,15 @@ main_initialization :: proc() {
 		graphicsdata=gamedata.graphicsdata,
 		settingsdata=gamedata.settingsdata,
 		rectangle={10,160,200,100},
+		halignment=.left,
 		text=str,
 	))
-
-	// TODO: Finish windows
-//	win: gui.Element = {}
-//	win.type = .window;
-//	win.x,      win.y     = 10,260
-//	win.height, win.width = 150,200
-//	append(&win.text,"window")
-//	win.background       = &gamedata.graphicsdata.box
-//	win.backgroundNPatch = &gamedata.graphicsdata.box_nPatch
-//	win.backgroundColor  = raylib.WHITE
-
-//	append(&win.selections, gui.create_button(
-//		graphicsdata=gamedata.graphicsdata,
-//		settingsdata=gamedata.settingsdata,
-//		rectangle={10,0,200,50},
-//		text="Selection 1",
-//	))
-//	append(&gamedata.guidata.elements, win)
+	append(&gamedata.guidata.elements, gui.create_window(
+		graphicsdata=gamedata.graphicsdata,
+		settingsdata=gamedata.settingsdata,
+		rectangle={10, 600, 200, 50},
+		text="This is a window",
+	))
 
 
 	gamedata.titleScreen = true

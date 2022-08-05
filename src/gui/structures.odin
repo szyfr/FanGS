@@ -28,7 +28,7 @@ Element :: struct {
 	backgroundColor:   raylib.Color,
 
 	// Button, Toggle
-	effect: proc(),
+	effect: proc(guidata : ^GuiData, index : i32),
 
 	// Toggle
 	// TODO: Customizable icon for inside toggle
@@ -46,4 +46,4 @@ VAlignment  :: enum { top,  center, bottom, }
 
 
 //= Procedures
-default_proc :: proc() {}
+default_proc :: proc(guidata : ^GuiData, index : i32) {}
