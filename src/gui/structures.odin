@@ -7,7 +7,11 @@ import "../raylib"
 
 //= Structures
 GuiData :: struct {
-	elements: [dynamic]Element,
+	elements    : [dynamic]Element,
+
+	titleScreen : bool,
+
+	abort       : bool,
 }
 
 Element :: struct {

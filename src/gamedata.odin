@@ -6,6 +6,7 @@ import "raylib"
 
 import "graphics"
 import "gui"
+import "gui_effects"
 import "player"
 import "localization"
 import "logging"
@@ -23,8 +24,6 @@ GameData :: struct {
 	playerdata       : ^player.PlayerData,
 	graphicsdata     : ^graphics.GraphicsData,
 	guidata          : ^gui.GuiData,
-
-	titleScreen      : bool,
 }
 
 
@@ -52,47 +51,99 @@ main_initialization :: proc() {
 	gamedata.guidata      = gui.init()
 
 	// TEST ELEMENTS
+//	append(&gamedata.guidata.elements, gui.create_label(
+//		graphicsdata=gamedata.graphicsdata,
+//		settingsdata=gamedata.settingsdata,
+//		rectangle={10, 10,200, 50},
+//		halignment=.left,
+//		text="Label",
+//		fontColor=raylib.RED,
+//	))
+//	append(&gamedata.guidata.elements, gui.create_button(
+//		graphicsdata=gamedata.graphicsdata,
+//		settingsdata=gamedata.settingsdata,
+//		rectangle={10, 60,200, 50},
+//		halignment=.left,
+//		text="Button",
+//	))
+//	append(&gamedata.guidata.elements, gui.create_toggle(
+//		graphicsdata=gamedata.graphicsdata,
+//		settingsdata=gamedata.settingsdata,
+//		rectangle={10,110,200, 50},
+//		halignment=.left,
+//		text="Toggle",
+//	))
+//	str: [dynamic]cstring
+//	append(&str,"tooltip","Line2","Line3")
+//	append(&gamedata.guidata.elements, gui.create_tooltip(
+//		graphicsdata=gamedata.graphicsdata,
+//		settingsdata=gamedata.settingsdata,
+//		rectangle={10,160,200,100},
+//		halignment=.left,
+//		valignment=.top,
+//		text=str,
+//	))
+//	append(&gamedata.guidata.elements, gui.create_window(
+//		graphicsdata=gamedata.graphicsdata,
+//		settingsdata=gamedata.settingsdata,
+//		rectangle={10, 400, 600, 300},
+//		text="This is a window",
+//	))
+//
+//	gui.bring_front(gamedata.guidata, 3)
+
+
+	//* Titlescreen
+	gamedata.guidata.titleScreen = true
+
+	// Title
 	append(&gamedata.guidata.elements, gui.create_label(
 		graphicsdata=gamedata.graphicsdata,
 		settingsdata=gamedata.settingsdata,
-		rectangle={10, 10,200, 50},
+		rectangle={40, 40, 200, 50},
 		halignment=.left,
-		text="Label",
-		fontColor=raylib.RED,
+		fontSize=40,
+		text="FanGS",
+	))
+
+	// Menu options
+	append(&gamedata.guidata.elements, gui.create_button(
+		graphicsdata=gamedata.graphicsdata,
+		settingsdata=gamedata.settingsdata,
+		rectangle={10, 300, 250, 50},
+		fontSize=20,
+		text=gamedata.localizationdata.newGame,
+		effect=gui_effects.start_new_game,
 	))
 	append(&gamedata.guidata.elements, gui.create_button(
 		graphicsdata=gamedata.graphicsdata,
 		settingsdata=gamedata.settingsdata,
-		rectangle={10, 60,200, 50},
-		halignment=.left,
-		text="Button",
+		rectangle={10, 360, 250, 50},
+		fontSize=20,
+		text=gamedata.localizationdata.loadGame,
 	))
-	append(&gamedata.guidata.elements, gui.create_toggle(
+	append(&gamedata.guidata.elements, gui.create_button(
 		graphicsdata=gamedata.graphicsdata,
 		settingsdata=gamedata.settingsdata,
-		rectangle={10,110,200, 50},
-		halignment=.left,
-		text="Toggle",
+		rectangle={10, 420, 250, 50},
+		fontSize=20,
+		text=gamedata.localizationdata.mods,
 	))
-	str: [dynamic]cstring
-	append(&str,"tooltip","Line2","Line3")
-	append(&gamedata.guidata.elements, gui.create_tooltip(
+	append(&gamedata.guidata.elements, gui.create_button(
 		graphicsdata=gamedata.graphicsdata,
 		settingsdata=gamedata.settingsdata,
-		rectangle={10,160,200,100},
-		halignment=.left,
-		valignment=.top,
-		text=str,
+		rectangle={10, 480, 250, 50},
+		fontSize=20,
+		text=gamedata.localizationdata.options,
 	))
-	append(&gamedata.guidata.elements, gui.create_window(
+	append(&gamedata.guidata.elements, gui.create_button(
 		graphicsdata=gamedata.graphicsdata,
 		settingsdata=gamedata.settingsdata,
-		rectangle={10, 600, 200, 50},
-		text="This is a window",
+		rectangle={10, 540, 250, 50},
+		fontSize=20,
+		text=gamedata.localizationdata.quit,
+		effect=gui_effects.quit_game,
 	))
-
-
-	gamedata.titleScreen = true
 
 }
 main_free :: proc() {

@@ -4,9 +4,9 @@ package localization
 //= Structures
 LocalizationData :: struct {
 	// Main menu
-	newGame  : string,
-	loadGame : string,
-	mods     : string,
-	options  : string,
-	quit     : string,
+	newGame  : cstring,
+	loadGame : cstring,
+	mods     : cstring,
+	options  : cstring,
+	quit     : cstring,
 }

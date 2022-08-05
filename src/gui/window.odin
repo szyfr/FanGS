@@ -114,10 +114,11 @@ create_window_full :: proc(
 
 	//* Selections
 	if selections == nil {
+		rect : raylib.Rectangle = {window.x + 5, window.y + window.height-55, window.width - 10, 50}
 		append(&window.selections, create_button(
 			graphicsdata=graphicsdata,
 			settingsdata=settingsdata,
-			rectangle={10, 60,200, 50},
+			rectangle=rect,
 			text="OK",
 			effect=close_window_proc,
 		))

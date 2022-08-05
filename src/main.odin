@@ -16,7 +16,7 @@ main :: proc() {
 
 	main_initialization()
 
-	for !raylib.window_should_close() {
+	for !raylib.window_should_close() && !gamedata.guidata.abort {
 		//* Logic
 		player.update(gamedata.playerdata, gamedata.settingsdata)
 		gui.update_elements(gamedata.guidata)
@@ -25,7 +25,7 @@ main :: proc() {
 		raylib.begin_drawing()
 		raylib.clear_background(raylib.RAYWHITE)
 
-		if !gamedata.titleScreen {
+		if !gamedata.guidata.titleScreen {
 			raylib.begin_mode3d(gamedata.playerdata.camera)
 			raylib.draw_grid(100, 1)
 			raylib.end_mode3d()

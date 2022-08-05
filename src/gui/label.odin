@@ -17,7 +17,9 @@ create_label_single :: proc(
 		settingsdata     : ^settings.SettingsData,
 		rectangle        :  raylib.Rectangle={0,0,100,50},
 		text             :  cstring=nil,
-		font             : ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
+		font             : ^raylib.Font={},
+		fontSize         : f32=0,
+		fontColor        : raylib.Color=raylib.BLACK,
 		halignment       :  HAlignment=.center,
 		valignment       :  VAlignment=.center,
 	) -> Element  {
