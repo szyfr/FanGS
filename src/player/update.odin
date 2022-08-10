@@ -47,11 +47,12 @@ update_player_movement :: proc(
 	if raylib.is_mouse_button_down(.MOUSE_BUTTON_RIGHT) {
 		mouseDelta: raylib.Vector2 = raylib.get_mouse_delta();
 
-		player.camera.position.x += mouseDelta.x * 0.01;
-		player.camera.position.z += mouseDelta.y * 0.01;
+		mod := (((player.camera.fovy + 20)) / 10000)
 
-		player.camera.target.x += mouseDelta.x * 0.01;
-		player.camera.target.z += mouseDelta.y * 0.01;
+		player.camera.position.x += mouseDelta.x * mod;
+		player.camera.position.z += mouseDelta.y * mod;
+		player.camera.target.x += mouseDelta.x   * mod;
+		player.camera.target.z += mouseDelta.y   * mod;
 	}
 
 	// Edge scrolling
@@ -76,7 +77,7 @@ update_player_movement :: proc(
 
 
 	// Zoom
-	player.camera.fovy -= raylib.get_mouse_wheel_move();
+	player.camera.fovy -= raylib.get_mouse_wheel_move()*4;
 
 	if player.camera.fovy > ZOOM_MAX do player.camera.fovy = ZOOM_MAX;
 	if player.camera.fovy < ZOOM_MIN do player.camera.fovy = ZOOM_MIN;

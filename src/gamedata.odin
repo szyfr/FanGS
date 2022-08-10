@@ -11,6 +11,7 @@ import "player"
 import "localization"
 import "logging"
 import "settings"
+import "worldmap"
 
 
 //= Global Variables
@@ -21,9 +22,10 @@ gamedata : ^GameData
 GameData :: struct {
 	settingsdata     : ^settings.SettingsData,
 	localizationdata : ^localization.LocalizationData,
-	playerdata       : ^player.PlayerData,
 	graphicsdata     : ^graphics.GraphicsData,
 	guidata          : ^gui.GuiData,
+	playerdata       : ^player.PlayerData,
+	mapdata          : ^worldmap.MapData,
 }
 
 
@@ -50,50 +52,9 @@ main_initialization :: proc() {
 	gamedata.graphicsdata = graphics.init()
 	gamedata.guidata      = gui.init()
 
-	// TEST ELEMENTS
-//	append(&gamedata.guidata.elements, gui.create_label(
-//		graphicsdata=gamedata.graphicsdata,
-//		settingsdata=gamedata.settingsdata,
-//		rectangle={10, 10,200, 50},
-//		halignment=.left,
-//		text="Label",
-//		fontColor=raylib.RED,
-//	))
-//	append(&gamedata.guidata.elements, gui.create_button(
-//		graphicsdata=gamedata.graphicsdata,
-//		settingsdata=gamedata.settingsdata,
-//		rectangle={10, 60,200, 50},
-//		halignment=.left,
-//		text="Button",
-//	))
-//	append(&gamedata.guidata.elements, gui.create_toggle(
-//		graphicsdata=gamedata.graphicsdata,
-//		settingsdata=gamedata.settingsdata,
-//		rectangle={10,110,200, 50},
-//		halignment=.left,
-//		text="Toggle",
-//	))
-//	str: [dynamic]cstring
-//	append(&str,"tooltip","Line2","Line3")
-//	append(&gamedata.guidata.elements, gui.create_tooltip(
-//		graphicsdata=gamedata.graphicsdata,
-//		settingsdata=gamedata.settingsdata,
-//		rectangle={10,160,200,100},
-//		halignment=.left,
-//		valignment=.top,
-//		text=str,
-//	))
-//	append(&gamedata.guidata.elements, gui.create_window(
-//		graphicsdata=gamedata.graphicsdata,
-//		settingsdata=gamedata.settingsdata,
-//		rectangle={10, 400, 600, 300},
-//		text="This is a window",
-//	))
-//
-//	gui.bring_front(gamedata.guidata, 3)
-
 
 	//* Titlescreen
+	// TODO: migrate over to title screen
 	gamedata.guidata.titleScreen = true
 
 	// Title
@@ -159,3 +120,5 @@ main_free :: proc() {
 	logging.print_log()
 
 }
+
+init_map :: proc() {}

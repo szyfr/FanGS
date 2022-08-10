@@ -11,6 +11,8 @@ GuiData :: struct {
 
 	titleScreen : bool,
 
+	selectedMap : string,
+
 	abort       : bool,
 }
 
