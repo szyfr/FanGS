@@ -2,8 +2,11 @@ package gui
 
 
 //= Imports
+import "core:fmt"
+
 import "../raylib"
 
+import "../gamedata"
 import "../graphics"
 import "../settings"
 
@@ -13,20 +16,20 @@ import "../settings"
 //* Create button
 create_button :: proc{ create_button_single, create_button_dynamic, };
 create_button_single :: proc(
-		graphicsdata     : ^graphics.GraphicsData,
-		settingsdata     : ^settings.SettingsData,
+		graphicsdata     : ^gamedata.GraphicsData,
+		settingsdata     : ^gamedata.SettingsData,
 		rectangle        :  raylib.Rectangle={0,0,100,50},
 		text             :  cstring="",
 		font             : ^raylib.Font={},
 		fontSize         :  f32=0,
 		fontColor        :  raylib.Color=raylib.BLACK,
-		halignment       :  HAlignment=.center,
-		valignment       :  VAlignment=.center,
+		halignment       :  gamedata.HAlignment=.center,
+		valignment       :  gamedata.VAlignment=.center,
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-		effect           :  proc(guidata : ^GuiData, index : i32)=default_proc,
-	) -> Element  {
+		effect           :  proc(guidata : ^gamedata.GuiData, index : i32)=gamedata.default_proc,
+	) -> gamedata.Element  {
 
 	return create_button_full(
 		graphicsdata=graphicsdata, settingsdata=settingsdata,
@@ -38,17 +41,18 @@ create_button_single :: proc(
 		effect=effect);
 }
 create_button_dynamic :: proc(
-		graphicsdata     : ^graphics.GraphicsData,
-		settingsdata     : ^settings.SettingsData,
+		graphicsdata     : ^gamedata.GraphicsData,
+		settingsdata     : ^gamedata.SettingsData,
 		rectangle        :  raylib.Rectangle={0,0,100,50},
 		text             :  [dynamic]cstring=nil,
 		font             : ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
-		halignment       :  HAlignment=.center,
-		valignment       :  VAlignment=.center,
+		halignment       :  gamedata.HAlignment=.center,
+		valignment       :  gamedata.VAlignment=.center,
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-		effect           :  proc(guidata : ^GuiData, index : i32)=default_proc) -> Element  {
+		effect           :  proc(guidata : ^gamedata.GuiData, index : i32)=gamedata.default_proc,
+	) -> gamedata.Element  {
 
 	return create_button_full(
 		graphicsdata=graphicsdata, settingsdata=settingsdata,
@@ -60,22 +64,22 @@ create_button_dynamic :: proc(
 		effect=effect);
 }
 create_button_full :: proc(
-		graphicsdata     : ^graphics.GraphicsData,
-		settingsdata     : ^settings.SettingsData,
+		graphicsdata     : ^gamedata.GraphicsData,
+		settingsdata     : ^gamedata.SettingsData,
 		rectangle        :  raylib.Rectangle={0,0,100,50},
 		textsingle       :  cstring=nil,
 		textdynamic      :  [dynamic]cstring=nil,
 		font             : ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
-		halignment       :  HAlignment=.center,
-		valignment       :  VAlignment=.center,
+		halignment       :  gamedata.HAlignment=.center,
+		valignment       :  gamedata.VAlignment=.center,
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-		effect           :  proc(guidata : ^GuiData, index : i32)=default_proc,
-	) -> Element {
+		effect           :  proc(guidata : ^gamedata.GuiData, index : i32)=gamedata.default_proc,
+	) -> gamedata.Element {
 
 	// General
-	element: Element = {};
+	element: gamedata.Element = {};
 	element.type = .button;
 
 	// Rectangle
@@ -121,9 +125,9 @@ create_button_full :: proc(
 
 //* Button logic
 update_button  :: proc{ update_main_button, update_sub_button, }
-update_main_button  :: proc(guidata: ^GuiData, index : i32) {
+update_main_button  :: proc(guidata: ^gamedata.GuiData, index : i32) {
 	mousePosition: raylib.Vector2 = raylib.get_mouse_position();
-	button : ^Element = &guidata.elements[index]
+	button : ^gamedata.Element = &guidata.elements[index]
 
 	if test_bounds(mousePosition, button.rect) {
 		button.backgroundColor = raylib.GRAY;
@@ -135,7 +139,7 @@ update_main_button  :: proc(guidata: ^GuiData, index : i32) {
 		button.backgroundColor = raylib.WHITE;
 	}
 }
-update_sub_button  :: proc(button: ^Element, guidata : ^GuiData, owner : i32) {
+update_sub_button  :: proc(button: ^gamedata.Element, guidata : ^gamedata.GuiData, owner : i32) {
 	mousePosition: raylib.Vector2 = raylib.get_mouse_position();
 
 	if test_bounds(mousePosition, button.rect) {
@@ -148,7 +152,7 @@ update_sub_button  :: proc(button: ^Element, guidata : ^GuiData, owner : i32) {
 		button.backgroundColor = raylib.WHITE;
 	}
 }
-draw_button  :: proc(button: ^Element) {
+draw_button  :: proc(button: ^gamedata.Element) {
 	raylib.draw_texture_n_patch(
 		button.background^,
 		button.backgroundNPatch^,

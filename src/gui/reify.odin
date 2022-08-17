@@ -4,19 +4,21 @@ package gui
 //= Imports
 import "../raylib"
 
+import "../gamedata"
+
 
 //= Procedures
 
 //* Reification
-init :: proc() -> ^GuiData {
-	gui := new(GuiData);
+init :: proc() {
+	using gamedata
 
-	gui.abort = false
-
-	return gui
+	guidata = new(gamedata.GuiData);
+	guidata.abort = false
 }
-free_data :: proc(gui : ^GuiData) {
-	delete(gui.elements)
+free_data :: proc() {
+	using gamedata
 
-	free(gui)
+	delete(guidata.elements)
+	free(guidata)
 }

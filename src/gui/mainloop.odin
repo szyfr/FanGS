@@ -2,11 +2,12 @@ package gui
 
 
 //= Imports
+import "../gamedata"
 
 
 //= Procedures
 update_elements :: proc{ update_main_elements, update_sub_elements, }
-update_main_elements :: proc(guidata : ^GuiData) {
+update_main_elements :: proc(guidata : ^gamedata.GuiData) {
 	for i:=0; i<len(guidata.elements); i+=1 {
 		#partial switch guidata.elements[i].type {
 			case .button:
@@ -24,7 +25,7 @@ update_main_elements :: proc(guidata : ^GuiData) {
 		}
 	}
 }
-update_sub_elements :: proc(elements : [dynamic]Element, guidata : ^GuiData, owner : i32) {
+update_sub_elements :: proc(elements : [dynamic]gamedata.Element, guidata : ^gamedata.GuiData, owner : i32) {
 	for i:=0; i<len(elements); i+=1 {
 		#partial switch elements[i].type {
 			case .button:
@@ -39,7 +40,7 @@ update_sub_elements :: proc(elements : [dynamic]Element, guidata : ^GuiData, own
 		}
 	}
 }
-draw_elements   :: proc(elements: [dynamic]Element) {
+draw_elements   :: proc(elements: [dynamic]gamedata.Element) {
 	for i:=0; i<len(elements); i+=1 {
 		#partial switch elements[i].type {
 			case .label:   draw_label(&elements[i]);   break;

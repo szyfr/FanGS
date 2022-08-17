@@ -8,6 +8,7 @@ import "core:strings"
 
 import "raylib"
 
+import "gamedata"
 import "gui"
 import "player"
 import "worldmap"
@@ -20,7 +21,7 @@ main :: proc() {
 
 	for !raylib.window_should_close() && !gamedata.guidata.abort {
 		//* Logic
-		player.update(gamedata.playerdata, gamedata.settingsdata)
+		player.update()
 		gui.update_elements(gamedata.guidata)
 		
 	//	if !gamedata.guidata.titleScreen && gamedata.mapdata == nil do gamedata.mapdata = worldmap.init(gamedata.guidata.selectedMap)

@@ -6,6 +6,7 @@ import "core:fmt"
 
 import "../raylib"
 
+import "../gamedata"
 import "../graphics"
 import "../settings"
 
@@ -15,19 +16,19 @@ import "../settings"
 //* Create toggle
 create_toggle :: proc{ create_toggle_single, create_toggle_dynamic, };
 create_toggle_single :: proc(
-		graphicsdata     : ^graphics.GraphicsData,
-		settingsdata     : ^settings.SettingsData,
+		graphicsdata     : ^gamedata.GraphicsData,
+		settingsdata     : ^gamedata.SettingsData,
 		rectangle        :  raylib.Rectangle={0,0,100,50},
 		text             :  cstring=nil,
 		font             : ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
-		halignment       :  HAlignment=.center,
-		valignment       :  VAlignment=.center,
+		halignment       :  gamedata.HAlignment=.center,
+		valignment       :  gamedata.VAlignment=.center,
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-		effect           :  proc(guidata : ^GuiData, index : i32)=default_proc,
+		effect           :  proc(guidata : ^gamedata.GuiData, index : i32)=gamedata.default_proc,
 		checked          :  bool=false,
-	) -> Element  {
+	) -> gamedata.Element  {
 
 	return create_toggle_full(
 		graphicsdata=graphicsdata, settingsdata=settingsdata,
@@ -39,19 +40,19 @@ create_toggle_single :: proc(
 		effect=effect, checked=checked);
 }
 create_toggle_dynamic :: proc(
-		graphicsdata     : ^graphics.GraphicsData,
-		settingsdata     : ^settings.SettingsData,
+		graphicsdata     : ^gamedata.GraphicsData,
+		settingsdata     : ^gamedata.SettingsData,
 		rectangle        :  raylib.Rectangle={0,0,100,50},
 		text             :  [dynamic]cstring=nil,
 		font             : ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
-		halignment       :  HAlignment=.center,
-		valignment       :  VAlignment=.center,
+		halignment       :  gamedata.HAlignment=.center,
+		valignment       :  gamedata.VAlignment=.center,
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-		effect           :  proc(guidata : ^GuiData, index : i32)=default_proc,
+		effect           :  proc(guidata : ^gamedata.GuiData, index : i32)=gamedata.default_proc,
 		checked          :  bool=false,
-	) -> Element  {
+	) -> gamedata.Element  {
 
 	return create_toggle_full(
 		graphicsdata=graphicsdata, settingsdata=settingsdata,
@@ -63,23 +64,23 @@ create_toggle_dynamic :: proc(
 		effect=effect, checked=checked);
 }
 create_toggle_full :: proc(
-		graphicsdata     : ^graphics.GraphicsData,
-		settingsdata     : ^settings.SettingsData,
+		graphicsdata     : ^gamedata.GraphicsData,
+		settingsdata     : ^gamedata.SettingsData,
 		rectangle        :  raylib.Rectangle={0,0,100,50},
 		textsingle       :  cstring=nil,
 		textdynamic      :  [dynamic]cstring=nil,
 		font             : ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
-		halignment       :  HAlignment=.center,
-		valignment       :  VAlignment=.center,
+		halignment       :  gamedata.HAlignment=.center,
+		valignment       :  gamedata.VAlignment=.center,
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-		effect           :  proc(guidata : ^GuiData, index : i32)=default_proc,
+		effect           :  proc(guidata : ^gamedata.GuiData, index : i32)=gamedata.default_proc,
 		checked          :  bool=false,
-	) -> Element {
+	) -> gamedata.Element {
 
 	// General
-	element: Element = {};
+	element: gamedata.Element = {};
 	element.type = .toggle;
 
 	// Rectangle
@@ -127,7 +128,7 @@ create_toggle_full :: proc(
 }
 
 //* Toggle logic
-update_toggle  :: proc(toggle: ^Element) {
+update_toggle  :: proc(toggle: ^gamedata.Element) {
 	mousePosition: raylib.Vector2 = raylib.get_mouse_position();
 	toggleRect: raylib.Rectangle = {toggle.x,toggle.y,toggle.height,toggle.height};
 
@@ -141,7 +142,7 @@ update_toggle  :: proc(toggle: ^Element) {
 		toggle.backgroundColor = raylib.WHITE;
 	}
 }
-draw_toggle  :: proc(toggle: ^Element) {
+draw_toggle  :: proc(toggle: ^gamedata.Element) {
 	toggleRect: raylib.Rectangle = {toggle.x,toggle.y,toggle.height,toggle.height};
 
 	raylib.draw_texture_n_patch(

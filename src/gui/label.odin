@@ -4,6 +4,7 @@ package gui
 //= Imports
 import "../raylib"
 
+import "../gamedata"
 import "../graphics"
 import "../settings"
 
@@ -13,16 +14,16 @@ import "../settings"
 //* Create label
 create_label :: proc{ create_label_single, create_label_dynamic, };
 create_label_single :: proc(
-		graphicsdata     : ^graphics.GraphicsData,
-		settingsdata     : ^settings.SettingsData,
+		graphicsdata     : ^gamedata.GraphicsData,
+		settingsdata     : ^gamedata.SettingsData,
 		rectangle        :  raylib.Rectangle={0,0,100,50},
 		text             :  cstring=nil,
 		font             : ^raylib.Font={},
-		fontSize         : f32=0,
-		fontColor        : raylib.Color=raylib.BLACK,
-		halignment       :  HAlignment=.center,
-		valignment       :  VAlignment=.center,
-	) -> Element  {
+		fontSize         :  f32=0,
+		fontColor        :  raylib.Color=raylib.BLACK,
+		halignment       :  gamedata.HAlignment=.center,
+		valignment       :  gamedata.VAlignment=.center,
+	) -> gamedata.Element  {
 
 	return create_label_full(
 		graphicsdata=graphicsdata, settingsdata=settingsdata,
@@ -31,14 +32,14 @@ create_label_single :: proc(
 		halignment=halignment, valignment=valignment);
 }
 create_label_dynamic :: proc(
-		graphicsdata     : ^graphics.GraphicsData,
-		settingsdata     : ^settings.SettingsData,
+		graphicsdata     : ^gamedata.GraphicsData,
+		settingsdata     : ^gamedata.SettingsData,
 		rectangle        :  raylib.Rectangle={0,0,100,50},
 		text             :  [dynamic]cstring=nil,
 		font             : ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
-		halignment       :  HAlignment=.center,
-		valignment       :  VAlignment=.center,
-	) -> Element {
+		halignment       :  gamedata.HAlignment=.center,
+		valignment       :  gamedata.VAlignment=.center,
+	) -> gamedata.Element {
 
 	return create_label_full(
 		graphicsdata=graphicsdata, settingsdata=settingsdata,
@@ -47,18 +48,18 @@ create_label_dynamic :: proc(
 		halignment=halignment, valignment=valignment);
 }
 create_label_full :: proc(
-		graphicsdata     : ^graphics.GraphicsData,
-		settingsdata     : ^settings.SettingsData,
+		graphicsdata     : ^gamedata.GraphicsData,
+		settingsdata     : ^gamedata.SettingsData,
 		rectangle        :  raylib.Rectangle={0,0,100,50},
 		textsingle       :  cstring=nil,
 		textdynamic      :  [dynamic]cstring=nil,
 		font             : ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
-		halignment       :  HAlignment=.center,
-		valignment       :  VAlignment=.center,
-	) -> Element {
+		halignment       :  gamedata.HAlignment=.center,
+		valignment       :  gamedata.VAlignment=.center,
+	) -> gamedata.Element {
 
 	// General
-	label: Element = {};
+	label: gamedata.Element = {};
 	label.type = .label;
 
 	// Rectangle
@@ -93,7 +94,7 @@ create_label_full :: proc(
 }
 
 //* Draw Label
-draw_label   :: proc(label: ^Element) {
+draw_label   :: proc(label: ^gamedata.Element) {
 	size: f32 = 16;
 	
 	longestString: int = 0;

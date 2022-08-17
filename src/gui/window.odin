@@ -4,6 +4,7 @@ package gui
 //= Imports
 import "../raylib"
 
+import "../gamedata"
 import "../graphics"
 import "../settings"
 
@@ -13,18 +14,18 @@ import "../settings"
 //* Create window
 create_window :: proc{ create_window_single, create_window_dynamic, }
 create_window_single :: proc(
-		graphicsdata     : ^graphics.GraphicsData,
-		settingsdata     : ^settings.SettingsData,
+		graphicsdata     : ^gamedata.GraphicsData,
+		settingsdata     : ^gamedata.SettingsData,
 		rectangle        :  raylib.Rectangle={0,0,100,50},
 		text             :  cstring="",
 		font             : ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
-		halignment       :  HAlignment=.center,
-		valignment       :  VAlignment=.center,
+		halignment       :  gamedata.HAlignment=.center,
+		valignment       :  gamedata.VAlignment=.center,
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-		selections       :  [dynamic]Element=nil,
-) -> Element {
+		selections       :  [dynamic]gamedata.Element=nil,
+) -> gamedata.Element {
 
 	return create_window_full(
 		graphicsdata=graphicsdata, settingsdata=settingsdata,
@@ -36,18 +37,18 @@ create_window_single :: proc(
 		selections=selections)
 }
 create_window_dynamic :: proc(
-		graphicsdata     : ^graphics.GraphicsData,
-		settingsdata     : ^settings.SettingsData,
+		graphicsdata     : ^gamedata.GraphicsData,
+		settingsdata     : ^gamedata.SettingsData,
 		rectangle        :  raylib.Rectangle={0,0,100,50},
 		text             :  [dynamic]cstring=nil,
 		font             : ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
-		halignment       :  HAlignment=.center,
-		valignment       :  VAlignment=.center,
+		halignment       :  gamedata.HAlignment=.center,
+		valignment       :  gamedata.VAlignment=.center,
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-		selections       :  [dynamic]Element=nil,
-) -> Element {
+		selections       :  [dynamic]gamedata.Element=nil,
+) -> gamedata.Element {
 
 	return create_window_full(
 		graphicsdata=graphicsdata, settingsdata=settingsdata,
@@ -59,22 +60,22 @@ create_window_dynamic :: proc(
 		selections=selections)
 }
 create_window_full :: proc(
-		graphicsdata     : ^graphics.GraphicsData,
-		settingsdata     : ^settings.SettingsData,
+		graphicsdata     : ^gamedata.GraphicsData,
+		settingsdata     : ^gamedata.SettingsData,
 		rectangle        :  raylib.Rectangle={0,0,100,50},
 		textsingle       :  cstring=nil,
 		textdynamic      :  [dynamic]cstring=nil,
 		font             : ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
-		halignment       :  HAlignment=.center,
-		valignment       :  VAlignment=.center,
+		halignment       :  gamedata.HAlignment=.center,
+		valignment       :  gamedata.VAlignment=.center,
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-		selections       :  [dynamic]Element=nil,
-	) -> Element {
+		selections       :  [dynamic]gamedata.Element=nil,
+	) -> gamedata.Element {
 	
 	//* General
-	window : Element = {}
+	window : gamedata.Element = {}
 	window.type = .window
 
 	//* Rectangle
@@ -128,7 +129,7 @@ create_window_full :: proc(
 }
 
 //* Window logic
-update_window  :: proc(window: ^Element, guidata : ^GuiData, index : i32) {
+update_window  :: proc(window: ^gamedata.Element, guidata : ^gamedata.GuiData, index : i32) {
 	mousePosition: raylib.Vector2 = raylib.get_mouse_position();
 	mouseDelta:    raylib.Vector2 = raylib.get_mouse_delta();
 
@@ -144,7 +145,7 @@ update_window  :: proc(window: ^Element, guidata : ^GuiData, index : i32) {
 
 	update_elements(window.selections, guidata, index);
 }
-draw_window  :: proc(window: ^Element) {
+draw_window  :: proc(window: ^gamedata.Element) {
 	raylib.draw_texture_n_patch(
 		window.background^,
 		window.backgroundNPatch^,
@@ -166,6 +167,6 @@ draw_window  :: proc(window: ^Element) {
 }
 
 //* Close window
-close_window_proc :: proc(guidata : ^GuiData, index : i32) {
+close_window_proc :: proc(guidata : ^gamedata.GuiData, index : i32) {
 	delete_element(guidata,index)
 }

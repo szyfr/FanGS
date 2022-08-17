@@ -4,20 +4,29 @@ package player
 //= Imports
 import "../raylib"
 
+import "../gamedata"
+
+
+//= Constants
+MOVE_SPD ::   0.05
+ZOOM_MAX :: 120
+ZOOM_MIN ::  40
+EDGE_DIS ::  50
+
 
 //= Procedures
 
-init :: proc() -> ^PlayerData {
-	player := new(PlayerData)
+init :: proc() {
+	using gamedata
 
-	player.camera.position   = raylib.Vector3{  0,  5, -1}
-	player.camera.target     = raylib.Vector3{  0,  0,  0}
-	player.camera.up         = raylib.Vector3{  0,  1,  0}
-	player.camera.fovy       = 60
-	player.camera.projection = .CAMERA_PERSPECTIVE
+	playerdata = new(gamedata.PlayerData)
 
-	return player
+	playerdata.position   = raylib.Vector3{  0,  5, -1}
+	playerdata.target     = raylib.Vector3{  0,  0,  0}
+	playerdata.up         = raylib.Vector3{  0,  1,  0}
+	playerdata.fovy       = 60
+	playerdata.projection = .CAMERA_PERSPECTIVE
 }
-free_data :: proc(player : ^PlayerData) {
-	free(player)
+free_data :: proc() {
+	free(gamedata.playerdata)
 }

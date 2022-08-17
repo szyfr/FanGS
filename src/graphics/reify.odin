@@ -4,25 +4,27 @@ package graphics
 //= Imports
 import "../raylib"
 
+import "../gamedata"
+
 
 //= Procedures
-init :: proc() -> ^GraphicsData {
-	graphics := new(GraphicsData)
+init :: proc() {
+	using gamedata
 
-	graphics.box = raylib.load_texture("data/gfx/textbox.png")
-	graphics.box_nPatch.source = raylib.Rectangle{0,0,48,48}
-	graphics.box_nPatch.left   = 16
-	graphics.box_nPatch.top    = 16
-	graphics.box_nPatch.right  = 16
-	graphics.box_nPatch.bottom = 16
-	graphics.box_nPatch.layout =  0
+	graphicsdata = new(gamedata.GraphicsData)
 
-	graphics.font = raylib.load_font("data/gfx/kong.ttf")
+	graphicsdata.box = raylib.load_texture("data/gfx/textbox.png")
+	graphicsdata.box_nPatch.source = raylib.Rectangle{0,0,48,48}
+	graphicsdata.box_nPatch.left   = 16
+	graphicsdata.box_nPatch.top    = 16
+	graphicsdata.box_nPatch.right  = 16
+	graphicsdata.box_nPatch.bottom = 16
+	graphicsdata.box_nPatch.layout =  0
 
-	return graphics
+	graphicsdata.font = raylib.load_font("data/gfx/kong.ttf")
 }
-free_data :: proc(graphics : ^GraphicsData) {
-	raylib.unload_texture(graphics.box)
+free_data :: proc() {
+	raylib.unload_texture(gamedata.graphicsdata.box)
 
-	free(graphics)
+	free(gamedata.graphicsdata)
 }

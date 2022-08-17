@@ -4,6 +4,7 @@ package gui
 //= Imports
 import "../raylib"
 
+import "../gamedata"
 import "../graphics"
 import "../settings"
 
@@ -13,17 +14,17 @@ import "../settings"
 //* Create tooltip
 create_tooltip :: proc{ create_tooltip_single, create_tooltip_dynamic, };
 create_tooltip_single :: proc(
-		graphicsdata     : ^graphics.GraphicsData,
-		settingsdata     : ^settings.SettingsData,
+		graphicsdata     : ^gamedata.GraphicsData,
+		settingsdata     : ^gamedata.SettingsData,
 		rectangle        :  raylib.Rectangle={0,0,100,50},
 		text             :  cstring="",
 		font             : ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
-		halignment       :  HAlignment=.center,
-		valignment       :  VAlignment=.center,
+		halignment       :  gamedata.HAlignment=.center,
+		valignment       :  gamedata.VAlignment=.center,
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-	) -> Element {
+	) -> gamedata.Element {
 
 	return create_tooltip_full(
 		graphicsdata=graphicsdata, settingsdata=settingsdata,
@@ -34,17 +35,17 @@ create_tooltip_single :: proc(
 		backgroundColor=backgroundColor);
 }
 create_tooltip_dynamic :: proc(
-		graphicsdata     : ^graphics.GraphicsData,
-		settingsdata     : ^settings.SettingsData,
+		graphicsdata     : ^gamedata.GraphicsData,
+		settingsdata     : ^gamedata.SettingsData,
 		rectangle        :  raylib.Rectangle={0,0,100,50},
 		text             :  [dynamic]cstring=nil,
 		font             : ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
-		halignment       :  HAlignment=.center,
-		valignment       :  VAlignment=.center,
+		halignment       :  gamedata.HAlignment=.center,
+		valignment       :  gamedata.VAlignment=.center,
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-	) -> Element  {
+	) -> gamedata.Element  {
 
 	return create_tooltip_full(
 		graphicsdata=graphicsdata, settingsdata=settingsdata,
@@ -55,21 +56,21 @@ create_tooltip_dynamic :: proc(
 		backgroundColor=backgroundColor);
 }
 create_tooltip_full :: proc(
-		graphicsdata     : ^graphics.GraphicsData,
-		settingsdata     : ^settings.SettingsData,
+		graphicsdata     : ^gamedata.GraphicsData,
+		settingsdata     : ^gamedata.SettingsData,
 		rectangle        :  raylib.Rectangle={0,0,100,50},
 		textsingle       :  cstring=nil,
 		textdynamic      :  [dynamic]cstring=nil,
 		font             : ^raylib.Font={}, fontSize: f32=0, fontColor: raylib.Color=raylib.BLACK,
-		halignment       :  HAlignment=.center,
-		valignment       :  VAlignment=.center,
+		halignment       :  gamedata.HAlignment=.center,
+		valignment       :  gamedata.VAlignment=.center,
 		background       : ^raylib.Texture={},
 		backgroundNPatch : ^raylib.N_Patch_Info={},
 		backgroundColor  :  raylib.Color=raylib.WHITE,
-	) -> Element {
+	) -> gamedata.Element {
 
 	// General
-	element: Element = {};
+	element: gamedata.Element = {};
 	element.type = .tooltip;
 
 	// Rectangle
@@ -111,13 +112,13 @@ create_tooltip_full :: proc(
 }
 
 //* Tooltip logic
-update_tooltip :: proc(tooltip: ^Element) {
+update_tooltip :: proc(tooltip: ^gamedata.Element) {
 	mousePosition: raylib.Vector2 = raylib.get_mouse_position();
 
 	tooltip.x = mousePosition.x + 10;
 	tooltip.y = mousePosition.y -  5;
 }
-draw_tooltip :: proc(tooltip: ^Element) {
+draw_tooltip :: proc(tooltip: ^gamedata.Element) {
 	raylib.draw_texture_n_patch(
 		tooltip.background^,
 		tooltip.backgroundNPatch^,
