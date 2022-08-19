@@ -2,7 +2,6 @@ package gui_effects
 
 
 //= Imports
-import "../gui_presets"
 import "../../gamedata"
 import "../../guinew"
 
@@ -13,7 +12,13 @@ import "../../guinew"
 start_new_game :: proc() {
 	gamedata.titleScreen = false
 
-	gui_presets.delete_titlescreen()
+	//? Titlescreen UI
+	guinew.remove(0)
+	guinew.remove(1)
+	guinew.remove(2)
+	guinew.remove(3)
+	guinew.remove(4)
+	guinew.remove(5)
 }
 
 //* Load game
