@@ -11,6 +11,10 @@ import "../worldmap"
 settingsdata     : ^SettingsData
 localizationdata : ^LocalizationData
 graphicsdata     : ^GraphicsData
+
 guidata          : ^GuiData
+
 playerdata       : ^PlayerData
 mapdata          : ^worldmap.MapData
+
+elements         : [dynamic]rawptr

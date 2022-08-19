@@ -4,14 +4,16 @@ package gui_effects
 //= Imports
 import "../gamedata"
 import "../gui"
+import "../guinew"
 
 
 //= Procedures
 
 //* New game
-start_new_game :: proc(guidata : ^gamedata.GuiData, index : i32) {
-	guidata.titleScreen = false
-	gui.delete_all(guidata)
+start_new_game :: proc() {
+	gamedata.guidata.titleScreen = false
+
+	guinew.remove_all()
 }
 
 //* Load game
@@ -21,6 +23,6 @@ start_new_game :: proc(guidata : ^gamedata.GuiData, index : i32) {
 //* Options
 
 //* Quit
-quit_game :: proc(guidata : ^gamedata.GuiData, index : i32) {
-	guidata.abort = true
+quit_game :: proc() {
+	gamedata.guidata.abort = true
 }

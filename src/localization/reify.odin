@@ -52,6 +52,9 @@ init :: proc(lang : i32) {
 	localizationdata.mods,     offset = copy_string(rawData, &offset)
 	localizationdata.options,  offset = copy_string(rawData, &offset)
 	localizationdata.quit,     offset = copy_string(rawData, &offset)
+
+	localizationdata.title            = "FanGS"
+	localizationdata.missing          = "missing_string"
 }
 free_data :: proc() {
 	delete(gamedata.localizationdata.newGame)

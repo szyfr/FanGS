@@ -16,6 +16,8 @@ import "player"
 import "settings"
 import "worldmap"
 
+import "guinew"
+
 
 //= Procedures
 
@@ -45,53 +47,42 @@ main_initialization :: proc() {
 	guidata.titleScreen = true
 
 	// Title
-	append(&guidata.elements, gui.create_label(
-		graphicsdata=graphicsdata,
-		settingsdata=settingsdata,
-		rectangle={40, 40, 200, 50},
-		halignment=.left,
-		fontSize=40,
-		text="FanGS",
-	))
-
-	// Menu options
-	append(&guidata.elements, gui.create_button(
-		graphicsdata=graphicsdata,
-		settingsdata=settingsdata,
-		rectangle={10, 300, 250, 50},
-		fontSize=20,
-		text=localizationdata.newGame,
-		effect=gui_effects.start_new_game,
-	))
-	append(&guidata.elements, gui.create_button(
-		graphicsdata=graphicsdata,
-		settingsdata=settingsdata,
-		rectangle={10, 360, 250, 50},
-		fontSize=20,
-		text=localizationdata.loadGame,
-	))
-	append(&guidata.elements, gui.create_button(
-		graphicsdata=graphicsdata,
-		settingsdata=settingsdata,
-		rectangle={10, 420, 250, 50},
-		fontSize=20,
-		text=localizationdata.mods,
-	))
-	append(&guidata.elements, gui.create_button(
-		graphicsdata=graphicsdata,
-		settingsdata=settingsdata,
-		rectangle={10, 480, 250, 50},
-		fontSize=20,
-		text=localizationdata.options,
-	))
-	append(&guidata.elements, gui.create_button(
-		graphicsdata=graphicsdata,
-		settingsdata=settingsdata,
-		rectangle={10, 540, 250, 50},
-		fontSize=20,
-		text=localizationdata.quit,
-		effect=gui_effects.quit_game,
-	))
+	guinew.create_label(
+		position = {40,40},
+		fontSize =  40,
+		text     = &localizationdata.title,
+	)
+	// Menu
+	guinew.create_button(
+		transform = {10, 300, 250, 50},
+		fontSize  =  20,
+		text      = &localizationdata.newGame,
+		effect    =  gui_effects.start_new_game,
+	)
+	guinew.create_button(
+		transform = {10, 360, 250, 50},
+		fontSize  =  20,
+		text      = &localizationdata.loadGame,
+	//	effect    =  gui_effects.load_game,
+	)
+	guinew.create_button(
+		transform = {10, 420, 250, 50},
+		fontSize  =  20,
+		text      = &localizationdata.mods,
+	//	effect    =  gui_effects.load_game,
+	)
+	guinew.create_button(
+		transform = {10, 480, 250, 50},
+		fontSize  =  20,
+		text      = &localizationdata.options,
+	//	effect    =  gui_effects.load_game,
+	)
+	guinew.create_button(
+		transform = {10, 540, 250, 50},
+		fontSize  =  20,
+		text      = &localizationdata.quit,
+		effect    =  gui_effects.quit_game,
+	)
 
 }
 main_free :: proc() {

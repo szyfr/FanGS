@@ -13,15 +13,19 @@ import "gui"
 import "player"
 import "worldmap"
 
+import "guinew"
+
 
 //= Main
 main :: proc() {
 
 	main_initialization()
+	defer main_free()
 
 	for !raylib.window_should_close() && !gamedata.guidata.abort {
 		//* Logic
 		player.update()
+		guinew.update()
 		gui.update_elements(gamedata.guidata)
 		
 	//	if !gamedata.guidata.titleScreen && gamedata.mapdata == nil do gamedata.mapdata = worldmap.init(gamedata.guidata.selectedMap)
@@ -52,14 +56,12 @@ main :: proc() {
 			}
 
 			raylib.end_mode3d()
-		} else {
-			gui.draw_elements(gamedata.guidata.elements)
 		}
+		gui.draw_elements(gamedata.guidata.elements)
+		guinew.draw()
 
 		raylib.draw_fps(0,0)
 
 		raylib.end_drawing()
 	}
-
-	main_free()
 }

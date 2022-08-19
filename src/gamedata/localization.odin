@@ -9,4 +9,7 @@ LocalizationData :: struct {
 	mods     : cstring,
 	options  : cstring,
 	quit     : cstring,
+
+	title    : cstring,
+	missing  : cstring,
 }
