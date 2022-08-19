@@ -12,9 +12,12 @@ settingsdata     : ^SettingsData
 localizationdata : ^LocalizationData
 graphicsdata     : ^GraphicsData
 
-guidata          : ^GuiData
-
 playerdata       : ^PlayerData
 mapdata          : ^worldmap.MapData
 
-elements         : [dynamic]rawptr
+elements         : map[int]rawptr
+
+
+titleScreen      : bool
+selectedMap      : string
+abort            : bool

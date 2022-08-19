@@ -31,9 +31,9 @@ Button :: struct {
 	fontSize         :  f32,
 	fontColor        :  raylib.Color,
 
-	effect           :  proc(),
-
 	text             : ^cstring,
+
+	effect           :  proc(),
 }
 
 

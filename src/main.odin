@@ -9,11 +9,10 @@ import "core:strings"
 import "raylib"
 
 import "gamedata"
-import "gui"
+import "guinew"
 import "player"
 import "worldmap"
 
-import "guinew"
 
 
 //= Main
@@ -22,20 +21,19 @@ main :: proc() {
 	main_initialization()
 	defer main_free()
 
-	for !raylib.window_should_close() && !gamedata.guidata.abort {
+	for !raylib.window_should_close() && !gamedata.abort {
 		//* Logic
 		player.update()
 		guinew.update()
-		gui.update_elements(gamedata.guidata)
 		
-	//	if !gamedata.guidata.titleScreen && gamedata.mapdata == nil do gamedata.mapdata = worldmap.init(gamedata.guidata.selectedMap)
-		if !gamedata.guidata.titleScreen && gamedata.mapdata == nil do gamedata.mapdata = worldmap.init("anbennar")
+	//	if !gamedata.titleScreen && gamedata.mapdata == nil do gamedata.mapdata = worldmap.init(gamedata.selectedMap)
+		if !gamedata.titleScreen && gamedata.mapdata == nil do gamedata.mapdata = worldmap.init("anbennar")
 
 		//* Graphics
 		raylib.begin_drawing()
 		raylib.clear_background(raylib.RAYWHITE)
 
-		if !gamedata.guidata.titleScreen {
+		if !gamedata.titleScreen {
 			raylib.begin_mode3d(gamedata.playerdata.camera)
 			raylib.draw_grid(100, 1)
 
@@ -57,7 +55,6 @@ main :: proc() {
 
 			raylib.end_mode3d()
 		}
-		gui.draw_elements(gamedata.guidata.elements)
 		guinew.draw()
 
 		raylib.draw_fps(0,0)

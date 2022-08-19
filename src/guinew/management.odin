@@ -12,7 +12,9 @@ import "../gamedata"
 //= Procedures
 update :: proc() {
 	using gamedata
-	for i:=0; i<len(elements); i+=1 {
+	for i:=0; i<len(elements)+1; i+=1 {
+		if !(i in elements) do continue
+
 		typeID : GuiElementType = (^GuiElementType)(elements[i])^
 
 		#partial switch typeID {
@@ -21,9 +23,12 @@ update :: proc() {
 	}
 }
 
+// TODO: Keep an eye on this. Could be glitchy.
 draw :: proc() {
 	using gamedata
-	for i:=0; i<len(elements); i+=1 {
+	for i:=0; i<len(elements)+1; i+=1 {
+		if !(i in elements) do continue
+
 		typeID : GuiElementType = (^GuiElementType)(elements[i])^
 
 		#partial switch typeID {
@@ -33,17 +38,11 @@ draw :: proc() {
 	}
 }
 
-remove :: proc(index : int) {
+remove :: proc(id : int) {
 	using gamedata
 
-	arr : [dynamic]rawptr
-	ptr : rawptr = elements[index]
-
-	for i:=0; i<len(elements); i+=1 {
-		if i != index do append(&arr, elements[i])
-	}
-
-	free(ptr)
+	free(elements[id])
+	delete_key(&elements, id)
 }
 
 remove_all :: proc() {
@@ -54,7 +53,16 @@ remove_all :: proc() {
 	}
 
 	delete(elements)
-	elements = new([dynamic]rawptr)^
+	elements = make(map[int]rawptr)
+}
+
+generate_id :: proc() -> int {
+	using gamedata
+
+	for i:=0;i<len(elements);i+=1 {
+		if elements[i] == nil do return i
+	}
+	return len(elements)
 }
 
 test_bounds :: proc(

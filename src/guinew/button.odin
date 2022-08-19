@@ -41,9 +41,11 @@ create_button :: proc(
 	if text == nil             do button.text             = &gamedata.localizationdata.missing
 	else                       do button.text             =  text
 
-	append(&gamedata.elements, rawptr(button))
+//	append(&gamedata.elements, rawptr(button))
+	id := generate_id()
+	gamedata.elements[id] = rawptr(button)
 
-	return len(gamedata.elements) - 1
+	return id
 }
 
 update_button :: proc(button : ^gamedata.Button) {

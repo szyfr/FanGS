@@ -28,9 +28,11 @@ create_label :: proc(
 	if text == nil   do label.text     = &gamedata.localizationdata.missing
 	else             do label.text     =  text
 
-	append(&gamedata.elements, rawptr(label))
+//	append(&gamedata.elements, rawptr(label))
+	id := generate_id()
+	gamedata.elements[id] = rawptr(label)
 
-	return len(gamedata.elements) - 1
+	return id
 }
 
 draw_label :: proc(label : ^gamedata.Label) {
