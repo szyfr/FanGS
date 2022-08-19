@@ -51,3 +51,12 @@ create_titlescreen :: proc() {
 		effect    =  gui_effects.quit_game,
 	)
 }
+
+delete_titlescreen :: proc() {
+	guinew.remove(0)
+	guinew.remove(1)
+	guinew.remove(2)
+	guinew.remove(3)
+	guinew.remove(4)
+	guinew.remove(5))
+}
