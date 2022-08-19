@@ -4,14 +4,18 @@ package worldmap
 //= Imports
 import "core:fmt"
 import "core:strings"
+
 import "../raylib"
+
+import "../gamedata"
 
 
 //= Procedures
 
-init :: proc(name : string) -> ^MapData {
-	mapdata := new(MapData)
-	fmt.printf("fuck\n")
+init :: proc(name : string) {
+	using gamedata
+
+	mapdata = new(MapData)
 
 	//* Generate location strings
 	provLoc : = strings.concatenate({"data/mods/", name, "/map/provincemap.png"})
@@ -57,15 +61,19 @@ init :: proc(name : string) -> ^MapData {
 			append(&mapdata.chunks, chunk)
 		}
 	}
-
-	// Load images
-	// Cut heightmap + provincemap
-	// Create chunks
-	// Generate models / Meshes
-
-	return mapdata
 }
 
 free_data :: proc() {
+	using gamedata
 
+	raylib.unload_image(mapdata.provinceImage)
+	raylib.unload_image(mapdata.terrainImage)
+	raylib.unload_image(mapdata.heightImage)
+
+	delete(mapdata.chunks)
+
+	// TODO: Provinces
+
+	free(mapdata)
+	mapdata = nil
 }

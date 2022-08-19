@@ -26,8 +26,8 @@ main :: proc() {
 		player.update()
 		guinew.update()
 		
-	//	if !gamedata.titleScreen && gamedata.mapdata == nil do gamedata.mapdata = worldmap.init(gamedata.selectedMap)
-		if !gamedata.titleScreen && gamedata.mapdata == nil do gamedata.mapdata = worldmap.init("anbennar")
+	//	if !gamedata.titleScreen && gamedata.mapdata == nil do worldmap.init(gamedata.selectedMap)
+		if !gamedata.titleScreen && gamedata.mapdata == nil do worldmap.init("anbennar")
 
 		//* Graphics
 		raylib.begin_drawing()
@@ -37,21 +37,7 @@ main :: proc() {
 			raylib.begin_mode3d(gamedata.playerdata.camera)
 			raylib.draw_grid(100, 1)
 
-			for i:=0;i<len(gamedata.mapdata.chunks);i+=1 {
-			//	raylib.draw_model(
-			//		gamedata.mapdata.chunks[i].model,
-			//		gamedata.mapdata.chunks[i],
-			//		1, raylib.WHITE,
-			//	)
-				raylib.draw_model_ex(
-					gamedata.mapdata.chunks[i].model,
-					gamedata.mapdata.chunks[i],
-					{0,1,0}, 180,
-					{10.046, 5, 10.046},
-			//		{10, 5, 10},
-					raylib.WHITE,
-				)
-			}
+			worldmap.draw_map()
 
 			raylib.end_mode3d()
 		}

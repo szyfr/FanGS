@@ -16,10 +16,6 @@ update :: proc() {
 }
 
 //* Player controls
-// TODO: Rework controls -
-//   - Middle mouse moves camera
-//   - Right mouse rotates camera
-//   - Scroll wheel actually zooms out camera instead of using FOV
 update_player_movement :: proc() {
 	using gamedata
 

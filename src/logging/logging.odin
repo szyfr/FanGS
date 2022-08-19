@@ -21,7 +21,7 @@ add_to_log :: proc(input: string) {
 //* Print log to file
 print_log :: proc() {
 
-	buffer: bytes.Buffer = {};
+	buffer: bytes.Buffer = {}
 
 	for i:=0; i<len(outputLog); i+=1 {
 		bytes.buffer_write_string(&buffer, outputLog[i])
@@ -32,10 +32,8 @@ print_log :: proc() {
 	output := bytes.buffer_to_bytes(&buffer)
 	fmt.printf("%s",output)
 
-//	raylib.save_file_text("data/log.txt", &output[0]);
 	os.write_entire_file("data/log.txt", output)
 
 	delete(output)
-
 	delete(outputLog)
 }

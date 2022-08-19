@@ -4,8 +4,6 @@ package gamedata
 //= Imports
 import "../raylib"
 
-import "../worldmap"
-
 
 //= Global Variables
 settingsdata     : ^SettingsData
@@ -13,7 +11,7 @@ localizationdata : ^LocalizationData
 graphicsdata     : ^GraphicsData
 
 playerdata       : ^PlayerData
-mapdata          : ^worldmap.MapData
+mapdata          : ^MapData
 
 elements         : map[int]rawptr
 
