@@ -3,8 +3,7 @@ package main
 
 //= Imports
 import "core:fmt"
-
-import "raylib"
+import "vendor:raylib"
 
 import "gamedata"
 import "graphics"
@@ -25,19 +24,19 @@ import "worldmap"
 main_initialization :: proc() {
 	using gamedata
 
-	raylib.set_trace_log_level(i32(raylib.Trace_Log_Level.LOG_NONE))
+	raylib.SetTraceLogLevel(.NONE)
 
 	settings.init()
 	localization.init(i32(settingsdata.language))
 	player.init()
 
 
-	raylib.init_window(
+	raylib.InitWindow(
 		settingsdata.windowWidth,
 		settingsdata.windowHeight,
 		"FanGS: Fantasy Grande Strategy",
 	)
-	raylib.set_target_fps(settingsdata.targetFPS)
+	raylib.SetTargetFPS(settingsdata.targetFPS)
 	
 	graphics.init()
 
@@ -46,7 +45,7 @@ main_initialization :: proc() {
 }
 main_free :: proc() {
 
-	raylib.close_window()
+	raylib.CloseWindow()
 
 	settings.free_data()
 	localization.free_data()
@@ -57,5 +56,3 @@ main_free :: proc() {
 	logging.print_log()
 
 }
-
-init_map :: proc() {}

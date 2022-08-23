@@ -2,7 +2,7 @@ package guinew
 
 
 //= Imports
-import "../raylib"
+import "vendor:raylib"
 
 import "../gamedata"
 
@@ -28,7 +28,6 @@ create_label :: proc(
 	if text == nil   do label.text     = &gamedata.localizationdata.missing
 	else             do label.text     =  text
 
-//	append(&gamedata.elements, rawptr(label))
 	id := generate_id()
 	gamedata.elements[id] = rawptr(label)
 
@@ -36,7 +35,7 @@ create_label :: proc(
 }
 
 draw_label :: proc(label : ^gamedata.Label) {
-	raylib.draw_text_ex(
+	raylib.DrawTextEx(
 		label.font^,
 		label.text^,
 		label.position,

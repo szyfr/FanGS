@@ -3,8 +3,7 @@ package guinew
 
 //= Imports
 import "core:fmt"
-
-import "../raylib"
+import "vendor:raylib"
 
 import "../gamedata"
 

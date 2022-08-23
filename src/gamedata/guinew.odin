@@ -2,7 +2,7 @@ package gamedata
 
 
 //= Imports
-import "../raylib"
+import "vendor:raylib"
 
 
 //= Structures
@@ -21,7 +21,7 @@ Button :: struct {
 	using transform  :  raylib.Rectangle,
 
 	background       : ^raylib.Texture,
-	backgroundNPatch : ^raylib.N_Patch_Info,
+	backgroundNPatch : ^raylib.NPatchInfo,
 	
 	bgColorDefault   :  raylib.Color,
 	bgColorSelected  :  raylib.Color,

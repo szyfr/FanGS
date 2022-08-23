@@ -2,12 +2,12 @@ package gamedata
 
 
 //= Imports
-import "../raylib"
+import "vendor:raylib"
 
 
 //= Structures
 PlayerData :: struct {
-	using camera : raylib.Camera3d,
+	using camera : raylib.Camera3D,
 	zoom         : f32,
 	cameraSlope  : raylib.Vector3,
 	lastMousePos : raylib.Vector2,

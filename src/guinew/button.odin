@@ -2,23 +2,23 @@ package guinew
 
 
 //= Imports
-import "../raylib"
+import "vendor:raylib"
 
 import "../gamedata"
 
 
 //= Procedures
 create_button :: proc(
-	transform        :  raylib.Rectangle    = {0, 0, 100, 100},
-	background       : ^raylib.Texture      = nil,
-	backgroundNPatch : ^raylib.N_Patch_Info = nil,
-	bgColorDefault   :  raylib.Color        = raylib.WHITE,
-	bgColorSelected  :  raylib.Color        = raylib.GRAY,
-	font             : ^raylib.Font         = nil,
-	fontSize         :  f32                 = 0,
-	fontColor        :  raylib.Color        = raylib.BLACK,
-	text             : ^cstring             = nil,
-	effect           :  proc()              = nil,
+	transform        :  raylib.Rectangle  = {0, 0, 100, 100},
+	background       : ^raylib.Texture    = nil,
+	backgroundNPatch : ^raylib.NPatchInfo = nil,
+	bgColorDefault   :  raylib.Color      = raylib.WHITE,
+	bgColorSelected  :  raylib.Color      = raylib.GRAY,
+	font             : ^raylib.Font       = nil,
+	fontSize         :  f32               = 0,
+	fontColor        :  raylib.Color      = raylib.BLACK,
+	text             : ^cstring           = nil,
+	effect           :  proc()            = nil,
 ) -> int {
 	button := new(gamedata.Button)
 
@@ -41,7 +41,6 @@ create_button :: proc(
 	if text == nil             do button.text             = &gamedata.localizationdata.missing
 	else                       do button.text             =  text
 
-//	append(&gamedata.elements, rawptr(button))
 	id := generate_id()
 	gamedata.elements[id] = rawptr(button)
 
@@ -49,16 +48,16 @@ create_button :: proc(
 }
 
 update_button :: proc(button : ^gamedata.Button) {
-	mousePosition := raylib.get_mouse_position()
+	mousePosition := raylib.GetMousePosition()
 	
 	if test_bounds(mousePosition, button) {
 		button.bgColorCurrent = button.bgColorSelected
-		if raylib.is_mouse_button_released(.MOUSE_BUTTON_LEFT) && button.effect != nil do button.effect()
+		if raylib.IsMouseButtonReleased(.LEFT) && button.effect != nil do button.effect()
 	} else do button.bgColorCurrent = button.bgColorDefault
 }
 
 draw_button :: proc(button : ^gamedata.Button) {
-	raylib.draw_texture_n_patch(
+	raylib.DrawTextureNPatch(
 		button.background^,
 		button.backgroundNPatch^,
 		button.transform,
@@ -70,7 +69,7 @@ draw_button :: proc(button : ^gamedata.Button) {
 	textPosition.x = ((button.width / 2) + button.x) - (((button.fontSize * f32(len(button.text))) * 1.1) / 2);
 	textPosition.y = ((button.height / 2) + button.y) - (((button.fontSize * 1) * 1.1) / 2)
 
-	raylib.draw_text_ex(
+	raylib.DrawTextEx(
 		button.font^,
 		button.text^,
 		textPosition,

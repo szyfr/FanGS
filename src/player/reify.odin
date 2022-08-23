@@ -2,7 +2,7 @@ package player
 
 
 //= Imports
-import "../raylib"
+import "vendor:raylib"
 
 import "../gamedata"
 
@@ -25,7 +25,7 @@ init :: proc() {
 	playerdata.target      = {0, 0,  0}
 	playerdata.up          = {0, 1,  0}
 	playerdata.fovy        = 60
-	playerdata.projection  = .CAMERA_PERSPECTIVE
+	playerdata.projection  = .PERSPECTIVE
 
 	playerdata.zoom        = 5
 	playerdata.cameraSlope = {0, 1, -5}

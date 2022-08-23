@@ -2,13 +2,13 @@ package gamedata
 
 
 //= Imports
-import "../raylib"
+import "vendor:raylib"
 
 
 //= Structures
 GraphicsData :: struct {
 	box        : raylib.Texture,
-	box_nPatch : raylib.N_Patch_Info,
+	box_nPatch : raylib.NPatchInfo,
 
 	font       : raylib.Font,
 }

@@ -2,7 +2,7 @@ package gamedata
 
 
 //= Imports
-import "../raylib"
+import "vendor:raylib"
 
 
 //= Global Variables

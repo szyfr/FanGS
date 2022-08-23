@@ -2,7 +2,7 @@ package worldmap
 
 
 //= Imports
-import "../raylib"
+import "vendor:raylib"
 
 import "../gamedata"
 
@@ -10,12 +10,7 @@ import "../gamedata"
 //= Procedures
 draw_map :: proc() {
 	for i:=0;i<len(gamedata.mapdata.chunks);i+=1 {
-	//	raylib.draw_model(
-	//		gamedata.mapdata.chunks[i].model,
-	//		gamedata.mapdata.chunks[i],
-	//		1, raylib.WHITE,
-	//	)
-		raylib.draw_model_ex(
+		raylib.DrawModelEx(
 			gamedata.mapdata.chunks[i].model,
 			gamedata.mapdata.chunks[i],
 			{0,1,0}, 180,

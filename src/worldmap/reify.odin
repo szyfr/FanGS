@@ -4,14 +4,13 @@ package worldmap
 //= Imports
 import "core:fmt"
 import "core:strings"
-
-import "../raylib"
+import "core:mem"
+import "vendor:raylib"
 
 import "../gamedata"
 
 
 //= Procedures
-
 init :: proc(name : string) {
 	using gamedata
 
@@ -23,9 +22,9 @@ init :: proc(name : string) {
 	heigLoc : = strings.concatenate({"data/mods/", name, "/map/heightmap.png"})
 
 	//* Load images
-	mapdata.provinceImage = raylib.load_image(strings.clone_to_cstring(provLoc))
-	mapdata.terrainImage  = raylib.load_image(strings.clone_to_cstring(terrLoc))
-	mapdata.heightImage   = raylib.load_image(strings.clone_to_cstring(heigLoc))
+	mapdata.provinceImage = raylib.LoadImage(strings.clone_to_cstring(provLoc))
+	mapdata.terrainImage  = raylib.LoadImage(strings.clone_to_cstring(terrLoc))
+	mapdata.heightImage   = raylib.LoadImage(strings.clone_to_cstring(heigLoc))
 
 	//* Create Chunks
 	numChunksWide  := mapdata.provinceImage.width  / 250
@@ -38,37 +37,52 @@ init :: proc(name : string) {
 			chunk := MapChunk{ location={-f32(o)*10,0,-f32(i)*10} }
 
 			//* Texture
-			img   := raylib.image_from_image(
+			img   := raylib.ImageFromImage(
 				mapdata.provinceImage,
 				{f32(o*250),f32(i*250) , 250,250},
 			)
-			chunk.texture = raylib.load_texture_from_image(img)
-			raylib.unload_image(img)
+			chunk.texture = raylib.LoadTextureFromImage(img)
+			raylib.UnloadImage(img)
 
 			//*Mesh and Model
-			img = raylib.image_from_image(
+			img = raylib.ImageFromImage(
 				mapdata.heightImage,
 				{f32(o*250),f32(i*250) , 250,250},
 			)
-			chunk.mesh  = raylib.gen_mesh_heightmap(img, {1, 0.2, 1})
-			chunk.model = raylib.load_model_from_mesh(chunk.mesh)
-			raylib.set_material_texture(chunk.model.materials, .MATERIAL_MAP_ALBEDO,chunk.texture)
+			chunk.mesh  = raylib.GenMeshHeightmap(img, {1, 0.2, 1})
+			chunk.model = raylib.LoadModelFromMesh(chunk.mesh)
+			raylib.SetMaterialTexture(chunk.model.materials, .ALBEDO, chunk.texture)
 
 			//* Free
-			raylib.unload_image(img)
+			raylib.UnloadImage(img)
 
 			//* Save
 			append(&mapdata.chunks, chunk)
 		}
+	}
+
+	for i:=0;i<int(mapdata.provinceImage.width * mapdata.provinceImage.height);i+=1 {
+//		posX, posY := i32(i)%mapdata.provinceImage.width, i32(i)/mapdata.provinceImage.width
+//		color := raylib.GetImageColor(
+//			mapdata.provinceImage,
+//			posX, posY,
+//		)
+//		if !(color in mapdata.provinces) {
+//			// Add Province
+//			fmt.printf("Added: pos:%i,%i (%i,%i,%i,%i)\n",
+//				posX, posY,
+//				color.r, color.g, color.b, color.a,
+//			)
+//		}
 	}
 }
 
 free_data :: proc() {
 	using gamedata
 
-	raylib.unload_image(mapdata.provinceImage)
-	raylib.unload_image(mapdata.terrainImage)
-	raylib.unload_image(mapdata.heightImage)
+	raylib.UnloadImage(mapdata.provinceImage)
+	raylib.UnloadImage(mapdata.terrainImage)
+	raylib.UnloadImage(mapdata.heightImage)
 
 	delete(mapdata.chunks)
 

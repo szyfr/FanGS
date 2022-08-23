@@ -2,7 +2,7 @@ package player
 
 
 //= Imports
-import "../raylib"
+import "vendor:raylib"
 
 import "../gamedata"
 import "../settings"
@@ -22,24 +22,23 @@ update_player_movement :: proc() {
 
 	// Key Movement
 	// TODO: check origin of each key
-	if raylib.is_key_down(raylib.Keyboard_Key(settingsdata.keybindings["up"].key)) {
+	if raylib.IsKeyDown(raylib.KeyboardKey(settingsdata.keybindings["up"].key)) {
 		playerdata.target.z   += MOVE_SPD * (playerdata.fovy / ZOOM_MAX)
 	}
-	if raylib.is_key_down(raylib.Keyboard_Key(settingsdata.keybindings["down"].key)) {
+	if raylib.IsKeyDown(raylib.KeyboardKey(settingsdata.keybindings["down"].key)) {
 		playerdata.target.z   -= MOVE_SPD * (playerdata.fovy / ZOOM_MAX)
 	}
-	if raylib.is_key_down(raylib.Keyboard_Key(settingsdata.keybindings["left"].key)) {
+	if raylib.IsKeyDown(raylib.KeyboardKey(settingsdata.keybindings["left"].key)) {
 		playerdata.target.x   += MOVE_SPD * (playerdata.fovy / ZOOM_MAX)
 	}
-	if raylib.is_key_down(raylib.Keyboard_Key(settingsdata.keybindings["right"].key)) {
+	if raylib.IsKeyDown(raylib.KeyboardKey(settingsdata.keybindings["right"].key)) {
 		playerdata.target.x   -= MOVE_SPD * (playerdata.fovy / ZOOM_MAX)
 	}
 
 	// Drag movement
-	if raylib.is_mouse_button_down(.MOUSE_BUTTON_MIDDLE) {
-		mouseDelta: raylib.Vector2 = raylib.get_mouse_delta()
+	if raylib.IsMouseButtonDown(.MIDDLE) {
+		mouseDelta: raylib.Vector2 = raylib.GetMouseDelta()
 
-	//	mod := (((playerdata.zoom + 20)) / 10000)
 		mod := ((playerdata.zoom) / 5) / 100
 
 		playerdata.target.x += mouseDelta.x * mod
@@ -48,16 +47,16 @@ update_player_movement :: proc() {
 
 	// Edge scrolling
 	if settingsdata.edgeScrolling {
-		if raylib.get_mouse_x() <= EDGE_DIS {
+		if raylib.GetMouseX() <= EDGE_DIS {
 			playerdata.target.x   += MOVE_SPD
 		}
-		if raylib.get_mouse_x() >= settingsdata.windowWidth - EDGE_DIS {
+		if raylib.GetMouseX() >= settingsdata.windowWidth - EDGE_DIS {
 			playerdata.target.x   -= MOVE_SPD
 		}
-		if raylib.get_mouse_y() <= EDGE_DIS {
+		if raylib.GetMouseY() <= EDGE_DIS {
 			playerdata.target.z   += MOVE_SPD
 		}
-		if raylib.get_mouse_y() >= settingsdata.windowHeight - EDGE_DIS {
+		if raylib.GetMouseY() >= settingsdata.windowHeight - EDGE_DIS {
 			playerdata.target.z   -= MOVE_SPD
 		}
 	}
@@ -81,7 +80,7 @@ update_player_camera :: proc() {
 //	}
 
 	// Zoom
-	playerdata.zoom -= raylib.get_mouse_wheel_move() * 2
+	playerdata.zoom -= raylib.GetMouseWheelMove() * 2
 	if playerdata.zoom > ZOOM_MAX do playerdata.zoom = ZOOM_MAX;
 	if playerdata.zoom < ZOOM_MIN do playerdata.zoom = ZOOM_MIN;
 

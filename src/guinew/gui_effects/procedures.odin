@@ -4,6 +4,7 @@ package gui_effects
 //= Imports
 import "../../gamedata"
 import "../../guinew"
+import "../../worldmap"
 
 
 //= Procedures
@@ -19,6 +20,11 @@ start_new_game :: proc() {
 	guinew.remove(3)
 	guinew.remove(4)
 	guinew.remove(5)
+
+//	if !gamedata.titleScreen && gamedata.mapdata == nil do worldmap.init(gamedata.selectedMap)
+//	if !gamedata.titleScreen && gamedata.mapdata == nil do worldmap.init("anbennar")
+//	worldmap.init(gamedata.selectedMap)
+	worldmap.init("anbennar")
 }
 
 //* Load game
