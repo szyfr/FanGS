@@ -39,9 +39,12 @@ main_initialization :: proc() {
 	raylib.SetTargetFPS(settingsdata.targetFPS)
 	
 	graphics.init()
+	logging.create_log()
 
 	gui_presets.create_titlescreen()
 
+
+	logging.add_to_log("Testing")
 }
 main_free :: proc() {
 
@@ -53,6 +56,6 @@ main_free :: proc() {
 	player.free_data()
 	guinew.remove_all()
 
-	logging.print_log()
+//	logging.print_log()
 
 }

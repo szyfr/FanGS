@@ -4,36 +4,44 @@ package logging
 //= Imports
 import "core:bytes"
 import "core:fmt"
+import "core:time"
+import "core:strings"
 import "core:os"
 
 
-//= Global
-outputLog : [dynamic]string
-
-
 //= Procedures
+//* Initializes logs
+create_log :: proc() {
+	if os.exists("data/log.txt") do os.remove("data/log.txt")
+	now := time.now()
 
-//* Append a string to the end of the log
-add_to_log :: proc(input: string) {
-	append(&outputLog, input)
+	bytBuffer : bytes.Buffer
+	strBuffer : strings.Builder
+
+	fmt.sbprintf(&strBuffer, "LOG: %i/%i/%i", time.year(now), time.month(now), time.day(now))
+	bytes.buffer_write_string(&bytBuffer, strings.to_string(strBuffer))
+
+	os.write_entire_file("data/log.txt", bytes.buffer_to_bytes(&bytBuffer))
+
+	bytes.buffer_destroy(&bytBuffer)
+//	strings.builder_destroy(&strBuffer)
 }
 
-//* Print log to file
-print_log :: proc() {
+//* Append a string to the end of the log
+add_to_log :: proc(input : string) {
+	data, result := os.read_entire_file("data/log.txt")
+	if !result do return
 
-	buffer: bytes.Buffer = {}
+	buffer : bytes.Buffer
+	bytes.buffer_init(&buffer, data)
+	bytes.buffer_write_byte(&buffer, '\n')
 
-	for i:=0; i<len(outputLog); i+=1 {
-		bytes.buffer_write_string(&buffer, outputLog[i])
-		bytes.buffer_write_byte(&buffer, '\n')
-	}
-	bytes.buffer_write_byte(&buffer, 0)
+	builder : strings.Builder
+	hour, min, sec := time.clock_from_time(time.now())
+	fmt.sbprintf(&builder, "[%i:%i:%i]", hour, min, sec)
+	bytes.buffer_write_string(&buffer, strings.to_string(builder))
 
-	output := bytes.buffer_to_bytes(&buffer)
-	fmt.printf("%s",output)
+	bytes.buffer_write_string(&buffer, input)
 
-	os.write_entire_file("data/log.txt", output)
-
-	delete(output)
-	delete(outputLog)
+	os.write_entire_file("data/log.txt", bytes.buffer_to_bytes(&buffer))
 }
