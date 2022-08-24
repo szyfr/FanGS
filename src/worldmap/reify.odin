@@ -5,9 +5,11 @@ package worldmap
 import "core:fmt"
 import "core:strings"
 import "core:mem"
+import "core:os"
 import "vendor:raylib"
 
 import "../gamedata"
+import "../settings"
 
 
 //= Procedures
@@ -61,19 +63,40 @@ init :: proc(name : string) {
 		}
 	}
 
-	for i:=0;i<int(mapdata.provinceImage.width * mapdata.provinceImage.height);i+=1 {
-//		posX, posY := i32(i)%mapdata.provinceImage.width, i32(i)/mapdata.provinceImage.width
-//		color := raylib.GetImageColor(
-//			mapdata.provinceImage,
-//			posX, posY,
-//		)
-//		if !(color in mapdata.provinces) {
-//			// Add Province
-//			fmt.printf("Added: pos:%i,%i (%i,%i,%i,%i)\n",
-//				posX, posY,
-//				color.r, color.g, color.b, color.a,
-//			)
-//		}
+//	size : i32 = 0
+//	colors := raylib.LoadImagePalette(mapdata.provinceImage, 10000, &size)
+
+	provDataLoc   := strings.concatenate({"data/mods/", name, "/map/provinces.bin"})
+	provData, res := os.read_entire_file(provDataLoc)
+	offset        : u32 = 0
+	
+	for i:=0; i<len(provData)/48; i+=1 {
+		prov : Province = {}
+
+		prov.localID  = u32(settings.fuse_i32(provData, offset+0))
+		prov.color    = {provData[offset+4], provData[offset+5], provData[offset+6], provData[offset+7]}
+		prov.terrain  = Terrain(settings.fuse_i32(provData, offset+8))
+		prov.provType = ProvinceType(settings.fuse_i32(provData, offset+12))
+		prov.maxInfrastructure = settings.fuse_i16(provData, offset+16)
+		prov.curInfrastructure = settings.fuse_i16(provData, offset+18)
+		prov.buildings[0] = provData[offset+20]
+		prov.buildings[1] = provData[offset+21]
+		prov.buildings[2] = provData[offset+22]
+		prov.buildings[3] = provData[offset+23]
+		prov.buildings[4] = provData[offset+24]
+		prov.buildings[5] = provData[offset+25]
+		prov.buildings[6] = provData[offset+26]
+		prov.buildings[7] = provData[offset+27]
+
+	//	fmt.printf("%i: %i,%i,%i\n%i, %i\n%i/%i\n",
+	//		prov.localID, prov.color.r, prov.color.g, prov.color.b,
+	//		prov.terrain, prov.provType,
+	//		prov.curInfrastructure, prov.maxInfrastructure,
+	//	)
+
+		mapdata.provinces[prov.color] = prov
+
+		offset += 48
 	}
 }
 

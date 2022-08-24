@@ -11,6 +11,9 @@ import "../gamedata"
 fuse_i32     :: proc(array: []u8, offset: u32) -> i32 {
 	return (i32(array[offset+3]) << 24) | (i32(array[offset+2]) << 16) | (i32(array[offset+1]) << 8) | i32(array[offset]);
 }
+fuse_i16     :: proc(array: []u8, offset: u32) -> i16 {
+	return (i16(array[offset+1]) << 8) | i16(array[offset]);
+}
 fuse_keybind :: proc(array: []u8, offset: u32) -> gamedata.Keybinding {
 	key: gamedata.Keybinding = {};
 

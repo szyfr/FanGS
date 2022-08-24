@@ -14,6 +14,7 @@ import "../settings"
 update :: proc() {
 	update_player_movement()
 	update_player_camera()
+	update_player_mouse()
 }
 
 //* Player movement
@@ -66,19 +67,6 @@ update_player_movement :: proc() {
 update_player_camera :: proc() {
 	using gamedata
 
-//	if raylib.is_key_down(raylib.Keyboard_Key.KEY_Q) {
-//		
-//	}
-//	if raylib.is_key_down(raylib.Keyboard_Key.KEY_E) {
-//		
-//	}
-//	if raylib.is_key_down(raylib.Keyboard_Key.KEY_M) {
-//		playerdata.cameraSlope = {0, 1, -5}
-//	}
-//	if raylib.is_mouse_button_down(.MOUSE_BUTTON_RIGHT) {
-//		mouseDelta: raylib.Vector2 = raylib.get_mouse_delta()
-//	}
-
 	// Zoom
 	playerdata.zoom -= raylib.GetMouseWheelMove() * 2
 	if playerdata.zoom > ZOOM_MAX do playerdata.zoom = ZOOM_MAX;
@@ -90,8 +78,9 @@ update_player_camera :: proc() {
 	else                             do playerdata.position.y = playerdata.target.y
 	if playerdata.cameraSlope.z != 0 do playerdata.position.z = playerdata.target.z + playerdata.zoom / playerdata.cameraSlope.z
 	else                             do playerdata.position.z = playerdata.target.z
+}
 
-//	playerdata.position.x = playerdata.target.x + playerdata.zoom / playerdata.cameraSlope.x
-//	playerdata.position.y = playerdata.target.y + playerdata.zoom / playerdata.cameraSlope.y
-//	playerdata.position.z = playerdata.target.z + playerdata.zoom / playerdata.cameraSlope.z
+//* Map interaction
+update_player_mouse :: proc() {
+	
 }

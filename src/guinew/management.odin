@@ -70,3 +70,25 @@ test_bounds :: proc(
 ) -> bool {
 	return (position.x >= bounds.x) & (position.x <= bounds.x + bounds.width) & (position.y >= bounds.y) & (position.y <= bounds.y + bounds.height)
 }
+
+test_bounds_all :: proc(
+	position : raylib.Vector2.
+) -> bool {
+	using gamedata
+
+	result : bool = true
+
+	for i:=0; i<len(elements); i+=1 {
+		if !(i in elements) do continue
+
+		typeID : GuiElementType = (^GuiElementType)(elements[i])^
+
+		#partial switch typeID {
+			case .button:
+				rect := ((Button)(elements[i])^).transform
+				result = !test_bounds(position, rect)
+		}
+	}
+
+	return result
+}
