@@ -72,11 +72,9 @@ test_bounds :: proc(
 }
 
 test_bounds_all :: proc(
-	position : raylib.Vector2.
+	position : raylib.Vector2,
 ) -> bool {
 	using gamedata
-
-	result : bool = true
 
 	for i:=0; i<len(elements); i+=1 {
 		if !(i in elements) do continue
@@ -85,10 +83,11 @@ test_bounds_all :: proc(
 
 		#partial switch typeID {
 			case .button:
-				rect := ((Button)(elements[i])^).transform
-				result = !test_bounds(position, rect)
+				rect   := ((^Button)(elements[i])^).transform
+				result := !test_bounds(position, rect)
+				if result == false do return false
 		}
 	}
 
-	return result
+	return true
 }

@@ -2,9 +2,11 @@ package player
 
 
 //= Imports
+import "core:fmt"
 import "vendor:raylib"
 
 import "../gamedata"
+import "../guinew"
 import "../settings"
 
 
@@ -82,5 +84,11 @@ update_player_camera :: proc() {
 
 //* Map interaction
 update_player_mouse :: proc() {
-	
+	if raylib.IsMouseButtonPressed(.LEFT) {
+		position := raylib.GetMousePosition()
+		result   := guinew.test_bounds_all(position)
+		if !result do return
+
+		//TODO: Cast a ray to models then get color
+	}
 }
