@@ -11,4 +11,7 @@ PlayerData :: struct {
 	zoom         : f32,
 	cameraSlope  : raylib.Vector3,
 	lastMousePos : raylib.Vector2,
+
+	ray : raylib.Ray,
+	currentSelection : ^Province,
 }

@@ -3,6 +3,8 @@ package player
 
 //= Imports
 import "core:fmt"
+import "core:math/linalg"
+import "core:math/linalg/glsl"
 import "vendor:raylib"
 
 import "../gamedata"
@@ -90,5 +92,48 @@ update_player_mouse :: proc() {
 		if !result do return
 
 		//TODO: Cast a ray to models then get color
+		gamedata.playerdata.ray = raylib.GetMouseRay(position, gamedata.playerdata)
+		collision : raylib.RayCollision = {}
+
+		for i:=0;i<len(gamedata.mapdata.chunks);i+=1 {
+			pos : raylib.Vector3 = gamedata.mapdata.chunks[i]
+		//	fmt.printf("%v,%v,%v\n",pos.x,pos.y,pos.z)
+
+			cosres := linalg.cos(f32(linalg.PI))
+			sinres := linalg.sin(f32(linalg.PI))
+			transform : linalg.Matrix4x4f32 = {
+				  cosres, 0, 0*-sinres, -pos.x,
+				       0, 5,         0, pos.y,
+				0*sinres, 0,    cosres, -pos.z,
+				       0, 0,         0,     1,
+			}
+
+		//	rotation : linalg.Matrix4x4f32 = {
+		//		cosres, 0, -sinres, 0,
+		//		     0, 1,       0, 0,
+		//		sinres, 0,  cosres, 0,
+		//		     0, 0,       0, 1,
+		//	}
+		//	transform : linalg.Matrix4x4f32 = {
+		//		10.046, 0,  0    , pos.x,
+		//		 0    , 5,  0    , pos.y,
+		//		 0    , 0, 10.046, pos.z,
+		//		 0    , 0,  0    ,     1,
+		//	}
+			collision = raylib.GetRayCollisionMesh(
+				gamedata.playerdata.ray,
+				gamedata.mapdata.chunks[i].mesh,
+				transform,
+			)
+			if collision.hit do fmt.printf("%v,%v,%v,%v\n%v,%v,%v,%v\n%v,%v,%v,%v\n%v,%v,%v,%v\n\n",
+				transform[0,0],transform[0,1],transform[0,2],transform[0,3],
+				transform[1,0],transform[1,1],transform[1,2],transform[1,3],
+				transform[2,0],transform[2,1],transform[2,2],transform[2,3],
+				transform[3,0],transform[3,1],transform[3,2],transform[3,3],
+			)
+			if collision.hit do break
+		}
+
+		if collision.hit do fmt.printf("%v,%v,%v\n",collision.point.x,collision.point.y,collision.point.z)
 	}
 }

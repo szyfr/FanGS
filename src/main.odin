@@ -30,9 +30,10 @@ main :: proc() {
 
 		if !gamedata.titleScreen {
 			raylib.BeginMode3D(gamedata.playerdata.camera)
-			raylib.DrawGrid(100, 1)
+			raylib.DrawGrid(100, 10)
 
 			worldmap.draw_map()
+			raylib.DrawRay(gamedata.playerdata.ray, raylib.PURPLE)
 
 			raylib.EndMode3D()
 		}

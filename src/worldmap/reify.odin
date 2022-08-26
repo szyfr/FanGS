@@ -3,9 +3,10 @@ package worldmap
 
 //= Imports
 import "core:fmt"
-import "core:strings"
+import "core:math/linalg"
 import "core:mem"
 import "core:os"
+import "core:strings"
 import "vendor:raylib"
 
 import "../gamedata"
@@ -35,8 +36,27 @@ init :: proc(name : string) {
 
 	for i:=0;i<int(numChunksTall);i+=1 {
 		for o:=0;o<int(numChunksWide);o+=1 {
+			chunk : MapChunk = {}
+
+			base : linalg.Matrix4x4f32 = {
+				1, 0, 0, f32(o)*10,
+				0, 1, 0,          0,
+				0, 0, 1, f32(i)*10,
+				0, 0, 0,          1,
+			}
+			base = mat_mult(base,MAT_ROTATE)
+			base = mat_mult(base,MAT_SCALE)
+
 			//* Location
-			chunk := MapChunk{ location={-f32(o)*10,0,-f32(i)*10} }
+		//	chunk := MapChunk{ location={-f32(o)*10,0,-f32(i)*10} }
+			chunk.location  = {-f32(o)*10,0,-f32(i)*10}
+			chunk.transform = base
+			fmt.printf("%v,%v,%v,%v\n%v,%v,%v,%v\n%v,%v,%v,%v\n%v,%v,%v,%v\n\n",
+				chunk.transform[0,0],chunk.transform[0,1],chunk.transform[0,2],chunk.transform[0,3],
+				chunk.transform[1,0],chunk.transform[1,1],chunk.transform[1,2],chunk.transform[1,3],
+				chunk.transform[2,0],chunk.transform[2,1],chunk.transform[2,2],chunk.transform[2,3],
+				chunk.transform[3,0],chunk.transform[3,1],chunk.transform[3,2],chunk.transform[3,3],
+			)
 
 			//* Texture
 			img   := raylib.ImageFromImage(
@@ -47,13 +67,17 @@ init :: proc(name : string) {
 			raylib.UnloadImage(img)
 
 			//*Mesh and Model
-			img = raylib.ImageFromImage(
-				mapdata.heightImage,
-				{f32(o*250),f32(i*250) , 250,250},
+			img = raylib.ImageCopy(mapdata.heightImage)
+			raylib.ImageCrop(
+				&img,
+				{f32(o*250), f32(i*250), 251, 251},
 			)
-			chunk.mesh  = raylib.GenMeshHeightmap(img, {1, 0.2, 1})
+			chunk.mesh  = raylib.GenMeshHeightmap(img, {10.046, 0.2, 10.046})
 			chunk.model = raylib.LoadModelFromMesh(chunk.mesh)
-			raylib.SetMaterialTexture(chunk.model.materials, .ALBEDO, chunk.texture)
+			chunk.mat   = raylib.LoadMaterialDefault()
+			raylib.SetMaterialTexture(&chunk.mat, .ALBEDO, chunk.texture)
+			raylib.UnloadMaterial(chunk.model.materials[0])
+			chunk.model.materials[0] = chunk.mat
 
 			//* Free
 			raylib.UnloadImage(img)
@@ -113,4 +137,41 @@ free_data :: proc() {
 
 	free(mapdata)
 	mapdata = nil
+}
+
+/*   ,0   ,1   ,2   ,3
+0,	 mo,  m1,  m2,  m3,
+1,	 m4,  m5,  m6,  m7,
+2,	 m8,  m9, m10, m11,
+3,	m12, m13, m14, m15,
+*/
+
+
+mat_mult :: proc(
+	left  : linalg.Matrix4x4f32,
+	right : linalg.Matrix4x4f32,
+) -> linalg.Matrix4x4f32 {
+	result : linalg.Matrix4x4f32 = {}
+
+	result[0,0] = left[0,0]*right[0,0] + left[0,1]*right[1,0] + left[0,2]*right[2,0] + left[0,3]*right[3,0]
+	result[0,1] = left[0,0]*right[0,1] + left[0,1]*right[1,1] + left[0,2]*right[2,1] + left[0,3]*right[3,1]
+	result[0,2] = left[0,0]*right[0,2] + left[0,1]*right[1,2] + left[0,2]*right[2,2] + left[0,3]*right[3,2]
+	result[0,3] = left[0,0]*right[0,3] + left[0,1]*right[1,3] + left[0,2]*right[2,3] + left[0,3]*right[3,3]
+	
+	result[1,0] = left[1,0]*right[0,0] + left[1,1]*right[1,0] + left[1,2]*right[2,0] + left[1,3]*right[3,0]
+	result[1,1] = left[1,0]*right[0,1] + left[1,1]*right[1,1] + left[1,2]*right[2,1] + left[1,3]*right[3,1]
+	result[1,2] = left[1,0]*right[0,2] + left[1,1]*right[1,2] + left[1,2]*right[2,2] + left[1,3]*right[3,2]
+	result[1,3] = left[1,0]*right[0,3] + left[1,1]*right[1,3] + left[1,2]*right[2,3] + left[1,3]*right[3,3]
+	
+	result[2,0] = left[2,0]*right[0,0] + left[2,1]*right[1,0] + left[2,2]*right[2,0] + left[2,3]*right[3,0]
+	result[2,1] = left[2,0]*right[0,1] + left[2,1]*right[1,1] + left[2,2]*right[2,1] + left[2,3]*right[3,1]
+	result[2,2] = left[2,0]*right[0,2] + left[2,1]*right[1,2] + left[2,2]*right[2,2] + left[2,3]*right[3,2]
+	result[2,3] = left[2,0]*right[0,3] + left[2,1]*right[1,3] + left[2,2]*right[2,3] + left[2,3]*right[3,3]
+	
+	result[3,0] = left[3,0]*right[0,0] + left[3,1]*right[1,0] + left[3,2]*right[2,0] + left[3,3]*right[3,0]
+	result[3,1] = left[3,0]*right[0,1] + left[3,1]*right[1,1] + left[3,2]*right[2,1] + left[3,3]*right[3,1]
+	result[3,2] = left[3,0]*right[0,2] + left[3,1]*right[1,2] + left[3,2]*right[2,2] + left[3,3]*right[3,2]
+	result[3,3] = left[3,0]*right[0,3] + left[3,1]*right[1,3] + left[3,2]*right[2,3] + left[3,3]*right[3,3]
+
+	return result
 }
