@@ -11,6 +11,7 @@ import "vendor:raylib"
 
 import "../gamedata"
 import "../settings"
+import "../utilities/matrix_math"
 
 
 //= Procedures
@@ -48,29 +49,16 @@ init :: proc(name : string) {
 		for o:=0;o<int(numChunksWide);o+=1 {
 			chunk : MapChunk = {}
 
-		//	base : linalg.Matrix4x4f32 = {
-		//		1, 0, 0, f32(o)*.001,
-		//		0, 1, 0,         0,
-		//		0, 0, 1, f32(i)*.001,
-		//		0, 0, 0,         1,
-		//	}
+			//* Transform
 			base : linalg.Matrix4x4f32 = {
 				1, 0, 0, 0,
 				0, 1, 0, 0,
 				0, 0, 1, 0,
 				f32(o)*10, 0, f32(i)*10, 1,
 			}
-			base = mat_mult(base,MAT_ROTATE)
-			base = mat_mult(base,MAT_SCALE)
-
-			//* Location
+			base = matrix_math.mat_mult(base,MAT_ROTATE)
+			base = matrix_math.mat_mult(base,MAT_SCALE)
 			chunk.transform = base
-		//	fmt.printf("%v,\t%v,\t%v,\t%v\n%v,\t%v,\t%v,\t%v\n%v,\t%v,\t%v,\t%v\n%v,\t%v,\t%v,\t%v\n\n",
-		//		chunk.transform[0,0],chunk.transform[0,1],chunk.transform[0,2],chunk.transform[0,3],
-		//		chunk.transform[1,0],chunk.transform[1,1],chunk.transform[1,2],chunk.transform[1,3],
-		//		chunk.transform[2,0],chunk.transform[2,1],chunk.transform[2,2],chunk.transform[2,3],
-		//		chunk.transform[3,0],chunk.transform[3,1],chunk.transform[3,2],chunk.transform[3,3],
-		//	)
 
 			//* Texture
 			img   := raylib.ImageFromImage(
@@ -80,17 +68,13 @@ init :: proc(name : string) {
 			chunk.texture = raylib.LoadTextureFromImage(img)
 			raylib.UnloadImage(img)
 
-			//* Mesh and Model
+			//* Mesh
 			img = raylib.ImageCopy(mapdata.heightImage)
-		//	raylib.ImageCrop(
-		//		&img,
-		//		{f32(o*250), f32(i*250), 251, 251},
-		//	)
 			raylib.ImageCrop(
 				&img,
 				{f32(o)*62.5, f32(i)*62.5, 63, 63},
 			)
-			chunk.mesh  = raylib.GenMeshHeightmap(img, {10.2, 0.2, 10.2})
+			chunk.mesh  = raylib.GenMeshHeightmap(img, {10.17, 0.2, 10.17})
 			chunk.mat   = raylib.LoadMaterialDefault()
 			raylib.SetMaterialTexture(&chunk.mat, .ALBEDO, chunk.texture)
 
@@ -105,6 +89,7 @@ init :: proc(name : string) {
 //	size : i32 = 0
 //	colors := raylib.LoadImagePalette(mapdata.provinceImage, 10000, &size)
 
+	//* Load Provinces
 	provDataLoc   := strings.concatenate({"data/mods/", name, "/map/provinces.bin"})
 	provData, res := os.read_entire_file(provDataLoc)
 	offset        : u32 = 0
@@ -148,45 +133,8 @@ free_data :: proc() {
 
 	delete(mapdata.chunks)
 
-	// TODO: Provinces
+	delete(mapdata.provinces)
 
 	free(mapdata)
 	mapdata = nil
-}
-
-/*   ,0   ,1   ,2   ,3
-0,	 mo,  m1,  m2,  m3,
-1,	 m4,  m5,  m6,  m7,
-2,	 m8,  m9, m10, m11,
-3,	m12, m13, m14, m15,
-*/
-
-
-mat_mult :: proc(
-	left  : linalg.Matrix4x4f32,
-	right : linalg.Matrix4x4f32,
-) -> linalg.Matrix4x4f32 {
-	result : linalg.Matrix4x4f32 = {}
-
-	result[0,0] = left[0,0]*right[0,0] + left[0,1]*right[1,0] + left[0,2]*right[2,0] + left[0,3]*right[3,0]
-	result[0,1] = left[0,0]*right[0,1] + left[0,1]*right[1,1] + left[0,2]*right[2,1] + left[0,3]*right[3,1]
-	result[0,2] = left[0,0]*right[0,2] + left[0,1]*right[1,2] + left[0,2]*right[2,2] + left[0,3]*right[3,2]
-	result[0,3] = left[0,0]*right[0,3] + left[0,1]*right[1,3] + left[0,2]*right[2,3] + left[0,3]*right[3,3]
-	
-	result[1,0] = left[1,0]*right[0,0] + left[1,1]*right[1,0] + left[1,2]*right[2,0] + left[1,3]*right[3,0]
-	result[1,1] = left[1,0]*right[0,1] + left[1,1]*right[1,1] + left[1,2]*right[2,1] + left[1,3]*right[3,1]
-	result[1,2] = left[1,0]*right[0,2] + left[1,1]*right[1,2] + left[1,2]*right[2,2] + left[1,3]*right[3,2]
-	result[1,3] = left[1,0]*right[0,3] + left[1,1]*right[1,3] + left[1,2]*right[2,3] + left[1,3]*right[3,3]
-	
-	result[2,0] = left[2,0]*right[0,0] + left[2,1]*right[1,0] + left[2,2]*right[2,0] + left[2,3]*right[3,0]
-	result[2,1] = left[2,0]*right[0,1] + left[2,1]*right[1,1] + left[2,2]*right[2,1] + left[2,3]*right[3,1]
-	result[2,2] = left[2,0]*right[0,2] + left[2,1]*right[1,2] + left[2,2]*right[2,2] + left[2,3]*right[3,2]
-	result[2,3] = left[2,0]*right[0,3] + left[2,1]*right[1,3] + left[2,2]*right[2,3] + left[2,3]*right[3,3]
-	
-	result[3,0] = left[3,0]*right[0,0] + left[3,1]*right[1,0] + left[3,2]*right[2,0] + left[3,3]*right[3,0]
-	result[3,1] = left[3,0]*right[0,1] + left[3,1]*right[1,1] + left[3,2]*right[2,1] + left[3,3]*right[3,1]
-	result[3,2] = left[3,0]*right[0,2] + left[3,1]*right[1,2] + left[3,2]*right[2,2] + left[3,3]*right[3,2]
-	result[3,3] = left[3,0]*right[0,3] + left[3,1]*right[1,3] + left[3,2]*right[2,3] + left[3,3]*right[3,3]
-
-	return result
 }

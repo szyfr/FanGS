@@ -88,7 +88,7 @@ update_player_camera :: proc() {
 
 //* Map interaction
 update_player_mouse :: proc() {
-	if raylib.IsMouseButtonPressed(.LEFT) {
+	if raylib.IsMouseButtonPressed(.LEFT) && !gamedata.titleScreen {
 		position := raylib.GetMousePosition()
 		result   := guinew.test_bounds_all(position)
 		if !result do return
@@ -112,7 +112,6 @@ update_player_mouse :: proc() {
 		}
 
 		if collision.hit {
-			fmt.printf("Hit:   %v,%v,%v\n",collision.point.x,collision.point.y,collision.point.z)
 			col := raylib.GetImageColor(
 				gamedata.mapdata.provinceImage,
 				-i32(collision.point.x*25),
@@ -120,6 +119,7 @@ update_player_mouse :: proc() {
 			)
 			prov, res := &gamedata.mapdata.provinces[col]
 			if res do gamedata.playerdata.currentSelection = prov
+			else   do gamedata.playerdata.currentSelection = nil
 		}
 	}
 }

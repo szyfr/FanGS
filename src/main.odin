@@ -33,7 +33,6 @@ main :: proc() {
 			raylib.DrawGrid(100, 10)
 
 			worldmap.draw_map()
-			raylib.DrawRay(gamedata.playerdata.ray, raylib.PURPLE)
 
 			raylib.EndMode3D()
 		}
