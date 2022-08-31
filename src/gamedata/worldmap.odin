@@ -32,11 +32,9 @@ MapData :: struct {
 }
 
 MapChunk :: struct {
-	using location : raylib.Vector3,
 	transform : linalg.Matrix4x4f32,
 
 	mesh    : raylib.Mesh,
-	model   : raylib.Model,
 	mat     : raylib.Material,
 	texture : raylib.Texture,
 }

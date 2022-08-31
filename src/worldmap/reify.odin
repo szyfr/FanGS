@@ -27,7 +27,17 @@ init :: proc(name : string) {
 	//* Load images
 	mapdata.provinceImage = raylib.LoadImage(strings.clone_to_cstring(provLoc))
 	mapdata.terrainImage  = raylib.LoadImage(strings.clone_to_cstring(terrLoc))
-	mapdata.heightImage   = raylib.LoadImage(strings.clone_to_cstring(heigLoc))
+
+	hm := raylib.LoadImage(strings.clone_to_cstring(heigLoc))
+	width  := hm.width
+	height := hm.height
+	raylib.ImageResize(
+		&hm,
+		width / 4,
+		height / 4,
+	)
+	mapdata.heightImage = raylib.ImageCopy(hm)
+	
 
 	//* Create Chunks
 	numChunksWide  := mapdata.provinceImage.width  / 250
@@ -38,25 +48,29 @@ init :: proc(name : string) {
 		for o:=0;o<int(numChunksWide);o+=1 {
 			chunk : MapChunk = {}
 
+		//	base : linalg.Matrix4x4f32 = {
+		//		1, 0, 0, f32(o)*.001,
+		//		0, 1, 0,         0,
+		//		0, 0, 1, f32(i)*.001,
+		//		0, 0, 0,         1,
+		//	}
 			base : linalg.Matrix4x4f32 = {
-				1, 0, 0, f32(o)*10,
-				0, 1, 0,          0,
-				0, 0, 1, f32(i)*10,
-				0, 0, 0,          1,
+				1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				f32(o)*10, 0, f32(i)*10, 1,
 			}
 			base = mat_mult(base,MAT_ROTATE)
 			base = mat_mult(base,MAT_SCALE)
 
 			//* Location
-		//	chunk := MapChunk{ location={-f32(o)*10,0,-f32(i)*10} }
-			chunk.location  = {-f32(o)*10,0,-f32(i)*10}
 			chunk.transform = base
-			fmt.printf("%v,%v,%v,%v\n%v,%v,%v,%v\n%v,%v,%v,%v\n%v,%v,%v,%v\n\n",
-				chunk.transform[0,0],chunk.transform[0,1],chunk.transform[0,2],chunk.transform[0,3],
-				chunk.transform[1,0],chunk.transform[1,1],chunk.transform[1,2],chunk.transform[1,3],
-				chunk.transform[2,0],chunk.transform[2,1],chunk.transform[2,2],chunk.transform[2,3],
-				chunk.transform[3,0],chunk.transform[3,1],chunk.transform[3,2],chunk.transform[3,3],
-			)
+		//	fmt.printf("%v,\t%v,\t%v,\t%v\n%v,\t%v,\t%v,\t%v\n%v,\t%v,\t%v,\t%v\n%v,\t%v,\t%v,\t%v\n\n",
+		//		chunk.transform[0,0],chunk.transform[0,1],chunk.transform[0,2],chunk.transform[0,3],
+		//		chunk.transform[1,0],chunk.transform[1,1],chunk.transform[1,2],chunk.transform[1,3],
+		//		chunk.transform[2,0],chunk.transform[2,1],chunk.transform[2,2],chunk.transform[2,3],
+		//		chunk.transform[3,0],chunk.transform[3,1],chunk.transform[3,2],chunk.transform[3,3],
+		//	)
 
 			//* Texture
 			img   := raylib.ImageFromImage(
@@ -66,18 +80,19 @@ init :: proc(name : string) {
 			chunk.texture = raylib.LoadTextureFromImage(img)
 			raylib.UnloadImage(img)
 
-			//*Mesh and Model
+			//* Mesh and Model
 			img = raylib.ImageCopy(mapdata.heightImage)
+		//	raylib.ImageCrop(
+		//		&img,
+		//		{f32(o*250), f32(i*250), 251, 251},
+		//	)
 			raylib.ImageCrop(
 				&img,
-				{f32(o*250), f32(i*250), 251, 251},
+				{f32(o)*62.5, f32(i)*62.5, 63, 63},
 			)
-			chunk.mesh  = raylib.GenMeshHeightmap(img, {10.046, 0.2, 10.046})
-			chunk.model = raylib.LoadModelFromMesh(chunk.mesh)
+			chunk.mesh  = raylib.GenMeshHeightmap(img, {10.2, 0.2, 10.2})
 			chunk.mat   = raylib.LoadMaterialDefault()
 			raylib.SetMaterialTexture(&chunk.mat, .ALBEDO, chunk.texture)
-			raylib.UnloadMaterial(chunk.model.materials[0])
-			chunk.model.materials[0] = chunk.mat
 
 			//* Free
 			raylib.UnloadImage(img)
