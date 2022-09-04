@@ -68,9 +68,18 @@ update_player_movement :: proc() {
 		}
 	}
 
+	//* Edge contraints/looping
 	if mapdata != nil {
 		if playerdata.target.z > 0                   do playerdata.target.z = 0
 		if playerdata.target.z < f32(mapdata.height) do playerdata.target.z = f32(mapdata.height)
+
+		if mapdata.mapsettings.loopMap {
+			if playerdata.target.x > 0                  do playerdata.target.x = f32(mapdata.width)
+			if playerdata.target.x < f32(mapdata.width) do playerdata.target.x = 0
+		} else {
+			if playerdata.target.x > 0                  do playerdata.target.x = 0
+			if playerdata.target.x < f32(mapdata.width) do playerdata.target.x = f32(mapdata.width)
+		}
 	}
 }
 
