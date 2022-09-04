@@ -9,6 +9,7 @@ import "core:os"
 import "core:strings"
 import "vendor:raylib"
 
+import "../localization"
 import "../gamedata"
 import "../settings"
 import "../utilities/matrix_math"
@@ -21,9 +22,9 @@ init :: proc(name : string) {
 	mapdata = new(MapData)
 
 	//* Generate location strings
-	provLoc : = strings.concatenate({"data/mods/", name, "/map/provincemap.png"})
-	terrLoc : = strings.concatenate({"data/mods/", name, "/map/terrainmap.png"})
-	heigLoc : = strings.concatenate({"data/mods/", name, "/map/heightmap.png"})
+	provLoc := strings.concatenate({"data/mods/", name, "/map/provincemap.png"})
+	terrLoc := strings.concatenate({"data/mods/", name, "/map/terrainmap.png"})
+	heigLoc := strings.concatenate({"data/mods/", name, "/map/heightmap.png"})
 
 	//* Load images
 	mapdata.provinceImage = raylib.LoadImage(strings.clone_to_cstring(provLoc))
@@ -122,6 +123,8 @@ init :: proc(name : string) {
 
 		offset += 48
 	}
+
+	localization.load_mod(name)
 }
 
 free_data :: proc() {

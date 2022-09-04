@@ -26,3 +26,12 @@ copy_string :: proc(array: []u8, offset: ^int) -> (cstring, int) {
 
 	return str, offset^
 }
+count_strings :: proc(array : []u8) -> int {
+	output : int = 1
+
+	for i:=0;i<len(array);i+=1 {
+		if array[i] == '\n' do output += 1
+	}
+
+	return output
+}

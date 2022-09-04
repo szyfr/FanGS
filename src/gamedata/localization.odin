@@ -9,7 +9,11 @@ LocalizationData :: struct {
 	mods     : cstring,
 	options  : cstring,
 	quit     : cstring,
-
 	title    : cstring,
+
 	missing  : cstring,
+
+	provTypes : [5]cstring,
+
+	worldLocalization : [dynamic]cstring,
 }

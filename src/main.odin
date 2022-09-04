@@ -38,6 +38,9 @@ main :: proc() {
 		}
 		guinew.draw()
 
+		//* Province GUI Test
+		if gamedata.playerdata.currentSelection != nil do guinew.draw_province_view()
+
 		raylib.DrawFPS(0,0)
 
 		raylib.EndDrawing()

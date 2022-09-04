@@ -120,7 +120,7 @@ update_player_mouse :: proc() {
 			prov, res := &gamedata.mapdata.provinces[col]
 			if res do gamedata.playerdata.currentSelection = prov
 			else   do gamedata.playerdata.currentSelection = nil
-		}
+		} else do gamedata.playerdata.currentSelection = nil
 	}
 }
 

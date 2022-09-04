@@ -2,7 +2,9 @@ package localization
 
 
 //= Imports
+import "core:fmt"
 import "core:os"
+import "core:strings"
 
 import "../logging"
 import "../gamedata"
@@ -47,13 +49,19 @@ init :: proc(lang : i32) {
 
 	offset : int = 0
 
-	localizationdata.newGame,  offset = copy_string(rawData, &offset)
-	localizationdata.loadGame, offset = copy_string(rawData, &offset)
-	localizationdata.mods,     offset = copy_string(rawData, &offset)
-	localizationdata.options,  offset = copy_string(rawData, &offset)
-	localizationdata.quit,     offset = copy_string(rawData, &offset)
+	localizationdata.newGame,      offset = copy_string(rawData, &offset)
+	localizationdata.loadGame,     offset = copy_string(rawData, &offset)
+	localizationdata.mods,         offset = copy_string(rawData, &offset)
+	localizationdata.options,      offset = copy_string(rawData, &offset)
+	localizationdata.quit,         offset = copy_string(rawData, &offset)
+	localizationdata.title,        offset = copy_string(rawData, &offset)
+	
+	localizationdata.provTypes[0], offset = copy_string(rawData, &offset)
+	localizationdata.provTypes[1], offset = copy_string(rawData, &offset)
+	localizationdata.provTypes[2], offset = copy_string(rawData, &offset)
+	localizationdata.provTypes[3], offset = copy_string(rawData, &offset)
+	localizationdata.provTypes[4], offset = copy_string(rawData, &offset)
 
-	localizationdata.title            = "FanGS"
 	localizationdata.missing          = "missing_string"
 }
 free_data :: proc() {
@@ -62,6 +70,58 @@ free_data :: proc() {
 	delete(gamedata.localizationdata.mods)
 	delete(gamedata.localizationdata.options)
 	delete(gamedata.localizationdata.quit)
+	delete(gamedata.localizationdata.title)
+//	delete(gamedata.localizationdata.missing)
+	delete(gamedata.localizationdata.worldLocalization)
 
 	free(gamedata.localizationdata)
+}
+
+load_mod :: proc(mod : string) {
+	directory : string
+	rawData   : []u8
+	success   : bool
+
+	#partial switch gamedata.settingsdata.language {
+		case .english:
+			directory = strings.concatenate({"data/mods/", mod, "/localization/english.bin"})
+			if os.is_file(directory) {
+				rawData, success = os.read_entire_file_from_filename(directory)
+			}
+		case .spanish:
+			directory = strings.concatenate({"data/mods/", mod, "/localization/spanish.bin"})
+			if os.is_file(directory) {
+				rawData, success = os.read_entire_file_from_filename(directory)
+			}
+		case .german:
+			directory = strings.concatenate({"data/mods/", mod, "/localization/german.bin"})
+			if os.is_file(directory) {
+				rawData, success = os.read_entire_file_from_filename(directory)
+			}
+		case .french:
+			directory = strings.concatenate({"data/mods/", mod, "/localization/french.bin"})
+			if os.is_file(directory) {
+				rawData, success = os.read_entire_file_from_filename(directory)
+			}
+	}
+
+	offset : int = 0
+
+	count := count_strings(rawData)
+
+	for i:=0;i<count-1;i+=1 {
+		local : cstring
+		local, offset = copy_string(rawData, &offset)
+
+		append(&gamedata.localizationdata.worldLocalization, local)
+	}
+
+	builder : strings.Builder
+	str     := fmt.sbprintf(
+		&builder,
+		"[LOG]: Loaded %v strings from mod:(%s).",
+		count,
+		mod,
+	)
+	logging.add_to_log(str)
 }

@@ -37,8 +37,11 @@ Terrain :: enum {
 	NULL,
 	plains,
 	swamp,
-	dwarf_tunnel,
+	deep_road,
 	dwarf_hold,
+	goblin_hold,
+	kobold_hold,
+	orc_hold,
 	cave,
 }
 ProvinceType :: enum {
