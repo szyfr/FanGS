@@ -27,26 +27,26 @@ update :: proc() {
 update_player_movement :: proc() {
 	using gamedata
 
+	mod := ((playerdata.zoom) / 5) / 100
+
 	// Key Movement
 	// TODO: check origin of each key
 	if raylib.IsKeyDown(raylib.KeyboardKey(settingsdata.keybindings["up"].key)) {
-		playerdata.target.z   += MOVE_SPD * (playerdata.fovy / ZOOM_MAX)
+		playerdata.target.z   += MOVE_SPD * (mod+3)
 	}
 	if raylib.IsKeyDown(raylib.KeyboardKey(settingsdata.keybindings["down"].key)) {
-		playerdata.target.z   -= MOVE_SPD * (playerdata.fovy / ZOOM_MAX)
+		playerdata.target.z   -= MOVE_SPD * (mod+3)
 	}
 	if raylib.IsKeyDown(raylib.KeyboardKey(settingsdata.keybindings["left"].key)) {
-		playerdata.target.x   += MOVE_SPD * (playerdata.fovy / ZOOM_MAX)
+		playerdata.target.x   += MOVE_SPD * (mod+3)
 	}
 	if raylib.IsKeyDown(raylib.KeyboardKey(settingsdata.keybindings["right"].key)) {
-		playerdata.target.x   -= MOVE_SPD * (playerdata.fovy / ZOOM_MAX)
+		playerdata.target.x   -= MOVE_SPD * (mod+3)
 	}
 
 	// Drag movement
 	if raylib.IsMouseButtonDown(.MIDDLE) {
 		mouseDelta: raylib.Vector2 = raylib.GetMouseDelta()
-
-		mod := ((playerdata.zoom) / 5) / 100
 
 		playerdata.target.x += mouseDelta.x * mod
 		playerdata.target.z += mouseDelta.y * mod
@@ -66,6 +66,11 @@ update_player_movement :: proc() {
 		if raylib.GetMouseY() >= settingsdata.windowHeight - EDGE_DIS {
 			playerdata.target.z   -= MOVE_SPD
 		}
+	}
+
+	if mapdata != nil {
+		if playerdata.target.z > 0                   do playerdata.target.z = 0
+		if playerdata.target.z < f32(mapdata.height) do playerdata.target.z = f32(mapdata.height)
 	}
 }
 

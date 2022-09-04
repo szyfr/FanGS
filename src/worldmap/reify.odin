@@ -16,6 +16,7 @@ import "../utilities/matrix_math"
 
 
 //= Procedures
+//TODO: Clean up this function
 init :: proc(name : string) {
 	using gamedata
 
@@ -87,8 +88,9 @@ init :: proc(name : string) {
 		}
 	}
 
-//	size : i32 = 0
-//	colors := raylib.LoadImagePalette(mapdata.provinceImage, 10000, &size)
+	//* Save height and width
+	mapdata.height = -(10 * numChunksTall)
+	mapdata.width  = -(10 * numChunksWide)
 
 	//* Load Provinces
 	provDataLoc   := strings.concatenate({"data/mods/", name, "/map/provinces.bin"})
@@ -113,18 +115,20 @@ init :: proc(name : string) {
 		prov.buildings[6] = provData[offset+26]
 		prov.buildings[7] = provData[offset+27]
 
-	//	fmt.printf("%i: %i,%i,%i\n%i, %i\n%i/%i\n",
-	//		prov.localID, prov.color.r, prov.color.g, prov.color.b,
-	//		prov.terrain, prov.provType,
-	//		prov.curInfrastructure, prov.maxInfrastructure,
-	//	)
-
 		mapdata.provinces[prov.color] = prov
 
 		offset += 48
 	}
 
+	//* Load localization
 	localization.load_mod(name)
+
+	//* Load settings
+	mapSettingsLoc    := strings.concatenate({"data/mods/", name, "/settings.bin"})
+	mapSettings, resu := os.read_entire_file(mapSettingsLoc)
+
+	mapdata.mapsettings = new(MapSettingsData)
+	mapdata.mapsettings.loopMap = bool(mapSettings[0])
 }
 
 free_data :: proc() {

@@ -29,6 +29,11 @@ MapData :: struct {
 
 	chunks        : [dynamic]MapChunk,
 	provinces     : map[raylib.Color]Province,
+
+	height        : i32,
+	width         : i32,
+
+	mapsettings   : ^MapSettingsData,
 }
 
 MapChunk :: struct {

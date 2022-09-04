@@ -88,6 +88,10 @@ test_bounds_all :: proc(
 				if result == false do return false
 		}
 	}
+	if playerdata.currentSelection != nil {
+		//TODO: Save this information somewhere so it will always be up to date
+		if test_bounds(position, {0, f32(gamedata.settingsdata.windowHeight) - 400, 300, 400}) do return false
+	}
 
 	return true
 }
