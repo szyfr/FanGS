@@ -97,6 +97,8 @@ init :: proc(name : string) {
 	provData, res := os.read_entire_file(provDataLoc)
 	offset        : u32 = 0
 	
+	colTest : raylib.Color
+
 	for i:=0; i<len(provData)/48; i+=1 {
 		prov : Province = {}
 
@@ -115,6 +117,10 @@ init :: proc(name : string) {
 		prov.buildings[6] = provData[offset+26]
 		prov.buildings[7] = provData[offset+27]
 
+		//* Generate borders
+		prov.borderPoints = generate_borders(prov.color)
+		append(&mapdata.provColors, prov.color)
+		
 		mapdata.provinces[prov.color] = prov
 
 		offset += 48

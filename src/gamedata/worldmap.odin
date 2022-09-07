@@ -29,6 +29,7 @@ MapData :: struct {
 
 	chunks        : [dynamic]MapChunk,
 	provinces     : map[raylib.Color]Province,
+	provColors    : [dynamic]raylib.Color,
 
 	height        : i32,
 	width         : i32,
@@ -45,6 +46,19 @@ MapChunk :: struct {
 }
 
 Point :: struct {
-	point :  raylib.Vector3,
-	next  : ^Point,
+	using pos :  raylib.Vector3,
+	next      : ^Point,
+}
+
+
+//= Enumerations
+Direction :: enum {
+	up,
+	upright,
+	right,
+	downright,
+	down,
+	downleft,
+	left,
+	topleft,
 }

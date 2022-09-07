@@ -33,6 +33,7 @@ main :: proc() {
 			raylib.DrawGrid(100, 10)
 
 			worldmap.draw_map()
+			worldmap.draw_borders()
 
 			raylib.EndMode3D()
 		}
