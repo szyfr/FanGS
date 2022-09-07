@@ -12,6 +12,7 @@ import "vendor:raylib"
 import "../gamedata"
 import "../guinew"
 import "../settings"
+import "../utilities/matrix_math"
 
 
 //= Procedures
@@ -101,20 +102,27 @@ update_player_camera :: proc() {
 }
 
 //* Map interaction
+//TODO: Improve distance calculation to reduce lag on click
 update_player_mouse :: proc() {
 	if raylib.IsMouseButtonPressed(.LEFT) && !gamedata.titleScreen {
+		//* Getting mouse position and testing GUI
 		position := raylib.GetMousePosition()
 		result   := guinew.test_bounds_all(position)
 		if !result do return
 
+		//* Creating ray and collision info
 		gamedata.playerdata.ray = raylib.GetMouseRay(position, gamedata.playerdata)
 		collision : raylib.RayCollision = {}
 
+		//* Casting ray
+		width := gamedata.mapdata.provinceImage.width/250
 		for i:=0;i<len(gamedata.mapdata.chunks);i+=1 {
+			//* Calculate distance to each chunk
 			distX := math.pow(gamedata.mapdata.chunks[i].transform[3,0] - gamedata.playerdata.target.x, 2)
 			distZ := math.pow(gamedata.mapdata.chunks[i].transform[3,2] - gamedata.playerdata.target.z, 2)
 			distance := math.sqrt(distX + distZ)
 
+			//* If chunk is within range, cast ray
 			if distance <= 35 * (get_zoom_percentage()+1) {
 				collision = raylib.GetRayCollisionMesh(
 					gamedata.playerdata.ray,
@@ -123,14 +131,54 @@ update_player_mouse :: proc() {
 				)
 			}
 			if collision.hit do break
+
+			//* Checking left loop edges
+			if gamedata.playerdata.target.x <= -f32((width-4) * 10) {
+				mod : linalg.Matrix4x4f32 = {
+					             1, 0, 0, 0,
+					             0, 1, 0, 0,
+					             0, 0, 1, 0,
+					-f32(width*10), 0, 0, 1,
+				}
+				collision = raylib.GetRayCollisionMesh(
+					gamedata.playerdata.ray,
+					gamedata.mapdata.chunks[i].mesh,
+					matrix_math.mat_mult(gamedata.mapdata.chunks[i].transform, mod),
+				)
+			}
+			if collision.hit do break
+
+			//* Checking right loop edges
+			if gamedata.playerdata.target.x >= -40 {
+				mod : linalg.Matrix4x4f32 = {
+					            1, 0, 0, 0,
+					            0, 1, 0, 0,
+					            0, 0, 1, 0,
+					f32(width*10), 0, 0, 1,
+				}
+				collision = raylib.GetRayCollisionMesh(
+					gamedata.playerdata.ray,
+					gamedata.mapdata.chunks[i].mesh,
+					matrix_math.mat_mult(gamedata.mapdata.chunks[i].transform, mod),
+				)
+			}
+			if collision.hit do break
 		}
 
 		if collision.hit {
+			//* Calculate x position
+			posX : i32
+			if collision.point.x*25 > 0 do posX =  gamedata.mapdata.provinceImage.width - i32(collision.point.x*25)
+			else                        do posX = -i32(collision.point.x*25)%gamedata.mapdata.provinceImage.width
+			
+			//* Grab color
 			col := raylib.GetImageColor(
 				gamedata.mapdata.provinceImage,
-				-i32(collision.point.x*25),
+				posX,
 				-i32(collision.point.z*25),
 			)
+
+			//* Set selected province
 			prov, res := &gamedata.mapdata.provinces[col]
 			if res do gamedata.playerdata.currentSelection = prov
 			else   do gamedata.playerdata.currentSelection = nil
