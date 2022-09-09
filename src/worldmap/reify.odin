@@ -119,6 +119,17 @@ init :: proc(name : string) {
 
 		//* Generate borders
 		prov.borderPoints = generate_borders(prov.color)
+	//	test := 0
+	//	for i:=0;i<len(prov.borderPoints);i+=1 {
+	//		if prov.borderPoints[i].next.pos.x < 0 do test+=1
+	//		fmt.printf(
+	//			"Positions: C(%v,%v,%v) ? P(%v,%v,%v)\n",
+	//			prov.borderPoints[i].pos.x,prov.borderPoints[i].pos.y,prov.borderPoints[i].pos.z,
+	//			prov.borderPoints[prov.borderPoints[i].idNext].pos.x,prov.borderPoints[prov.borderPoints[i].idNext].pos.y,prov.borderPoints[prov.borderPoints[i].idNext].pos.z,
+	//		//	prov.borderPoints[i].next.pos.x,prov.borderPoints[i].next.pos.y,prov.borderPoints[i].next.pos.z,
+	//		)
+	//	}
+	//	fmt.printf("%v/%v points fucked up\n",test,len(prov.borderPoints))
 		append(&mapdata.provColors, prov.color)
 		
 		mapdata.provinces[prov.color] = prov

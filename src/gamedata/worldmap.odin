@@ -46,19 +46,19 @@ MapChunk :: struct {
 }
 
 Point :: struct {
-	using pos :  raylib.Vector3,
-	next      : ^Point,
+	idNext : int,
+	pos    :  raylib.Vector3,
 }
 
 
 //= Enumerations
 Direction :: enum {
-	up,
-	upright,
 	right,
 	downright,
 	down,
 	downleft,
 	left,
-	topleft,
+	upleft,
+	up,
+	upright,
 }

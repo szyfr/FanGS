@@ -18,15 +18,27 @@ draw_borders :: proc() {
 		res := col in gamedata.mapdata.provinces
 	//	fmt.printf("COL: %v\n",len(gamedata.mapdata.provinces[col].borderPoints))
 		for o:=0;o<len(gamedata.mapdata.provinces[col].borderPoints);o+=1 {
-		//	fmt.printf(
-		//		"Point\npos: %v,%v,%v\nnex: %v,%v,%v\n\n",
-		//		gamedata.mapdata.provinces[col].borderPoints[o].x, gamedata.mapdata.provinces[col].borderPoints[o].y, gamedata.mapdata.provinces[col].borderPoints[o].z,
-		//		gamedata.mapdata.provinces[col].borderPoints[o].next.x, gamedata.mapdata.provinces[col].borderPoints[o].next.y, gamedata.mapdata.provinces[col].borderPoints[o].z,
-		//	)
+			id   := gamedata.mapdata.provinces[col].borderPoints[o].idNext
+			ncol := BLACK
+			if &gamedata.mapdata.provinces[col] == gamedata.playerdata.currentSelection do ncol = RED
+
+			newPosition1 := Vector3{
+				-gamedata.mapdata.provinces[col].borderPoints[o].pos.x/25,
+				-gamedata.mapdata.provinces[col].borderPoints[o].pos.y,
+				-gamedata.mapdata.provinces[col].borderPoints[o].pos.z/25,
+			}
+			newPosition2 := Vector3{
+				-gamedata.mapdata.provinces[col].borderPoints[id].pos.x/25,
+				-gamedata.mapdata.provinces[col].borderPoints[id].pos.y,
+				-gamedata.mapdata.provinces[col].borderPoints[id].pos.z/25,
+			}
+
 			DrawLine3D(
-				gamedata.mapdata.provinces[col].borderPoints[o],
-				gamedata.mapdata.provinces[col].borderPoints[o].next,
-				raylib.BLACK,
+				newPosition1,
+				newPosition2,
+			//	-gamedata.mapdata.provinces[col].borderPoints[o].pos,
+			//	-gamedata.mapdata.provinces[col].borderPoints[id].pos,
+				ncol,
 			)
 		}
 	}
