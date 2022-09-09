@@ -47,7 +47,8 @@ MapChunk :: struct {
 
 Point :: struct {
 	idNext : int,
-	pos    :  raylib.Vector3,
+	pos    : raylib.Vector3,
+	off    : raylib.Vector3,
 }
 
 

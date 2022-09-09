@@ -23,14 +23,14 @@ draw_borders :: proc() {
 			if &gamedata.mapdata.provinces[col] == gamedata.playerdata.currentSelection do ncol = RED
 
 			newPosition1 := Vector3{
-				-gamedata.mapdata.provinces[col].borderPoints[o].pos.x/25,
-				-gamedata.mapdata.provinces[col].borderPoints[o].pos.y,
-				-gamedata.mapdata.provinces[col].borderPoints[o].pos.z/25,
+				-(gamedata.mapdata.provinces[col].borderPoints[o].pos.x/25) + gamedata.mapdata.provinces[col].borderPoints[o].off.x,
+				-(gamedata.mapdata.provinces[col].borderPoints[o].pos.y),
+				-(gamedata.mapdata.provinces[col].borderPoints[o].pos.z/25) + gamedata.mapdata.provinces[col].borderPoints[o].off.z,
 			}
 			newPosition2 := Vector3{
-				-gamedata.mapdata.provinces[col].borderPoints[id].pos.x/25,
+				-(gamedata.mapdata.provinces[col].borderPoints[id].pos.x/25) + gamedata.mapdata.provinces[col].borderPoints[id].off.x,
 				-gamedata.mapdata.provinces[col].borderPoints[id].pos.y,
-				-gamedata.mapdata.provinces[col].borderPoints[id].pos.z/25,
+				-(gamedata.mapdata.provinces[col].borderPoints[id].pos.z/25) + gamedata.mapdata.provinces[col].borderPoints[id].off.z,
 			}
 
 			DrawLine3D(

@@ -30,7 +30,8 @@ generate_borders :: proc(
 		if compare_colors(color, col) {
 			point := Point{
 				0,
-				{f32(posX), -1, f32(posY)},
+				{f32(posX), -.35, f32(posY)},
+				{},
 			}
 			append(&array, point)
 			prev  = &array[0]
@@ -45,14 +46,8 @@ generate_borders :: proc(
 		newPosition, newDirection := check_for_point(color, prev.pos, dir)
 
 		point.pos    = newPosition
+		point.off    = pixel_offset(newDirection)
 		point.idNext = previd
-
-	//	fmt.printf(
-	//		"Positions: 0(%v,%v,%v) ? C(%v,%v,%v) ? P(%v,%v,%v)\n",
-	//		array[0].x,array[0].y,array[0].z,
-	//		point.x,point.y,point.z,
-	//		point.next.x,point.next.y,point.next.z,
-	//	)
 
 	//	if dir == newDirection do continue
 
@@ -65,6 +60,39 @@ generate_borders :: proc(
 	array[0].idNext = len(array)-2
 
 	return array
+}
+
+//TODO: Move
+pixel_offset :: proc(
+	dir : gamedata.Direction,
+) -> raylib.Vector3 {
+	newPosition : raylib.Vector3
+	mod : f32 = .025
+
+	switch dir {
+		case .right:
+			newPosition.z += mod
+		case .downright:
+			newPosition.x += mod
+			newPosition.z += mod
+		case .down:
+			newPosition.x -= mod
+		case .downleft:
+			newPosition.x -= mod
+			newPosition.z -= mod
+		case .left:
+			newPosition.z -= mod
+		case .upleft:
+			newPosition.x += mod
+			newPosition.z -= mod
+		case .up:
+			newPosition.x += mod
+		case .upright:
+			newPosition.x += mod
+			newPosition.z += mod
+	}
+
+	return newPosition
 }
 
 //TODO: Move
