@@ -6,6 +6,7 @@ import "core:fmt"
 import "vendor:raylib"
 
 import "../gamedata"
+import "../utilities/colors"
 
 
 //= Procedures
@@ -16,33 +17,40 @@ generate_borders :: proc(
 ) -> [dynamic]gamedata.Point {
 	using raylib, gamedata
 
+	//* Initialize variables
 	pixelCount := int(gamedata.mapdata.provinceImage.width * gamedata.mapdata.provinceImage.height)
-	array :  [dynamic]Point
-	prev  : ^Point
-	loc   :  Vector3
+	array      :  [dynamic]Point
+	prev       : ^Point
+	loc        :  Vector3
 
+	//* Grabs first point
 	for i:=0;i<pixelCount;i+=1 {
+		//* Grab color
 		posX, posY := i32(i)%gamedata.mapdata.provinceImage.width, i32(i)/gamedata.mapdata.provinceImage.width
 		col := GetImageColor(
 			gamedata.mapdata.provinceImage,
 			posX, posY,
 		)
-		if compare_colors(color, col) {
+		//* Compare
+		if colors.compare_colors(color, col) {
 			point := Point{
 				0,
 				{f32(posX), -.35, f32(posY)},
 				{},
 			}
+			//* Append to array
 			append(&array, point)
 			prev  = &array[0]
 			break
 		}
 	}
 
+	//* Finds next point
 	point  : Point
 	dir    : Direction = .right
 	previd : int = 0
 	for point.pos != array[0].pos {
+		//* Create point
 		newPosition, newDirection := check_for_point(color, prev.pos, dir)
 
 		point.pos    = newPosition
@@ -53,6 +61,7 @@ generate_borders :: proc(
 
 		dir = newDirection
 
+		//* Append to array
 		append(&array, point)
 		prev = &array[len(array)-1]
 		previd += 1
@@ -62,7 +71,6 @@ generate_borders :: proc(
 	return array
 }
 
-//TODO: Move
 pixel_offset :: proc(
 	dir : gamedata.Direction,
 ) -> raylib.Vector3 {
@@ -95,7 +103,7 @@ pixel_offset :: proc(
 	return newPosition
 }
 
-//TODO: Move
+//* Checks for same colored point around starting point
 check_for_point :: proc(
 	color : raylib.Color,
 	pos   : raylib.Vector3,
@@ -118,7 +126,7 @@ check_for_point :: proc(
 			gamedata.mapdata.provinceImage,
 			i32(newPosition.x), i32(newPosition.z),
 		)
-		if compare_colors(color, newColor) do break
+		if colors.compare_colors(color, newColor) do break
 
 		//* Set new direction and loop
 		newDirection = increment_direction(newDirection)
@@ -127,7 +135,7 @@ check_for_point :: proc(
 	return newPosition, newDirection
 }
 
-//TODO: Move
+//* Returns point offset by direction
 get_direction_position :: proc(
 	position  : raylib.Vector3,
 	direction : gamedata.Direction,
@@ -159,7 +167,7 @@ get_direction_position :: proc(
 	return newPosition
 }
 
-//TODO: Move
+//* Returns direction perpendicular to the current direction
 get_new_direction :: proc(
 	dir : gamedata.Direction,
 ) -> gamedata.Direction {
@@ -187,7 +195,7 @@ get_new_direction :: proc(
 	return newDirection
 }
 
-//TODO: Move
+//* Increments direction and loops it
 increment_direction :: proc(
 	dir : gamedata.Direction,
 ) -> gamedata.Direction {
@@ -197,7 +205,7 @@ increment_direction :: proc(
 	return newDirection
 }
 
-//TODO: Move
+//* Checks the surrounding pixels if they are the same color and returns
 check_pixel :: proc(
 	color : raylib.Color,
 	x, y  : i32,
@@ -206,24 +214,11 @@ check_pixel :: proc(
 
 	empty : u8 = 0
 
-	if !compare_colors(color, GetImageColor(gamedata.mapdata.provinceImage,   x, y-1)) do empty+=1
-	if !compare_colors(color, GetImageColor(gamedata.mapdata.provinceImage,   x, y+1)) do empty+=1
-	if !compare_colors(color, GetImageColor(gamedata.mapdata.provinceImage, x-1,   y)) do empty+=1
-	if !compare_colors(color, GetImageColor(gamedata.mapdata.provinceImage, x+1,   y)) do empty+=1
+	if !colors.compare_colors(color, GetImageColor(gamedata.mapdata.provinceImage,   x, y-1)) do empty+=1
+	if !colors.compare_colors(color, GetImageColor(gamedata.mapdata.provinceImage,   x, y+1)) do empty+=1
+	if !colors.compare_colors(color, GetImageColor(gamedata.mapdata.provinceImage, x-1,   y)) do empty+=1
+	if !colors.compare_colors(color, GetImageColor(gamedata.mapdata.provinceImage, x+1,   y)) do empty+=1
 
 	if empty >= 1 do return true
 	return false
-}
-
-//TODO: Move
-compare_colors :: proc(
-	col1,col2 : raylib.Color,
-) -> bool {
-	result : bool = true
-
-	if col1.r != col2.r do result = false
-	if col1.g != col2.g do result = false
-	if col1.b != col2.b do result = false
-
-	return result
 }
