@@ -25,21 +25,21 @@ init :: proc(name : string) {
 	//* Generate location strings
 	provLoc := strings.concatenate({"data/mods/", name, "/map/provincemap.png"})
 	terrLoc := strings.concatenate({"data/mods/", name, "/map/terrainmap.png"})
-	heigLoc := strings.concatenate({"data/mods/", name, "/map/heightmap.png"})
+//	heigLoc := strings.concatenate({"data/mods/", name, "/map/heightmap.png"})
 
 	//* Load images
 	mapdata.provinceImage = raylib.LoadImage(strings.clone_to_cstring(provLoc))
 	mapdata.terrainImage  = raylib.LoadImage(strings.clone_to_cstring(terrLoc))
 
-	hm := raylib.LoadImage(strings.clone_to_cstring(heigLoc))
-	width  := hm.width
-	height := hm.height
-	raylib.ImageResize(
-		&hm,
-		width / 4,
-		height / 4,
-	)
-	mapdata.heightImage = raylib.ImageCopy(hm)
+//	hm := raylib.LoadImage(strings.clone_to_cstring(heigLoc))
+//	width  := hm.width
+//	height := hm.height
+//	raylib.ImageResize(
+//		&hm,
+//		width / 4,
+//		height / 4,
+//	)
+//	mapdata.heightImage = raylib.ImageCopy(hm)
 	
 
 	//* Create Chunks
@@ -56,7 +56,7 @@ init :: proc(name : string) {
 				1, 0, 0, 0,
 				0, 1, 0, 0,
 				0, 0, 1, 0,
-				f32(o)*10, 0, f32(i)*10, 1,
+				f32(o)*10 + 5, 0, f32(i)*10 + 5, 1,
 			}
 			base = matrix_math.mat_mult(base,MAT_ROTATE)
 			base = matrix_math.mat_mult(base,MAT_SCALE)
@@ -71,17 +71,19 @@ init :: proc(name : string) {
 			raylib.UnloadImage(img)
 
 			//* Mesh
-			img = raylib.ImageCopy(mapdata.heightImage)
-			raylib.ImageCrop(
-				&img,
-				{f32(o)*62.5, f32(i)*62.5, 63, 63},
-			)
-			chunk.mesh  = raylib.GenMeshHeightmap(img, {10.17, 0.2, 10.17})
+		//	img = raylib.ImageCopy(mapdata.heightImage)
+		//	raylib.ImageCrop(
+		//		&img,
+		//		{f32(o)*62.5, f32(i)*62.5, 63, 63},
+		//	)
+		//	chunk.mesh  = raylib.GenMeshHeightmap(img, {10.17, 0.2, 10.17})
+		//	chunk.mesh  = raylib.GenMeshPlane(10.17, 10.17, 1, 1)
+			chunk.mesh  = raylib.GenMeshPlane(10, 10, 1, 1)
 			chunk.mat   = raylib.LoadMaterialDefault()
 			raylib.SetMaterialTexture(&chunk.mat, .ALBEDO, chunk.texture)
 
 			//* Free
-			raylib.UnloadImage(img)
+		//	raylib.UnloadImage(img)
 
 			//* Save
 			append(&mapdata.chunks, chunk)
@@ -119,17 +121,6 @@ init :: proc(name : string) {
 
 		//* Generate borders
 		prov.borderPoints = generate_borders(prov.color)
-	//	test := 0
-	//	for i:=0;i<len(prov.borderPoints);i+=1 {
-	//		if prov.borderPoints[i].next.pos.x < 0 do test+=1
-	//		fmt.printf(
-	//			"Positions: C(%v,%v,%v) ? P(%v,%v,%v)\n",
-	//			prov.borderPoints[i].pos.x,prov.borderPoints[i].pos.y,prov.borderPoints[i].pos.z,
-	//			prov.borderPoints[prov.borderPoints[i].idNext].pos.x,prov.borderPoints[prov.borderPoints[i].idNext].pos.y,prov.borderPoints[prov.borderPoints[i].idNext].pos.z,
-	//		//	prov.borderPoints[i].next.pos.x,prov.borderPoints[i].next.pos.y,prov.borderPoints[i].next.pos.z,
-	//		)
-	//	}
-	//	fmt.printf("%v/%v points fucked up\n",test,len(prov.borderPoints))
 		append(&mapdata.provColors, prov.color)
 		
 		mapdata.provinces[prov.color] = prov
@@ -153,7 +144,6 @@ free_data :: proc() {
 
 	raylib.UnloadImage(mapdata.provinceImage)
 	raylib.UnloadImage(mapdata.terrainImage)
-	raylib.UnloadImage(mapdata.heightImage)
 
 	delete(mapdata.chunks)
 

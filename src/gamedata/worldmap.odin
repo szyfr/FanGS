@@ -25,7 +25,6 @@ MAT_SCALE :: linalg.Matrix4x4f32 {
 MapData :: struct {
 	provinceImage : raylib.Image,
 	terrainImage  : raylib.Image,
-	heightImage   : raylib.Image,
 
 	chunks        : [dynamic]MapChunk,
 	provinces     : map[raylib.Color]Province,

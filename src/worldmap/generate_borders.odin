@@ -35,8 +35,8 @@ generate_borders :: proc(
 		if colors.compare_colors(color, col) {
 			point := Point{
 				0,
-				{f32(posX), -.35, f32(posY)},
-				{},
+				{f32(posX), 0, f32(posY)},
+				{0, 0.001, 0},
 			}
 			//* Append to array
 			append(&array, point)
@@ -53,8 +53,11 @@ generate_borders :: proc(
 		//* Create point
 		newPosition, newDirection := check_for_point(color, prev.pos, dir)
 
+		offset := pixel_offset(newDirection)
+		offset.y = 0.001
+
 		point.pos    = newPosition
-		point.off    = pixel_offset(newDirection)
+		point.off    = offset
 		point.idNext = previd
 
 	//	if dir == newDirection do continue
@@ -75,7 +78,7 @@ pixel_offset :: proc(
 	dir : gamedata.Direction,
 ) -> raylib.Vector3 {
 	newPosition : raylib.Vector3
-	mod : f32 = .025
+	mod : f32 = .0125
 
 	switch dir {
 		case .right:
@@ -122,7 +125,7 @@ check_for_point :: proc(
 		if newPosition.z > f32(gamedata.mapdata.provinceImage.height) do continue
 		
 		//* Grab color and compare
-		newColor    := GetImageColor(
+		newColor := GetImageColor(
 			gamedata.mapdata.provinceImage,
 			i32(newPosition.x), i32(newPosition.z),
 		)
