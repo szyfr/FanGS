@@ -11,6 +11,7 @@ import "gamedata"
 import "guinew"
 import "player"
 import "worldmap"
+import "worldmap_new"
 
 
 //= Main
@@ -32,8 +33,9 @@ main :: proc() {
 			raylib.BeginMode3D(gamedata.playerdata.camera)
 			raylib.DrawGrid(100, 10)
 
-			worldmap.draw_map()
-			worldmap.draw_borders()
+		//	worldmap.draw_map()
+		//	worldmap.draw_borders()
+			worldmap_new.draw_provinces()
 
 			raylib.EndMode3D()
 		}

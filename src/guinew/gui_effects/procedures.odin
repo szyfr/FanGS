@@ -5,6 +5,7 @@ package gui_effects
 import "../../gamedata"
 import "../../guinew"
 import "../../worldmap"
+import "../../worldmap_new"
 
 
 //= Procedures
@@ -24,7 +25,8 @@ start_new_game :: proc() {
 //	if !gamedata.titleScreen && gamedata.mapdata == nil do worldmap.init(gamedata.selectedMap)
 //	if !gamedata.titleScreen && gamedata.mapdata == nil do worldmap.init("anbennar")
 //	worldmap.init(gamedata.selectedMap)
-	worldmap.init("anbennar")
+//	worldmap.init("anbennar")
+	worldmap_new.init("anbennar")
 }
 
 //* Load game
