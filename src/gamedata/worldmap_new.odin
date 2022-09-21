@@ -14,6 +14,11 @@ WorldData :: struct {
 	provinceImage  : raylib.Image,
 	terrainImage   : raylib.Image,
 
+	collisionMesh  : raylib.Mesh,
+
+	mapHeight      : f32,
+	mapWidth       : f32,
+
 	provincesdata  : map[raylib.Color]ProvinceData,
 	provincescolor : [dynamic]raylib.Color,
 

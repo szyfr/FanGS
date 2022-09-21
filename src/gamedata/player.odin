@@ -13,5 +13,5 @@ PlayerData :: struct {
 	lastMousePos : raylib.Vector2,
 
 	ray : raylib.Ray,
-	currentSelection : ^Province,
+	currentSelection : ^ProvinceData,
 }

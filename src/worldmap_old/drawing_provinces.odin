@@ -1,4 +1,4 @@
-package worldmap
+package worldmap_old
 
 
 //= Imports
@@ -60,6 +60,7 @@ draw_borders :: proc() {
 				-(gamedata.mapdata.provinces[col].borderPoints[id].pos.z/25) + gamedata.mapdata.provinces[col].borderPoints[id].off.z,
 			}
 
+			rlSetLineWidth(20)
 			DrawLine3D(
 				newPosition1,
 				newPosition2,

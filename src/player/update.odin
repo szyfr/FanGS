@@ -70,16 +70,16 @@ update_player_movement :: proc() {
 	}
 
 	//* Edge contraints/looping
-	if mapdata != nil {
-		if playerdata.target.z > 0                   do playerdata.target.z = 0
-		if playerdata.target.z < f32(mapdata.height) do playerdata.target.z = f32(mapdata.height)
+	if worlddata != nil {
+		if playerdata.target.z >  0                   do playerdata.target.z =  0
+		if playerdata.target.z < -worlddata.mapHeight do playerdata.target.z = -worlddata.mapHeight
 
-		if mapdata.mapsettings.loopMap {
-			if playerdata.target.x > 0                  do playerdata.target.x = f32(mapdata.width)
-			if playerdata.target.x < f32(mapdata.width) do playerdata.target.x = 0
+		if worlddata.mapsettings.loopMap {
+			if playerdata.target.x >  0                  do playerdata.target.x = -worlddata.mapWidth
+			if playerdata.target.x < -worlddata.mapWidth do playerdata.target.x = 0
 		} else {
-			if playerdata.target.x > 0                  do playerdata.target.x = 0
-			if playerdata.target.x < f32(mapdata.width) do playerdata.target.x = f32(mapdata.width)
+			if playerdata.target.x >  0                  do playerdata.target.x = 0
+			if playerdata.target.x < -worlddata.mapWidth do playerdata.target.x = -worlddata.mapWidth
 		}
 	}
 }
@@ -105,6 +105,7 @@ update_player_camera :: proc() {
 //TODO: Improve distance calculation to reduce lag on click
 update_player_mouse :: proc() {
 	if raylib.IsMouseButtonPressed(.LEFT) && !gamedata.titleScreen {
+
 		//* Getting mouse position and testing GUI
 		position := raylib.GetMousePosition()
 		result   := guinew.test_bounds_all(position)
@@ -113,76 +114,63 @@ update_player_mouse :: proc() {
 		//* Creating ray and collision info
 		gamedata.playerdata.ray = raylib.GetMouseRay(position, gamedata.playerdata)
 		collision : raylib.RayCollision = {}
-
-		//* Casting ray
-		width := gamedata.mapdata.provinceImage.width/250
-		for i:=0;i<len(gamedata.mapdata.chunks);i+=1 {
-			//* Calculate distance to each chunk
-			distX := math.pow(gamedata.mapdata.chunks[i].transform[3,0] - gamedata.playerdata.target.x, 2)
-			distZ := math.pow(gamedata.mapdata.chunks[i].transform[3,2] - gamedata.playerdata.target.z, 2)
-			distance := math.sqrt(distX + distZ)
-
-			//* If chunk is within range, cast ray
-			if distance <= 35 * (get_zoom_percentage()+1) {
-				collision = raylib.GetRayCollisionMesh(
-					gamedata.playerdata.ray,
-					gamedata.mapdata.chunks[i].mesh,
-					gamedata.mapdata.chunks[i].transform,
-				)
-			}
-			if collision.hit do break
-
-			//* Checking left loop edges
-			if gamedata.playerdata.target.x <= -f32((width-4) * 10) {
-				mod : linalg.Matrix4x4f32 = {
-					             1, 0, 0, 0,
-					             0, 1, 0, 0,
-					             0, 0, 1, 0,
-					-f32(width*10), 0, 0, 1,
-				}
-				collision = raylib.GetRayCollisionMesh(
-					gamedata.playerdata.ray,
-					gamedata.mapdata.chunks[i].mesh,
-					matrix_math.mat_mult(gamedata.mapdata.chunks[i].transform, mod),
-				)
-			}
-			if collision.hit do break
-
-			//* Checking right loop edges
-			if gamedata.playerdata.target.x >= -40 {
-				mod : linalg.Matrix4x4f32 = {
-					            1, 0, 0, 0,
-					            0, 1, 0, 0,
-					            0, 0, 1, 0,
-					f32(width*10), 0, 0, 1,
-				}
-				collision = raylib.GetRayCollisionMesh(
-					gamedata.playerdata.ray,
-					gamedata.mapdata.chunks[i].mesh,
-					matrix_math.mat_mult(gamedata.mapdata.chunks[i].transform, mod),
-				)
-			}
-			if collision.hit do break
+		width, height := -gamedata.worlddata.mapWidth/2, -gamedata.worlddata.mapHeight/2
+		transformCenter : linalg.Matrix4x4f32 = {
+			-1, 0,  0, 0,
+			 0, 1,  0, 0,
+			 0, 0, -1, 0,
+			width, 0, height, 1,
+		}
+		transformLeft : linalg.Matrix4x4f32 = {
+			-1, 0,  0, 0,
+			 0, 1,  0, 0,
+			 0, 0, -1, 0,
+			width-gamedata.worlddata.mapWidth, 0, height, 1,
+		}
+		transformRight : linalg.Matrix4x4f32 = {
+			-1, 0,  0, 0,
+			 0, 1,  0, 0,
+			 0, 0, -1, 0,
+			width+gamedata.worlddata.mapWidth, 0, height, 1,
 		}
 
-		if collision.hit {
-			//* Calculate x position
-			posX : i32
-			if collision.point.x*25 > 0 do posX =  gamedata.mapdata.provinceImage.width - i32(collision.point.x*25)
-			else                        do posX = -i32(collision.point.x*25)%gamedata.mapdata.provinceImage.width
-			
-			//* Grab color
-			col := raylib.GetImageColor(
-				gamedata.mapdata.provinceImage,
-				posX,
-				-i32(collision.point.z*25),
+		//* Casting ray
+		collision = raylib.GetRayCollisionMesh(
+			gamedata.playerdata.ray,
+			gamedata.worlddata.collisionMesh,
+			transformCenter,
+		)
+		if !collision.hit {
+			collision = raylib.GetRayCollisionMesh(
+				gamedata.playerdata.ray,
+				gamedata.worlddata.collisionMesh,
+				transformLeft,
 			)
+			if !collision.hit {
+				collision = raylib.GetRayCollisionMesh(
+					gamedata.playerdata.ray,
+					gamedata.worlddata.collisionMesh,
+					transformRight,
+				)
+			}
+		}
 
-			//* Set selected province
-			prov, res := &gamedata.mapdata.provinces[col]
-			if res do gamedata.playerdata.currentSelection = prov
-			else   do gamedata.playerdata.currentSelection = nil
-		} else do gamedata.playerdata.currentSelection = nil
+		//* Calculate PosX
+		posX : i32
+		if collision.point.x*25 > 0 do posX =  i32(gamedata.worlddata.mapWidth*25) - i32(collision.point.x*25)
+		else                        do posX = -i32(collision.point.x*25) % i32(gamedata.worlddata.mapWidth*25)
+
+		//* Grab color
+		col := raylib.GetImageColor(
+			gamedata.worlddata.provinceImage,
+			posX,
+			-i32(collision.point.z*25),
+		)
+
+		//* Set selected province
+		prov, res := &gamedata.worlddata.provincesdata[col]
+		if res do gamedata.playerdata.currentSelection = prov
+		else   do gamedata.playerdata.currentSelection = nil
 	}
 }
 

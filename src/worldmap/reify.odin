@@ -4,105 +4,53 @@ package worldmap
 //= Imports
 import "core:fmt"
 import "core:math/linalg"
-import "core:mem"
 import "core:os"
 import "core:strings"
+
 import "vendor:raylib"
 
 import "../localization"
 import "../gamedata"
 import "../settings"
+import "../utilities/colors"
 import "../utilities/matrix_math"
 
 
 //= Procedures
-//TODO: Clean up this function
 init :: proc(name : string) {
-	using gamedata
+	using gamedata, raylib
 
-	mapdata = new(MapData)
+	gamedata.worlddata = new(WorldData)
 
 	//* Generate location strings
 	provLoc := strings.concatenate({"data/mods/", name, "/map/provincemap.png"})
 	terrLoc := strings.concatenate({"data/mods/", name, "/map/terrainmap.png"})
-//	heigLoc := strings.concatenate({"data/mods/", name, "/map/heightmap.png"})
 
 	//* Load images
-	mapdata.provinceImage = raylib.LoadImage(strings.clone_to_cstring(provLoc))
-	mapdata.terrainImage  = raylib.LoadImage(strings.clone_to_cstring(terrLoc))
-
-//	hm := raylib.LoadImage(strings.clone_to_cstring(heigLoc))
-//	width  := hm.width
-//	height := hm.height
-//	raylib.ImageResize(
-//		&hm,
-//		width / 4,
-//		height / 4,
-//	)
-//	mapdata.heightImage = raylib.ImageCopy(hm)
-	
-
-	//* Create Chunks
-	numChunksWide  := mapdata.provinceImage.width  / 250
-	numChunksTall  := mapdata.provinceImage.height / 250
-	numChunksTotal := numChunksWide * numChunksTall
-
-	for i:=0;i<int(numChunksTall);i+=1 {
-		for o:=0;o<int(numChunksWide);o+=1 {
-			chunk : MapChunk = {}
-
-			//* Transform
-			base : linalg.Matrix4x4f32 = {
-				1, 0, 0, 0,
-				0, 1, 0, 0,
-				0, 0, 1, 0,
-				f32(o)*10 + 5, 0, f32(i)*10 + 5, 1,
-			}
-			base = matrix_math.mat_mult(base,MAT_ROTATE)
-			base = matrix_math.mat_mult(base,MAT_SCALE)
-			chunk.transform = base
-
-			//* Texture
-			img   := raylib.ImageFromImage(
-				mapdata.provinceImage,
-				{f32(o*250),f32(i*250) , 250,250},
-			)
-			chunk.texture = raylib.LoadTextureFromImage(img)
-			raylib.UnloadImage(img)
-
-			//* Mesh
-		//	img = raylib.ImageCopy(mapdata.heightImage)
-		//	raylib.ImageCrop(
-		//		&img,
-		//		{f32(o)*62.5, f32(i)*62.5, 63, 63},
-		//	)
-		//	chunk.mesh  = raylib.GenMeshHeightmap(img, {10.17, 0.2, 10.17})
-		//	chunk.mesh  = raylib.GenMeshPlane(10.17, 10.17, 1, 1)
-			chunk.mesh  = raylib.GenMeshPlane(10, 10, 1, 1)
-			chunk.mat   = raylib.LoadMaterialDefault()
-			raylib.SetMaterialTexture(&chunk.mat, .ALBEDO, chunk.texture)
-
-			//* Free
-		//	raylib.UnloadImage(img)
-
-			//* Save
-			append(&mapdata.chunks, chunk)
-		}
-	}
-
-	//* Save height and width
-	mapdata.height = -(10 * numChunksTall)
-	mapdata.width  = -(10 * numChunksWide)
+	gamedata.worlddata.provinceImage = LoadImage(strings.clone_to_cstring(provLoc))
+	gamedata.worlddata.terrainImage  = LoadImage(strings.clone_to_cstring(terrLoc))
+	gamedata.worlddata.provincePixelCount = int(gamedata.worlddata.provinceImage.height * gamedata.worlddata.provinceImage.width)
 
 	//* Load Provinces
 	provDataLoc   := strings.concatenate({"data/mods/", name, "/map/provinces.bin"})
 	provData, res := os.read_entire_file(provDataLoc)
 	offset        : u32 = 0
+
+	//* General data
+	gamedata.worlddata.mapWidth  = f32(gamedata.worlddata.provinceImage.width)  / 25
+	gamedata.worlddata.mapHeight = f32(gamedata.worlddata.provinceImage.height) / 25
+
+	//* Collision mesh
+	gamedata.worlddata.collisionMesh = GenMeshPlane(
+		gamedata.worlddata.mapWidth,
+		gamedata.worlddata.mapHeight,
+		1, 1,
+	)
 	
-	colTest : raylib.Color
+	colTest : Color
 
 	for i:=0; i<len(provData)/48; i+=1 {
-		prov : Province = {}
+		prov : ProvinceData = {}
 
 		prov.localID  = u32(settings.fuse_i32(provData, offset+0))
 		prov.color    = {provData[offset+4], provData[offset+5], provData[offset+6], provData[offset+7]}
@@ -119,11 +67,53 @@ init :: proc(name : string) {
 		prov.buildings[6] = provData[offset+26]
 		prov.buildings[7] = provData[offset+27]
 
-		//* Generate borders
-		prov.borderPoints = generate_borders(prov.color)
-		append(&mapdata.provColors, prov.color)
-		
-		mapdata.provinces[prov.color] = prov
+		// TODO: Province Pops / Modifiers
+
+		//* Generate images
+		width  : int = int(gamedata.worlddata.provinceImage.width)
+		height : int = int(gamedata.worlddata.provinceImage.height)
+
+		minX, maxX : f32 = f32(width),  0
+		minY, maxY : f32 = f32(height), 0
+		for i:=0;i<gamedata.worlddata.provincePixelCount;i+=1 {
+			col := GetImageColor(
+				gamedata.worlddata.provinceImage,
+				i32(i%width), i32(i/width),
+			)
+			if colors.compare_colors(prov.color, col) {
+				if f32(i%width) < minX do minX = f32(i%width)-3
+				if f32(i%width) > maxX do maxX = f32(i%width)+3
+				if f32(i/width) < minY do minY = f32(i/width)-3
+				if f32(i/width) > maxY do maxY = f32(i/width)+3
+			}
+		}
+		mod : f32 = 25
+		prov.position    = {minX / mod, 0, minY / mod}
+		prov.width       =  maxX-minX
+		prov.height      =  maxY-minY
+		prov.centerpoint = {
+			(minX + (prov.width / 2)) / mod,
+			0,
+			(minY + (prov.height / 2)) / mod,
+		}
+
+		rect : Rectangle = {minX, minY, prov.width, prov.height}
+		prov.provImage   =  ImageFromImage(gamedata.worlddata.provinceImage, rect)
+		// TODO: Temp. Still need to remove other colors and add border
+		ImageAlphaMask(&prov.provImage, generate_alpha_mask(&prov.provImage,prov.color))
+		remove_colors(&prov.provImage, prov.color)
+		apply_borders(&prov.provImage)
+		prov.currenttx   =  LoadTextureFromImage(prov.provImage)
+		// TODO: Test to see if it needs to by scaled
+		prov.provmesh    =  GenMeshPlane(prov.width / mod, prov.height / mod, 1, 1)
+		prov.provmodel   =  LoadModelFromMesh(prov.provmesh)
+		SetMaterialTexture(&prov.provmodel.materials[0], .ALBEDO, prov.currenttx)
+
+
+
+		//* Finish up
+		gamedata.worlddata.provincesdata[prov.color] = prov
+		append(&gamedata.worlddata.provincescolor, prov.color)
 
 		offset += 48
 	}
@@ -135,20 +125,6 @@ init :: proc(name : string) {
 	mapSettingsLoc    := strings.concatenate({"data/mods/", name, "/settings.bin"})
 	mapSettings, resu := os.read_entire_file(mapSettingsLoc)
 
-	mapdata.mapsettings = new(MapSettingsData)
-	mapdata.mapsettings.loopMap = bool(mapSettings[0])
-}
-
-free_data :: proc() {
-	using gamedata
-
-	raylib.UnloadImage(mapdata.provinceImage)
-	raylib.UnloadImage(mapdata.terrainImage)
-
-	delete(mapdata.chunks)
-
-	delete(mapdata.provinces)
-
-	free(mapdata)
-	mapdata = nil
+	gamedata.worlddata.mapsettings = new(MapSettingsData)
+	gamedata.worlddata.mapsettings.loopMap = bool(mapSettings[0])
 }
