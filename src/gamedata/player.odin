@@ -12,6 +12,17 @@ PlayerData :: struct {
 	cameraSlope  : raylib.Vector3,
 	lastMousePos : raylib.Vector2,
 
-	ray : raylib.Ray,
+	ray              :  raylib.Ray,
 	currentSelection : ^ProvinceData,
+
+	curMapmode : Mapmode,
+}
+
+
+//= Enumerations
+Mapmode :: enum {
+	overworld,
+	political,
+	terrain,
+	control,
 }

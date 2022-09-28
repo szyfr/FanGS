@@ -24,7 +24,6 @@ apply_borders :: proc(
 	
 	collect_points(image)
 	collect_points(image)
-//	collect_points(image)
 }
 apply_borders_old :: proc(
 	image : ^raylib.Image,

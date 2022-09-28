@@ -22,6 +22,7 @@ update :: proc() {
 	update_player_movement()
 	update_player_camera()
 	update_player_mouse()
+	update_mapmodes()
 }
 
 //* Player movement
@@ -169,9 +170,21 @@ update_player_mouse :: proc() {
 
 		//* Set selected province
 		prov, res := &gamedata.worlddata.provincesdata[col]
+		if prov.provType == gamedata.ProvinceType.impassable do return
 		if res do gamedata.playerdata.currentSelection = prov
 		else   do gamedata.playerdata.currentSelection = nil
 	}
+}
+
+//* Mapmode keybindings
+// TODO: set keybindings in file
+update_mapmodes :: proc() {
+	using raylib, gamedata
+
+	if IsKeyDown(KeyboardKey.ONE)   do playerdata.curMapmode = .overworld
+	if IsKeyDown(KeyboardKey.TWO)   do playerdata.curMapmode = .political
+	if IsKeyDown(KeyboardKey.THREE) do playerdata.curMapmode = .terrain
+	if IsKeyDown(KeyboardKey.FOUR)  do playerdata.curMapmode = .control
 }
 
 get_zoom_percentage :: proc() -> f32 {

@@ -18,6 +18,25 @@ draw_provinces :: proc() {
 		col  := worlddata.provincescolor[i]
 		disp := worlddata.provincescolor[i]
 
+		#partial switch playerdata.curMapmode {
+			case .overworld:
+			case .political:
+			case .terrain:
+				#partial switch worlddata.provincesdata[col].terrain {
+					// TODO: plains, swamp, other holds, caves
+					case .NULL:       disp = raylib.RAYWHITE
+					case .deep_road:  disp = {200, 146,  79, 255}
+					case .dwarf_hold: disp = {150, 104, 225, 255}
+				}
+			case .control:
+				#partial switch worlddata.provincesdata[col].provType {
+					case .base:         disp = { 33, 227, 101, 255}
+					case .controllable: disp = {225, 223,  21, 255}
+					case .water:        disp = { 27, 136, 239, 255}
+					case .impassable:   disp = {158, 185, 198, 255}
+				}
+		}
+
 		if &worlddata.provincesdata[worlddata.provincescolor[i]] == playerdata.currentSelection {
 			disp = RED
 		}

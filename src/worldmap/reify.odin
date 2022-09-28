@@ -81,12 +81,14 @@ init :: proc(name : string) {
 				i32(i%width), i32(i/width),
 			)
 			if colors.compare_colors(prov.color, col) {
-				if f32(i%width) < minX do minX = f32(i%width)-3
-				if f32(i%width) > maxX do maxX = f32(i%width)+3
-				if f32(i/width) < minY do minY = f32(i/width)-3
-				if f32(i/width) > maxY do maxY = f32(i/width)+3
+				if f32(i%width) < minX do minX = f32(i%width)
+				if f32(i%width) > maxX do maxX = f32(i%width)
+				if f32(i/width) < minY do minY = f32(i/width)
+				if f32(i/width) > maxY do maxY = f32(i/width)
 			}
 		}
+		maxX += 1
+		maxY += 1
 		mod : f32 = 25
 		prov.position    = {minX / mod, 0, minY / mod}
 		prov.width       =  maxX-minX
