@@ -20,16 +20,16 @@ import "../utilities/matrix_math"
 init :: proc(name : string) {
 	using gamedata, raylib
 
-	gamedata.worlddata = new(WorldData)
+	worlddata = new(WorldData)
 
 	//* Generate location strings
 	provLoc := strings.concatenate({"data/mods/", name, "/map/provincemap.png"})
 	terrLoc := strings.concatenate({"data/mods/", name, "/map/terrainmap.png"})
 
 	//* Load images
-	gamedata.worlddata.provinceImage = LoadImage(strings.clone_to_cstring(provLoc))
-	gamedata.worlddata.terrainImage  = LoadImage(strings.clone_to_cstring(terrLoc))
-	gamedata.worlddata.provincePixelCount = int(gamedata.worlddata.provinceImage.height * gamedata.worlddata.provinceImage.width)
+	worlddata.provinceImage = LoadImage(strings.clone_to_cstring(provLoc))
+	worlddata.terrainImage  = LoadImage(strings.clone_to_cstring(terrLoc))
+	worlddata.provincePixelCount = int(worlddata.provinceImage.height * worlddata.provinceImage.width)
 
 	//* Load Provinces
 	provDataLoc   := strings.concatenate({"data/mods/", name, "/map/provinces.bin"})
@@ -37,13 +37,20 @@ init :: proc(name : string) {
 	offset        : u32 = 0
 
 	//* General data
-	gamedata.worlddata.mapWidth  = f32(gamedata.worlddata.provinceImage.width)  / 25
-	gamedata.worlddata.mapHeight = f32(gamedata.worlddata.provinceImage.height) / 25
+	worlddata.mapWidth  = f32(worlddata.provinceImage.width)  / 25
+	worlddata.mapHeight = f32(worlddata.provinceImage.height) / 25
+
+	//* Time
+	// TODO: load date from settings
+	worlddata.date = {1444,11,11}
+	worlddata.timeSpeed = 1
+	worlddata.timeDelay = 0
+	worlddata.timePause = true
 
 	//* Collision mesh
-	gamedata.worlddata.collisionMesh = GenMeshPlane(
-		gamedata.worlddata.mapWidth,
-		gamedata.worlddata.mapHeight,
+	worlddata.collisionMesh = GenMeshPlane(
+		worlddata.mapWidth,
+		worlddata.mapHeight,
 		1, 1,
 	)
 	

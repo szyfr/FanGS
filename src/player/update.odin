@@ -23,6 +23,7 @@ update :: proc() {
 	update_player_camera()
 	update_player_mouse()
 	update_mapmodes()
+	update_date_controls()
 }
 
 //* Player movement
@@ -185,6 +186,33 @@ update_mapmodes :: proc() {
 	if IsKeyDown(KeyboardKey.TWO)   do playerdata.curMapmode = .political
 	if IsKeyDown(KeyboardKey.THREE) do playerdata.curMapmode = .terrain
 	if IsKeyDown(KeyboardKey.FOUR)  do playerdata.curMapmode = .control
+}
+
+//* Date keybindings
+// TODO: set keybindings in file
+update_date_controls :: proc() {
+	using raylib, gamedata
+
+	if IsKeyPressed(KeyboardKey.SPACE) {
+		if worlddata.timePause do worlddata.timePause = false
+		else                   do worlddata.timePause = true
+	}
+	if IsKeyPressed(KeyboardKey.EQUAL) && (IsKeyDown(KeyboardKey.LEFT_SHIFT) || IsKeyDown(KeyboardKey.RIGHT_SHIFT)) {
+		switch worlddata.timeSpeed {
+			case 1: worlddata.timeSpeed = 0
+			case 2: worlddata.timeSpeed = 1
+			case 3: worlddata.timeSpeed = 2
+			case 4: worlddata.timeSpeed = 3
+		}
+	}
+	if IsKeyPressed(KeyboardKey.MINUS) {
+		switch worlddata.timeSpeed {
+			case 0: worlddata.timeSpeed = 1
+			case 1: worlddata.timeSpeed = 2
+			case 2: worlddata.timeSpeed = 3
+			case 3: worlddata.timeSpeed = 4
+		}
+	}
 }
 
 get_zoom_percentage :: proc() -> f32 {

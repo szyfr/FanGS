@@ -25,6 +25,11 @@ WorldData :: struct {
 	provincePixelCount : int,
 
 	mapsettings    : ^MapSettingsData,
+
+	date      : Date,
+	timeSpeed : uint,
+	timeDelay : uint,
+	timePause : bool,
 }
 
 ProvinceData :: struct {
@@ -55,4 +60,10 @@ ProvinceData :: struct {
 	buildings : [8]u8,
 
 	modifierList : [dynamic]ProvinceModifier,
+}
+
+Date :: struct {
+	year  : uint,
+	month : uint,
+	day   : uint,
 }
