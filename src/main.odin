@@ -30,7 +30,7 @@ main :: proc() {
 
 		if !gamedata.titleScreen {
 			raylib.BeginMode3D(gamedata.playerdata.camera)
-		//	raylib.DrawGrid(100, 10)
+			raylib.DrawGrid(100, 10)
 
 			worldmap.draw_provinces()
 

@@ -78,50 +78,133 @@ free_data :: proc() {
 }
 
 load_mod :: proc(mod : string) {
+	using gamedata
+
 	directory : string
 	rawData   : []u8
 	success   : bool
+	offset    : int = 0
+	count     : int = 0
 
+	append(&localizationdata.baseLocalIndex,      u32(len(localizationdata.baseLocalArray)))
+	append(&localizationdata.terrainLocalIndex,   u32(len(localizationdata.terrainLocalArray)))
+	append(&localizationdata.provincesLocalIndex, u32(len(localizationdata.provincesLocalArray)))
+
+	//* Base
 	#partial switch gamedata.settingsdata.language {
 		case .english:
 			directory = strings.concatenate({"data/mods/", mod, "/localization/english.bin"})
-			if os.is_file(directory) {
-				rawData, success = os.read_entire_file_from_filename(directory)
-			}
+			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .spanish:
 			directory = strings.concatenate({"data/mods/", mod, "/localization/spanish.bin"})
-			if os.is_file(directory) {
-				rawData, success = os.read_entire_file_from_filename(directory)
-			}
+			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .german:
 			directory = strings.concatenate({"data/mods/", mod, "/localization/german.bin"})
-			if os.is_file(directory) {
-				rawData, success = os.read_entire_file_from_filename(directory)
-			}
+			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .french:
 			directory = strings.concatenate({"data/mods/", mod, "/localization/french.bin"})
-			if os.is_file(directory) {
-				rawData, success = os.read_entire_file_from_filename(directory)
-			}
+			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 	}
-
-	offset : int = 0
-
-	count := count_strings(rawData)
-
+	offset = 0
+	count  = count_strings(rawData)
 	for i:=0;i<count-1;i+=1 {
 		local : cstring
 		local, offset = copy_string(rawData, &offset)
 
-		append(&gamedata.localizationdata.worldLocalization, local)
+		append(&gamedata.localizationdata.baseLocalArray, local)
 	}
+	delete(rawData)
 
-	builder : strings.Builder
-	str     := fmt.sbprintf(
-		&builder,
-		"[LOG]: Loaded %v strings from mod:(%s).",
-		count,
-		mod,
-	)
-	logging.add_to_log(str)
+	//* Terrain
+	#partial switch gamedata.settingsdata.language {
+		case .english:
+			directory = strings.concatenate({"data/mods/", mod, "/localization/terrain/english.bin"})
+			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
+		case .spanish:
+			directory = strings.concatenate({"data/mods/", mod, "/localization/terrain/spanish.bin"})
+			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
+		case .german:
+			directory = strings.concatenate({"data/mods/", mod, "/localization/terrain/german.bin"})
+			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
+		case .french:
+			directory = strings.concatenate({"data/mods/", mod, "/localization/terrain/french.bin"})
+			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
+	}
+	offset = 0
+	count  = count_strings(rawData)
+	for i:=0;i<count-1;i+=1 {
+		local : cstring
+		local, offset = copy_string(rawData, &offset)
+
+		append(&gamedata.localizationdata.terrainLocalArray, local)
+	}
+	delete(rawData)
+
+	//* Terrain
+	#partial switch gamedata.settingsdata.language {
+		case .english:
+			directory = strings.concatenate({"data/mods/", mod, "/localization/provinces/english.bin"})
+			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
+		case .spanish:
+			directory = strings.concatenate({"data/mods/", mod, "/localization/provinces/spanish.bin"})
+			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
+		case .german:
+			directory = strings.concatenate({"data/mods/", mod, "/localization/provinces/german.bin"})
+			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
+		case .french:
+			directory = strings.concatenate({"data/mods/", mod, "/localization/provinces/french.bin"})
+			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
+	}
+	offset = 0
+	count  = count_strings(rawData)
+	for i:=0;i<count-1;i+=1 {
+		local : cstring
+		local, offset = copy_string(rawData, &offset)
+
+		append(&gamedata.localizationdata.provincesLocalArray, local)
+	}
+	delete(rawData)
+
+//	#partial switch gamedata.settingsdata.language {
+//		case .english:
+//			directory = strings.concatenate({"data/mods/", mod, "/localization/english.bin"})
+//			if os.is_file(directory) {
+//				rawData, success = os.read_entire_file_from_filename(directory)
+//			}
+//		case .spanish:
+//			directory = strings.concatenate({"data/mods/", mod, "/localization/spanish.bin"})
+//			if os.is_file(directory) {
+//				rawData, success = os.read_entire_file_from_filename(directory)
+//			}
+//		case .german:
+//			directory = strings.concatenate({"data/mods/", mod, "/localization/german.bin"})
+//			if os.is_file(directory) {
+//				rawData, success = os.read_entire_file_from_filename(directory)
+//			}
+//		case .french:
+//			directory = strings.concatenate({"data/mods/", mod, "/localization/french.bin"})
+//			if os.is_file(directory) {
+//				rawData, success = os.read_entire_file_from_filename(directory)
+//			}
+//	}
+//
+//	offset : int = 0
+//
+//	count := count_strings(rawData)
+//
+//	for i:=0;i<count-1;i+=1 {
+//		local : cstring
+//		local, offset = copy_string(rawData, &offset)
+//
+//		append(&gamedata.localizationdata.worldLocalization, local)
+//	}
+//
+//	builder : strings.Builder
+//	str     := fmt.sbprintf(
+//		&builder,
+//		"[LOG]: Loaded %v strings from mod:(%s).",
+//		count,
+//		mod,
+//	)
+//	logging.add_to_log(str)
 }

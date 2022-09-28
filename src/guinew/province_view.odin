@@ -24,7 +24,7 @@ draw_province_view :: proc() {
 	//* Province name
 	raylib.DrawTextEx(
 		gamedata.graphicsdata.font,
-		gamedata.localizationdata.worldLocalization[int(gamedata.playerdata.currentSelection.localID)+9],
+		gamedata.localizationdata.provincesLocalArray[int(gamedata.playerdata.currentSelection.localID)],
 		{topLeft.x + 20, topLeft.y + 20},
 		gamedata.settingsdata.fontSize, 0,
 		raylib.BLACK,
@@ -32,7 +32,7 @@ draw_province_view :: proc() {
 	//* Terrain and type
 	raylib.DrawTextEx(
 		gamedata.graphicsdata.font,
-		gamedata.localizationdata.worldLocalization[int(gamedata.playerdata.currentSelection.terrain)+29],
+		gamedata.localizationdata.terrainLocalArray[int(gamedata.playerdata.currentSelection.terrain)],
 		{topLeft.x + 40, topLeft.y + 40},
 		gamedata.settingsdata.fontSize, 0,
 		raylib.BLACK,
@@ -61,3 +61,9 @@ draw_province_view :: proc() {
 	)
 	delete(str)
 }
+
+/*
+	Old
+	int(gamedata.playerdata.currentSelection.localID)+9
+	int(gamedata.playerdata.currentSelection.terrain)+29
+*/

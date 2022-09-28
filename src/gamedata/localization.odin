@@ -15,5 +15,13 @@ LocalizationData :: struct {
 
 	provTypes : [5]cstring,
 
+	//* Mod
 	worldLocalization : [dynamic]cstring,
+
+	baseLocalIndex      : [dynamic]u32,
+	baseLocalArray      : [dynamic]cstring,
+	terrainLocalIndex   : [dynamic]u32,
+	terrainLocalArray   : [dynamic]cstring,
+	provincesLocalIndex : [dynamic]u32,
+	provincesLocalArray : [dynamic]cstring,
 }
