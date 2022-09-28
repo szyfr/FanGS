@@ -61,19 +61,19 @@ main :: proc() {
 			if gamedata.worlddata.timePause do raylib.DrawTexture(gamedata.graphicsdata.box, 0, 0, raylib.RED)
 			switch gamedata.worlddata.timeSpeed {
 				case 0:
-					raylib.DrawTexture(gamedata.graphicsdata.box, 0, 100, raylib.BLACK)
+					raylib.DrawTexture(gamedata.graphicsdata.box, 0, 50, raylib.BLACK)
 					fallthrough
 				case 1:
-					raylib.DrawTexture(gamedata.graphicsdata.box, 0, 200, raylib.BLACK)
+					raylib.DrawTexture(gamedata.graphicsdata.box, 0, 100, raylib.BLACK)
 					fallthrough
 				case 2:
-					raylib.DrawTexture(gamedata.graphicsdata.box, 0, 300, raylib.BLACK)
+					raylib.DrawTexture(gamedata.graphicsdata.box, 0, 150, raylib.BLACK)
 					fallthrough
 				case 3:
-					raylib.DrawTexture(gamedata.graphicsdata.box, 0, 400, raylib.BLACK)
+					raylib.DrawTexture(gamedata.graphicsdata.box, 0, 200, raylib.BLACK)
 					fallthrough
 				case 4:
-					raylib.DrawTexture(gamedata.graphicsdata.box, 0, 500, raylib.BLACK)
+					raylib.DrawTexture(gamedata.graphicsdata.box, 0, 250, raylib.BLACK)
 			}
 		}
 

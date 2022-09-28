@@ -13,15 +13,12 @@ update :: proc() {
 	using gamedata
 
 	if !worlddata.timePause && (worlddata.timeDelay == 0 || worlddata.timeSpeed == 0) {
+		//TODO: Tune this
 		switch worlddata.timeSpeed {
-			case 1:
-				worlddata.timeDelay = 2000
-			case 2:
-				worlddata.timeDelay = 4000
-			case 3:
-				worlddata.timeDelay = 6000
-			case 4:
-				worlddata.timeDelay = 8000
+			case 1: worlddata.timeDelay = 5
+			case 2: worlddata.timeDelay = 20
+			case 3: worlddata.timeDelay = 35
+			case 4: worlddata.timeDelay = 50
 		}
 		worlddata.date.day += 1
 	}
