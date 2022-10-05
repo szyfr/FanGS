@@ -171,9 +171,10 @@ update_player_mouse :: proc() {
 
 		//* Set selected province
 		prov, res := &gamedata.worlddata.provincesdata[col]
-		if prov.provType == gamedata.ProvinceType.impassable do return
-		if res do gamedata.playerdata.currentSelection = prov
-		else   do gamedata.playerdata.currentSelection = nil
+		if res {
+			if prov.provType == gamedata.ProvinceType.impassable do return
+			gamedata.playerdata.currentSelection = prov
+		} else do gamedata.playerdata.currentSelection = nil
 	}
 }
 

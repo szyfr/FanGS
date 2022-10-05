@@ -13,7 +13,8 @@ init :: proc() {
 
 	graphicsdata = new(gamedata.GraphicsData)
 
-	graphicsdata.box = raylib.LoadTexture("data/gfx/textbox.png")
+	graphicsdata.box       = raylib.LoadTexture("data/gfx/textbox.png")
+	graphicsdata.box_small = raylib.LoadTexture("data/gfx/textbox_small.png")
 	graphicsdata.box_nPatch.source =  raylib.Rectangle{0,0,48,48}
 	graphicsdata.box_nPatch.left   =  16
 	graphicsdata.box_nPatch.top    =  16

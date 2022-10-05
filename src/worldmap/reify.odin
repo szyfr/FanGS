@@ -42,7 +42,7 @@ init :: proc(name : string) {
 
 	//* Time
 	// TODO: load date from settings
-	worlddata.date = {1444,11,11}
+	worlddata.date = {1444, 11, 11}
 	worlddata.timeSpeed = 1
 	worlddata.timeDelay = 0
 	worlddata.timePause = true
