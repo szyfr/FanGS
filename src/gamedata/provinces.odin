@@ -25,10 +25,6 @@ Province :: struct {
 	modifierList : [dynamic]ProvinceModifier,
 }
 
-Population :: struct {
-	//etc
-}
-
 ProvinceModifier :: struct {
 	//etc
 }

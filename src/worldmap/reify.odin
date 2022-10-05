@@ -36,6 +36,10 @@ init :: proc(name : string) {
 	provData, res := os.read_entire_file(provDataLoc)
 	offset        : u32 = 0
 
+	//* Load Pops
+	popDataLoc   := strings.concatenate({"data/mods/", name, "/map/pops.bin"})
+	popData, res := os.read_entire_file(popDataLoc)
+
 	//* General data
 	worlddata.mapWidth  = f32(worlddata.provinceImage.width)  / 25
 	worlddata.mapHeight = f32(worlddata.provinceImage.height) / 25
