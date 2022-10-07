@@ -3,27 +3,21 @@ package gamedata
 
 //= Imports
 
-//= Constants
-
-
 //= Structures
 SettingsData :: struct {
-	windowWidth:   i32,
-	windowHeight:  i32,
+	windowWidth   : i32,
+	windowHeight  : i32,
 
-	targetFPS:     i32,
+	targetFPS     : i32,
+	language      : Languages,
+	edgeScrolling : bool,
+	fontSize      : f32,
 
-	language:      Languages,
-
-	edgeScrolling: bool,
-
-	fontSize:      f32,
-
-	keybindings:   map[string]Keybinding,
+	keybindings   : map[string]Keybinding,
 }
 Keybinding :: struct {
-	origin: u8,
-	key:    u32,
+	origin : u8,
+	key    : u32,
 }
 
 

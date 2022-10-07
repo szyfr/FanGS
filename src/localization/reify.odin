@@ -10,45 +10,56 @@ import "../logging"
 import "../gamedata"
 
 
+//= Constants
+LANG_ENG_LOCATION :: "data/localization/english.bin"
+LANG_SPA_LOCATION :: "data/localization/spanish.bin"
+LANG_GER_LOCATION :: "data/localization/german.bin"
+LANG_FRA_LOCATION :: "data/localization/french.bin"
+
+LOCAL_LOAD_FAILURE :: "[Major]: Failed to load localization."
+LOCAL_LOAD_SUCCESS :: "[LOG]: Loaded core localization."
+
+MISSING_STRING :: "missing_string"
+
+MODS_LOCATION_START   :: "data/mods/"
+MODS_LOCATION_END_ENG :: "/localization/english.bin"
+MODS_LOCATION_END_SPA :: "/localization/spanish.bin"
+MODS_LOCATION_END_GER :: "/localization/german.bin"
+MODS_LOCATION_END_FRA :: "/localization/french.bin"
+
+
 //= Procedures
-// TODO: Fix the language bullshit i've done here
-init :: proc(lang : i32) {
+
+//* Initialization
+init :: proc(lang : gamedata.Languages) {
 	using gamedata
 
+	//* Initialize structures and variables
 	localizationdata = new(gamedata.LocalizationData)
 	rawData : []u8
 	success : bool
 
-	switch lang {
-		case 0:
-			if os.is_file("data/localization/english.bin") {
-				rawData, success = os.read_entire_file_from_filename("data/localization/english.bin")
-			}
-			break
-		case 1:
-			if os.is_file("data/localization/spanish.bin") {
-				rawData, success = os.read_entire_file_from_filename("data/localization/spanish.bin")
-			}
-			break;
-		case 2:
-			if os.is_file("data/localization/german.bin") {
-				rawData, success = os.read_entire_file_from_filename("data/localization/german.bin")
-			}
-			break
-		case 3:
-			if os.is_file("data/localization/french.bin") {
-				rawData, success = os.read_entire_file_from_filename("data/localization/french.bin")
-			}
-			break
+	//* Load specified language file
+	#partial switch lang {
+		case .english:
+			if os.is_file(LANG_ENG_LOCATION) do rawData, success = os.read_entire_file_from_filename(LANG_ENG_LOCATION)
+		case .spanish:
+			if os.is_file(LANG_SPA_LOCATION) do rawData, success = os.read_entire_file_from_filename(LANG_SPA_LOCATION)
+		case .german:
+			if os.is_file(LANG_GER_LOCATION) do rawData, success = os.read_entire_file_from_filename(LANG_GER_LOCATION)
+		case .french:
+			if os.is_file(LANG_FRA_LOCATION) do rawData, success = os.read_entire_file_from_filename(LANG_FRA_LOCATION)
 	}
 
+	//* Make sure file loaded
 	if rawData == nil || success == false {
-		logging.add_to_log("[Major]: Failed to load localization.")
+		logging.add_to_log(LOCAL_LOAD_FAILURE)
 		return
-	}
+	} else do logging.add_to_log(LOCAL_LOAD_SUCCESS)
 
 	offset : int = 0
 
+	//* Load strings
 	localizationdata.newGame,      offset = copy_string(rawData, &offset)
 	localizationdata.loadGame,     offset = copy_string(rawData, &offset)
 	localizationdata.mods,         offset = copy_string(rawData, &offset)
@@ -62,19 +73,23 @@ init :: proc(lang : i32) {
 	localizationdata.provTypes[3], offset = copy_string(rawData, &offset)
 	localizationdata.provTypes[4], offset = copy_string(rawData, &offset)
 
-	localizationdata.missing          = "missing_string"
+	localizationdata.missing = MISSING_STRING
 }
-free_data :: proc() {
-	delete(gamedata.localizationdata.newGame)
-	delete(gamedata.localizationdata.loadGame)
-	delete(gamedata.localizationdata.mods)
-	delete(gamedata.localizationdata.options)
-	delete(gamedata.localizationdata.quit)
-	delete(gamedata.localizationdata.title)
-//	delete(gamedata.localizationdata.missing)
-	delete(gamedata.localizationdata.worldLocalization)
 
-	free(gamedata.localizationdata)
+//* Free
+free_data :: proc() {
+	using gamedata
+
+	delete(localizationdata.newGame)
+	delete(localizationdata.loadGame)
+	delete(localizationdata.mods)
+	delete(localizationdata.options)
+	delete(localizationdata.quit)
+	delete(localizationdata.title)
+//	delete(localizationdata.missing) //! For some reason this hits a breakpoint.
+	delete(localizationdata.worldLocalization)
+
+	free(localizationdata)
 }
 
 load_mod :: proc(mod : string) {
@@ -94,16 +109,16 @@ load_mod :: proc(mod : string) {
 	//* Base
 	#partial switch gamedata.settingsdata.language {
 		case .english:
-			directory = strings.concatenate({"data/mods/", mod, "/localization/english.bin"})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_ENG})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .spanish:
-			directory = strings.concatenate({"data/mods/", mod, "/localization/spanish.bin"})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_SPA})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .german:
-			directory = strings.concatenate({"data/mods/", mod, "/localization/german.bin"})
+			directory = strings.concatenate({MODS_LOCATION_START, mod,MODS_LOCATION_END_GER})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .french:
-			directory = strings.concatenate({"data/mods/", mod, "/localization/french.bin"})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_FRA})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 	}
 	offset = 0
@@ -112,24 +127,24 @@ load_mod :: proc(mod : string) {
 		local : cstring
 		local, offset = copy_string(rawData, &offset)
 
-		append(&gamedata.localizationdata.baseLocalArray, local)
+		append(&localizationdata.baseLocalArray, local)
 	}
 	total += count
 	delete(rawData)
 
 	//* Terrain
-	#partial switch gamedata.settingsdata.language {
+	#partial switch settingsdata.language {
 		case .english:
-			directory = strings.concatenate({"data/mods/", mod, "/localization/terrain/english.bin"})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_ENG})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .spanish:
-			directory = strings.concatenate({"data/mods/", mod, "/localization/terrain/spanish.bin"})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_SPA})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .german:
-			directory = strings.concatenate({"data/mods/", mod, "/localization/terrain/german.bin"})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_GER})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .french:
-			directory = strings.concatenate({"data/mods/", mod, "/localization/terrain/french.bin"})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_FRA})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 	}
 	offset = 0
@@ -138,24 +153,24 @@ load_mod :: proc(mod : string) {
 		local : cstring
 		local, offset = copy_string(rawData, &offset)
 
-		append(&gamedata.localizationdata.terrainLocalArray, local)
+		append(&localizationdata.terrainLocalArray, local)
 	}
 	total += count
 	delete(rawData)
 
 	//* Terrain
-	#partial switch gamedata.settingsdata.language {
+	#partial switch settingsdata.language {
 		case .english:
-			directory = strings.concatenate({"data/mods/", mod, "/localization/provinces/english.bin"})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_ENG})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .spanish:
-			directory = strings.concatenate({"data/mods/", mod, "/localization/provinces/spanish.bin"})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_SPA})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .german:
-			directory = strings.concatenate({"data/mods/", mod, "/localization/provinces/german.bin"})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_GER})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .french:
-			directory = strings.concatenate({"data/mods/", mod, "/localization/provinces/french.bin"})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_FRA})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 	}
 	offset = 0
@@ -169,6 +184,7 @@ load_mod :: proc(mod : string) {
 	total += count
 	delete(rawData)
 
+	//* Logging
 	builder : strings.Builder
 	str     := fmt.sbprintf(
 		&builder,
@@ -177,4 +193,5 @@ load_mod :: proc(mod : string) {
 		mod,
 	)
 	logging.add_to_log(str)
+	delete(str)
 }

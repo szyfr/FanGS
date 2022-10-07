@@ -30,7 +30,7 @@ main_initialization :: proc() {
 	settings.init()
 
 	//* Init Localization
-	localization.init(i32(settingsdata.language))
+	localization.init(settingsdata.language)
 
 	//* Init Player
 	player.init()

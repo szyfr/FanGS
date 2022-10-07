@@ -28,7 +28,7 @@ create_log :: proc() {
 	//* Generate string and convert to byte array
 	fmt.sbprintf(
 		&strBuffer,
-		"Creation Date: %i/%i/%i | %v:%v:%v | UTC",
+		"Creation Date: %2i/%2i/%2i | %2v:%2v:%2v | UTC",
 		time.year(now), time.month(now), time.day(now),
 		hour, min, sec,
 	)
@@ -57,7 +57,7 @@ add_to_log :: proc(input : string) {
 	hour, min, sec := time.clock_from_time(time.now())
 
 	//* Concatanate strings
-	fmt.sbprintf(&builder, "[%i:%i:%i]", hour, min, sec)
+	fmt.sbprintf(&builder, "[%2v:%2v:%2v]", hour, min, sec)
 	bytes.buffer_write_string(&buffer, strings.to_string(builder))
 	bytes.buffer_write_string(&buffer, input)
 
