@@ -28,47 +28,30 @@ update :: proc() {
 
 //* Player movement
 update_player_movement :: proc() {
-	using gamedata
+	using gamedata, settings, raylib
 
 	mod := ((playerdata.zoom) / 5) / 100
 
-	// Key Movement
-	// TODO: check origin of each key
-	if raylib.IsKeyDown(raylib.KeyboardKey(settingsdata.keybindings["up"].key)) {
-		playerdata.target.z   += MOVE_SPD * (mod+3)
-	}
-	if raylib.IsKeyDown(raylib.KeyboardKey(settingsdata.keybindings["down"].key)) {
-		playerdata.target.z   -= MOVE_SPD * (mod+3)
-	}
-	if raylib.IsKeyDown(raylib.KeyboardKey(settingsdata.keybindings["left"].key)) {
-		playerdata.target.x   += MOVE_SPD * (mod+3)
-	}
-	if raylib.IsKeyDown(raylib.KeyboardKey(settingsdata.keybindings["right"].key)) {
-		playerdata.target.x   -= MOVE_SPD * (mod+3)
-	}
+	//* Key Movement
+	if is_key_down("up")    do playerdata.target.z   += MOVE_SPD * (mod+3)
+	if is_key_down("down")  do playerdata.target.z   -= MOVE_SPD * (mod+3)
+	if is_key_down("left")  do playerdata.target.x   += MOVE_SPD * (mod+3)
+	if is_key_down("right") do playerdata.target.x   -= MOVE_SPD * (mod+3)
 
-	// Drag movement
-	if raylib.IsMouseButtonDown(.MIDDLE) {
+	//* Drag movement
+	if is_key_down("grabmap") {
 		mouseDelta: raylib.Vector2 = raylib.GetMouseDelta()
 
 		playerdata.target.x += mouseDelta.x * mod
 		playerdata.target.z += mouseDelta.y * mod
 	}
 
-	// Edge scrolling
+	//* Edge scrolling
 	if settingsdata.edgeScrolling {
-		if raylib.GetMouseX() <= EDGE_DIS {
-			playerdata.target.x   += MOVE_SPD
-		}
-		if raylib.GetMouseX() >= settingsdata.windowWidth - EDGE_DIS {
-			playerdata.target.x   -= MOVE_SPD
-		}
-		if raylib.GetMouseY() <= EDGE_DIS {
-			playerdata.target.z   += MOVE_SPD
-		}
-		if raylib.GetMouseY() >= settingsdata.windowHeight - EDGE_DIS {
-			playerdata.target.z   -= MOVE_SPD
-		}
+		if raylib.GetMouseX() <= EDGE_DIS do playerdata.target.x   += MOVE_SPD
+		if raylib.GetMouseY() <= EDGE_DIS do playerdata.target.z   += MOVE_SPD
+		if raylib.GetMouseX() >= settingsdata.windowWidth - EDGE_DIS  do playerdata.target.x   -= MOVE_SPD
+		if raylib.GetMouseY() >= settingsdata.windowHeight - EDGE_DIS do playerdata.target.z   -= MOVE_SPD
 	}
 
 	//* Edge contraints/looping
@@ -90,7 +73,8 @@ update_player_movement :: proc() {
 update_player_camera :: proc() {
 	using gamedata
 
-	// Zoom
+	//* Zoom
+	// TODO: set keybindings in file
 	playerdata.zoom -= raylib.GetMouseWheelMove() * 2
 	if playerdata.zoom > ZOOM_MAX do playerdata.zoom = ZOOM_MAX;
 	if playerdata.zoom < ZOOM_MIN do playerdata.zoom = ZOOM_MIN;
@@ -104,7 +88,6 @@ update_player_camera :: proc() {
 }
 
 //* Map interaction
-//TODO: Improve distance calculation to reduce lag on click
 update_player_mouse :: proc() {
 	if raylib.IsMouseButtonPressed(.LEFT) && !gamedata.titleScreen {
 
@@ -174,7 +157,6 @@ update_player_mouse :: proc() {
 		if res {
 			if prov.provType == gamedata.ProvinceType.impassable do return
 			gamedata.playerdata.currentSelection = prov
-			fmt.printf("%p\n",prov)
 		} else do gamedata.playerdata.currentSelection = nil
 	}
 }
@@ -215,11 +197,4 @@ update_date_controls :: proc() {
 			case 3: worlddata.timeSpeed = 4
 		}
 	}
-}
-
-get_zoom_percentage :: proc() -> f32 {
-	max  := ZOOM_MAX - ZOOM_MIN
-	zoom := gamedata.playerdata.zoom - ZOOM_MIN
-
-	return zoom / max
 }

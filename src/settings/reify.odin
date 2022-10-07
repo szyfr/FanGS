@@ -23,6 +23,7 @@ KEY_MOVEUP         :: 0x30
 KEY_MOVEDOWN       :: 0x34
 KEY_MOVELEFT       :: 0x38
 KEY_MOVERIGHT      :: 0x3C
+KEY_GRABMAP        :: 0x40
 
 
 //= Procedures
@@ -51,10 +52,11 @@ init :: proc() {
 	}
 
 	//* Grab keybindings
-	settingsdata.keybindings["up"]    = fuse_keybind(rawData, KEY_MOVEUP)
-	settingsdata.keybindings["down"]  = fuse_keybind(rawData, KEY_MOVEDOWN)
-	settingsdata.keybindings["left"]  = fuse_keybind(rawData, KEY_MOVELEFT)
-	settingsdata.keybindings["right"] = fuse_keybind(rawData, KEY_MOVERIGHT)
+	settingsdata.keybindings["up"]      = fuse_keybind(rawData, KEY_MOVEUP)
+	settingsdata.keybindings["down"]    = fuse_keybind(rawData, KEY_MOVEDOWN)
+	settingsdata.keybindings["left"]    = fuse_keybind(rawData, KEY_MOVELEFT)
+	settingsdata.keybindings["right"]   = fuse_keybind(rawData, KEY_MOVERIGHT)
+	settingsdata.keybindings["grabmap"] = fuse_keybind(rawData, KEY_GRABMAP)
 
 	//* Logging
 	logging.add_to_log("[LOG]: Loaded program settings.")

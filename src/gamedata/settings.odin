@@ -17,6 +17,10 @@ SettingsData :: struct {
 }
 Keybinding :: struct {
 	origin : u8,
+		// 0 - Keyboard
+		// 1 - Mouse
+		// 2 - Gamepad Button
+		// 3 - Gamepad Axis
 	key    : u32,
 }
 

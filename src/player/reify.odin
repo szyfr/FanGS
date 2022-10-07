@@ -16,9 +16,11 @@ EDGE_DIS : i32 :  50
 
 //= Procedures
 
+//* Initialize
 init :: proc() {
 	using gamedata
 
+	//* Init player data
 	playerdata = new(gamedata.PlayerData)
 
 	playerdata.position    = {0, 5, -1}
@@ -30,6 +32,8 @@ init :: proc() {
 	playerdata.zoom        = 5
 	playerdata.cameraSlope = {0, 1, -5}
 }
+
+//* Free
 free_data :: proc() {
 	free(gamedata.playerdata)
 }

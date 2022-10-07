@@ -9,7 +9,7 @@ import "../gamedata"
 
 
 //= Constants
-SETTINGS_FILE_SIZE   :: 0x0040
+SETTINGS_FILE_SIZE   :: 0x0044 
 SETTING_SAVE_FAILURE :: "[MAJOR]: Failed to save settings."
 SETTING_SAVE_SUCCESS :: "[LOG]: Saved settings."
 
@@ -43,7 +43,8 @@ create_settings :: proc() {
 	unfuse_keybind(Keybinding{0,265}, array[KEY_MOVEUP    : KEY_MOVEDOWN])
 	unfuse_keybind(Keybinding{0,264}, array[KEY_MOVEDOWN  : KEY_MOVELEFT])
 	unfuse_keybind(Keybinding{0,263}, array[KEY_MOVELEFT  : KEY_MOVERIGHT])
-	unfuse_keybind(Keybinding{0,262}, array[KEY_MOVERIGHT : 0x40])
+	unfuse_keybind(Keybinding{0,262}, array[KEY_MOVERIGHT : KEY_GRABMAP])
+	unfuse_keybind(Keybinding{1,  2}, array[KEY_GRABMAP   : 0x44])
 	// TODO: Finish adding all keybindings
 
 	//* Save settings
@@ -72,10 +73,11 @@ save_setting :: proc() {
 		case 16: array[FONT_SIZE_PTR] = 1
 		case 20: array[FONT_SIZE_PTR] = 2
 	}
-	unfuse_keybind(settingsdata.keybindings["up"],    array[KEY_MOVEUP    : KEY_MOVEDOWN])
-	unfuse_keybind(settingsdata.keybindings["down"],  array[KEY_MOVEDOWN  : KEY_MOVELEFT])
-	unfuse_keybind(settingsdata.keybindings["left"],  array[KEY_MOVELEFT  : KEY_MOVERIGHT])
-	unfuse_keybind(settingsdata.keybindings["right"], array[KEY_MOVERIGHT : 0x40])
+	unfuse_keybind(settingsdata.keybindings["up"],      array[KEY_MOVEUP    : KEY_MOVEDOWN])
+	unfuse_keybind(settingsdata.keybindings["down"],    array[KEY_MOVEDOWN  : KEY_MOVELEFT])
+	unfuse_keybind(settingsdata.keybindings["left"],    array[KEY_MOVELEFT  : KEY_MOVERIGHT])
+	unfuse_keybind(settingsdata.keybindings["right"],   array[KEY_MOVERIGHT : KEY_GRABMAP])
+	unfuse_keybind(settingsdata.keybindings["grabmap"], array[KEY_GRABMAP   : 0x44])
 
 	//* Save file
 	res := os.write_entire_file(SETTINGS_LOCATION, array[:])
