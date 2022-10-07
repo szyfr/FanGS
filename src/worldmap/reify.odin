@@ -37,8 +37,8 @@ init :: proc(name : string) {
 	offset        : u32 = 0
 
 	//* Load Pops
-	popDataLoc   := strings.concatenate({"data/mods/", name, "/map/pops.bin"})
-	popData, res := os.read_entire_file(popDataLoc)
+	popDataLoc    := strings.concatenate({"data/mods/", name, "/map/pops.bin"})
+	popData, res2 := os.read_entire_file(popDataLoc)
 
 	//* General data
 	worlddata.mapWidth  = f32(worlddata.provinceImage.width)  / 25

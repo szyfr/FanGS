@@ -4,7 +4,6 @@ package gamedata
 //= Imports
 
 //= Constants
-SETTINGS_FILE_SIZE :: 0x0040
 
 
 //= Structures

@@ -1,57 +1,12 @@
 package main
 
 
-//= Import
-import "core:time"
-import "core:fmt"
-import "core:strings"
-import "vendor:raylib"
-
-import "gamedata"
-import "guinew"
-import "player"
-import "worldmap"
-import "date"
-
-
 //= Main
 main :: proc() {
 
 	main_initialization()
 	defer main_free()
 
-	for !raylib.WindowShouldClose() && !gamedata.abort {
-		//* Logic
-		player.update()
-		guinew.update()
-		if !gamedata.titleScreen {
-			date.update()
-		}
+	main_loop()
 
-		//* Graphics
-		raylib.BeginDrawing()
-		raylib.ClearBackground(raylib.RAYWHITE)
-
-		if !gamedata.titleScreen {
-			raylib.BeginMode3D(gamedata.playerdata.camera)
-			raylib.DrawGrid(100, 10)
-
-			worldmap.draw_provinces()
-
-			raylib.EndMode3D()
-		}
-		guinew.draw()
-
-		//* Province view GUI
-		if gamedata.playerdata.currentSelection != nil do guinew.draw_province_view()
-
-		raylib.DrawFPS(0,0)
-
-		if !gamedata.titleScreen {
-			
-			guinew.draw_date_ui()
-		}
-
-		raylib.EndDrawing()
-	}
 }

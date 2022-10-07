@@ -17,20 +17,26 @@ import "settings"
 import "worldmap"
 
 
-
 //= Procedures
 
 //* Reification
 main_initialization :: proc() {
 	using gamedata
 
-	raylib.SetTraceLogLevel(.NONE)
+	//* Create log
+	logging.create_log()
 
+	//* Init Settings
 	settings.init()
+
+	//* Init Localization
 	localization.init(i32(settingsdata.language))
+
+	//* Init Player
 	player.init()
 
-
+	//* Init Raylib
+	raylib.SetTraceLogLevel(.NONE)
 	raylib.InitWindow(
 		settingsdata.windowWidth,
 		settingsdata.windowHeight,
@@ -38,13 +44,11 @@ main_initialization :: proc() {
 	)
 	raylib.SetTargetFPS(settingsdata.targetFPS)
 	
+	//* Init Graphics
 	graphics.init()
-	logging.create_log()
 
+	//* Generate titlescreen
 	gui_presets.create_titlescreen()
-
-
-	logging.add_to_log("Testing")
 }
 main_free :: proc() {
 
@@ -55,7 +59,5 @@ main_free :: proc() {
 	graphics.free_data()
 	player.free_data()
 	guinew.remove_all()
-
-//	logging.print_log()
 
 }
