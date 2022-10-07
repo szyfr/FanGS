@@ -12,7 +12,6 @@ graphicsdata     : ^GraphicsData
 
 playerdata       : ^PlayerData
 
-mapdata          : ^MapData
 worlddata        : ^WorldData
 
 elements         : map[int]rawptr

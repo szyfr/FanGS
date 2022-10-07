@@ -22,10 +22,20 @@ LOCAL_LOAD_SUCCESS :: "[LOG]: Loaded core localization."
 MISSING_STRING :: "missing_string"
 
 MODS_LOCATION_START   :: "data/mods/"
-MODS_LOCATION_END_ENG :: "/localization/english.bin"
-MODS_LOCATION_END_SPA :: "/localization/spanish.bin"
-MODS_LOCATION_END_GER :: "/localization/german.bin"
-MODS_LOCATION_END_FRA :: "/localization/french.bin"
+MODS_LOCATION_DEF_ENG :: "/localization/english.bin"
+MODS_LOCATION_DEF_SPA :: "/localization/spanish.bin"
+MODS_LOCATION_DEF_GER :: "/localization/german.bin"
+MODS_LOCATION_DEF_FRA :: "/localization/french.bin"
+
+MODS_LOCATION_TER_ENG :: "/localization/terrain/english.bin"
+MODS_LOCATION_TER_SPA :: "/localization/terrain/spanish.bin"
+MODS_LOCATION_TER_GER :: "/localization/terrain/german.bin"
+MODS_LOCATION_TER_FRA :: "/localization/terrain/french.bin"
+
+MODS_LOCATION_PRO_ENG :: "/localization/provinces/english.bin"
+MODS_LOCATION_PRO_SPA :: "/localization/provinces/spanish.bin"
+MODS_LOCATION_PRO_GER :: "/localization/provinces/german.bin"
+MODS_LOCATION_PRO_FRA :: "/localization/provinces/french.bin"
 
 
 //= Procedures
@@ -109,16 +119,16 @@ load_mod :: proc(mod : string) {
 	//* Base
 	#partial switch gamedata.settingsdata.language {
 		case .english:
-			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_ENG})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_DEF_ENG})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .spanish:
-			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_SPA})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_DEF_SPA})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .german:
-			directory = strings.concatenate({MODS_LOCATION_START, mod,MODS_LOCATION_END_GER})
+			directory = strings.concatenate({MODS_LOCATION_START, mod,MODS_LOCATION_DEF_GER})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .french:
-			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_FRA})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_DEF_FRA})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 	}
 	offset = 0
@@ -135,16 +145,16 @@ load_mod :: proc(mod : string) {
 	//* Terrain
 	#partial switch settingsdata.language {
 		case .english:
-			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_ENG})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_TER_ENG})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .spanish:
-			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_SPA})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_TER_SPA})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .german:
-			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_GER})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_TER_GER})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .french:
-			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_FRA})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_TER_FRA})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 	}
 	offset = 0
@@ -161,16 +171,16 @@ load_mod :: proc(mod : string) {
 	//* Terrain
 	#partial switch settingsdata.language {
 		case .english:
-			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_ENG})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_PRO_ENG})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .spanish:
-			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_SPA})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_PRO_SPA})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .german:
-			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_GER})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_PRO_GER})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 		case .french:
-			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_END_FRA})
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_PRO_FRA})
 			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
 	}
 	offset = 0

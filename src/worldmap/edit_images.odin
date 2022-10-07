@@ -348,10 +348,10 @@ check_pixel :: proc(
 
 	empty : u8 = 0
 
-	if !colors.compare_colors(color, GetImageColor(gamedata.mapdata.provinceImage,   x, y-1)) do empty+=1
-	if !colors.compare_colors(color, GetImageColor(gamedata.mapdata.provinceImage,   x, y+1)) do empty+=1
-	if !colors.compare_colors(color, GetImageColor(gamedata.mapdata.provinceImage, x-1,   y)) do empty+=1
-	if !colors.compare_colors(color, GetImageColor(gamedata.mapdata.provinceImage, x+1,   y)) do empty+=1
+	if !colors.compare_colors(color, GetImageColor(worlddata.provinceImage,   x, y-1)) do empty+=1
+	if !colors.compare_colors(color, GetImageColor(worlddata.provinceImage,   x, y+1)) do empty+=1
+	if !colors.compare_colors(color, GetImageColor(worlddata.provinceImage, x-1,   y)) do empty+=1
+	if !colors.compare_colors(color, GetImageColor(worlddata.provinceImage, x+1,   y)) do empty+=1
 
 	if empty >= 1 do return true
 	return false

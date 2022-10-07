@@ -174,6 +174,7 @@ update_player_mouse :: proc() {
 		if res {
 			if prov.provType == gamedata.ProvinceType.impassable do return
 			gamedata.playerdata.currentSelection = prov
+			fmt.printf("%p\n",prov)
 		} else do gamedata.playerdata.currentSelection = nil
 	}
 }

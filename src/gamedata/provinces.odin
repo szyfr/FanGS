@@ -12,8 +12,6 @@ Province :: struct {
 	terrain  : Terrain,
 	provType : ProvinceType,
 
-	borderPoints : [dynamic]Point,
-
 	maxInfrastructure : i16,
 	curInfrastructure : i16,
 

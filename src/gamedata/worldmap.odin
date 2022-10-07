@@ -3,45 +3,69 @@ package gamedata
 
 //= Imports
 import "core:math/linalg"
+
 import "vendor:raylib"
 
 
 //= Constants
-MAT_ROTATE :: linalg.Matrix4x4f32 {
-	-1, 0,  0, 0,
-	 0, 1,  0, 0,
-	 0, 0, -1, 0,
-	 0, 0,  0, 1,
-}
-MAT_SCALE :: linalg.Matrix4x4f32 {
-	 1, 0, 0, 0,
-	 0, 5, 0, 0,
-	 0, 0, 1, 0,
-	 0, 0, 0, 1,
-}
 
+//= Structures
+WorldData :: struct {
+	provinceImage  : raylib.Image,
+	terrainImage   : raylib.Image,
 
-//= Structure
-MapData :: struct {
-	provinceImage : raylib.Image,
-	terrainImage  : raylib.Image,
+	collisionMesh  : raylib.Mesh,
 
-	chunks        : [dynamic]MapChunk,
-	provinces     : map[raylib.Color]Province,
-	provColors    : [dynamic]raylib.Color,
+	mapHeight      : f32,
+	mapWidth       : f32,
 
-	height        : i32,
-	width         : i32,
+	provincesdata  : map[raylib.Color]ProvinceData,
+	provincescolor : [dynamic]raylib.Color,
 
-	mapsettings   : ^MapSettingsData,
+	provincePixelCount : int,
+
+	mapsettings    : ^MapSettingsData,
+
+	date      : Date,
+	timeSpeed : uint,
+	timeDelay : uint,
+	timePause : bool,
 }
 
-MapChunk :: struct {
-	transform : linalg.Matrix4x4f32,
+ProvinceData :: struct {
+	//* Image
+	provmesh  : raylib.Mesh,
+	provmodel : raylib.Model,
 
-	mesh    : raylib.Mesh,
-	mat     : raylib.Material,
-	texture : raylib.Texture,
+	provImage : raylib.Image,
+	currenttx : raylib.Texture,
+
+	position      : raylib.Vector3,
+	centerpoint   : raylib.Vector3,
+	height, width : f32,
+
+	//* Data
+	localID  : u32,
+	color    : raylib.Color,
+
+	terrain  : Terrain,
+	provType : ProvinceType,
+
+	maxInfrastructure : i16,
+	curInfrastructure : i16,
+
+	popList   : [dynamic]Population,
+
+	// TODO: make enum?
+	buildings : [8]u8,
+
+	modifierList : [dynamic]ProvinceModifier,
+}
+
+Date :: struct {
+	year  : uint,
+	month : uint,
+	day   : uint,
 }
 
 Point :: struct {
