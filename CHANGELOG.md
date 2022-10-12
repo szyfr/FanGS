@@ -1,8 +1,9 @@
 
 # Changelog
 
-## 0.01_0 "Foundation" - 21/6/29 -> ??/??/??
-[Unreleased] Streams - 21
+
+## 0.02_0 "Governance" - ??/??/?? -> ??/??/??
+[Unreleased] Streams - 0
 ### Added
 - 
 ### Removed
@@ -11,3 +12,8 @@
 - 
 ### Bugs
 - 
+
+
+## 0.01_0 "Foundation" - 21/06/29 -> ??/??/??
+[Unreleased] Streams - 21
+Baseline version
