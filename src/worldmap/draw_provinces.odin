@@ -55,7 +55,9 @@ draw_provinces :: proc() {
 					case  2: disp = {192, 192, 192, 255} //orc       // gray
 					case  3: disp = { 51, 184,  54, 255} //orc       // green
 					case  4: disp = {174, 122,  74, 255} //orc       // brown
-					case  5: disp = {174, 122,  74, 255} //goblin    // cave
+					case  5: disp = {104, 217, 118, 255} //goblin    // cave
+					case  6: disp = {171, 228, 172, 255} //halforc
+					case  7: disp = {242, 234, 172, 255} //halfelf
 				}
 			case .religion:
 				switch worlddata.provincesdata[col].avePop.religion {

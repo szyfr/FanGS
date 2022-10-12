@@ -2,6 +2,8 @@ package date
 
 
 //= Imports
+import "core:fmt"
+
 import "vendor:raylib"
 
 import "../gamedata"
@@ -49,6 +51,12 @@ increment_date :: proc() {
 			gamedata.worlddata.date.month  = 1
 		} else do gamedata.worlddata.date.month += 1
 		gamedata.worlddata.date.day = 1
+
 		//! Monthly game logic
+	//	fmt.printf("Update\n")
+		for i:=0;i<len(gamedata.worlddata.provincescolor);i+=1 {
+			col := gamedata.worlddata.provincescolor[i]
+			worldmap.grow_province(&gamedata.worlddata.provincesdata[col])
+		}
 	}
 }
