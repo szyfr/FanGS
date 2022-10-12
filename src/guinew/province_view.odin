@@ -20,6 +20,7 @@ draw_province_view :: proc() {
 		{0,0}, 0,
 		raylib.RAYWHITE,
 	)
+
 	//* DrawTextEx(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint)
 	//* Province name
 	raylib.DrawTextEx(
@@ -29,6 +30,7 @@ draw_province_view :: proc() {
 		gamedata.settingsdata.fontSize, 0,
 		raylib.BLACK,
 	)
+
 	//* Terrain and type
 	raylib.DrawTextEx(
 		gamedata.graphicsdata.font,
@@ -44,8 +46,9 @@ draw_province_view :: proc() {
 		gamedata.settingsdata.fontSize, 0,
 		raylib.BLACK,
 	)
+
 	//* Infrastructure
-	builder : strings.Builder
+	builder : strings.Builder = strings.Builder{buf=make([dynamic]byte, 0, 200)}
 	str     := fmt.sbprintf(
 		&builder,
 		"%v / %v",
@@ -59,6 +62,27 @@ draw_province_view :: proc() {
 		gamedata.settingsdata.fontSize, 0,
 		raylib.BLACK,
 	)
+	clear(&builder.buf)
+
+	//* Populations
+	if gamedata.playerdata.currentSelection.provType == .base {
+		str = fmt.sbprintf(
+			&builder,
+			"%v | %v - %v - %v\n",
+			gamedata.playerdata.currentSelection.avePop.pop,
+			gamedata.playerdata.currentSelection.avePop.ancestry,
+			gamedata.playerdata.currentSelection.avePop.culture,
+			gamedata.playerdata.currentSelection.avePop.religion,
+		)
+		raylib.DrawTextEx(
+			gamedata.graphicsdata.font,
+			strings.clone_to_cstring(str),
+			{topLeft.x + 20, topLeft.y + 120},
+			gamedata.settingsdata.fontSize, 0,
+			raylib.BLACK,
+		)
+	}
+	
 	delete(str)
 }
 

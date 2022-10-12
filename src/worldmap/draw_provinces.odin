@@ -35,6 +35,35 @@ draw_provinces :: proc() {
 					case .water:        disp = { 27, 136, 239, 255}
 					case .impassable:   disp = {158, 185, 198, 255}
 				}
+			case .population:
+			case .ancestry:
+				switch worlddata.provincesdata[col].avePop.ancestry {
+					case  0: disp = raylib.RAYWHITE      //null,
+					case  1: disp = {192, 192, 192, 255} //human,
+					case  2: disp = { 51, 184,  54, 255} //orc,
+					case  3: disp = {171, 228, 172, 255} //half_orc,
+					case  4: disp = {211, 189,  33, 255} //elf,
+					case  5: disp = {242, 234, 172, 255} //half_elf,
+					case  6: disp = {174, 122,  74, 255} //dwarf,
+					case 14: disp = { 63, 228,  54, 255} //goblin,
+					case 15: disp = {248,  35,  35, 255} //kobold,
+				}
+			case .culture:
+				switch worlddata.provincesdata[col].avePop.culture {
+					case  0: disp = raylib.RAYWHITE      //null,
+					case  1: disp = { 59,  59,  59, 255} //orc       // black
+					case  2: disp = {192, 192, 192, 255} //orc       // gray
+					case  3: disp = { 51, 184,  54, 255} //orc       // green
+					case  4: disp = {174, 122,  74, 255} //orc       // brown
+					case  5: disp = {174, 122,  74, 255} //goblin    // cave
+				}
+			case .religion:
+				switch worlddata.provincesdata[col].avePop.religion {
+					case  0: disp = raylib.RAYWHITE      //null,
+					case  1: disp = {192, 192, 192, 255} //orc       // great dookan
+					case  2: disp = {131, 131, 131, 255} //orc       // old dookan
+					case  3: disp = {104, 217, 118, 255} //goblin    // shamanism
+				}
 		}
 
 		if &worlddata.provincesdata[worlddata.provincescolor[i]] == playerdata.currentSelection {

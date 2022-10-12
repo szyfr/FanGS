@@ -55,6 +55,7 @@ ProvinceData :: struct {
 	curInfrastructure : i16,
 
 	popList   : [dynamic]Population,
+	avePop    : Population,
 
 	// TODO: make enum?
 	buildings : [8]u8,

@@ -78,7 +78,32 @@ init :: proc(name : string) {
 		prov.buildings[6] = provData[offset+26]
 		prov.buildings[7] = provData[offset+27]
 
-		// TODO: Province Pops / Modifiers
+		//* Populations
+		popPtr := settings.fuse_i32(provData, offset+28)
+
+		if int(popPtr) != -1 {
+			popCount := settings.fuse_i32(popData, u32(popPtr))
+			popPtr += 8
+
+			for i:=0;i<int(popCount);i+=1 {
+				pop : Population = {
+					u32(settings.fuse_i32(popData, u32(popPtr))),
+					popData[popPtr+4],
+					popData[popPtr+5],
+					popData[popPtr+6],
+					0,
+				}
+				popPtr += 8
+				append(&prov.popList, pop)
+			}
+
+			prov.avePop = province_pop_data(prov)
+
+			fmt.printf("%v: %v\n",prov.localID,prov.avePop)
+		}
+		
+
+		// TODO: Province Modifiers
 
 		//* Generate images
 		width  : int = int(gamedata.worlddata.provinceImage.width)
@@ -112,7 +137,6 @@ init :: proc(name : string) {
 
 		rect : Rectangle = {minX, minY, prov.width, prov.height}
 		prov.provImage   =  ImageFromImage(gamedata.worlddata.provinceImage, rect)
-		// TODO: Temp. Still need to remove other colors and add border
 		ImageAlphaMask(&prov.provImage, generate_alpha_mask(&prov.provImage,prov.color))
 		remove_colors(&prov.provImage, prov.color)
 		apply_borders(&prov.provImage)

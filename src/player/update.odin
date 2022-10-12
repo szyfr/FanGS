@@ -170,6 +170,10 @@ update_mapmodes :: proc() {
 	if IsKeyDown(KeyboardKey.TWO)   do playerdata.curMapmode = .political
 	if IsKeyDown(KeyboardKey.THREE) do playerdata.curMapmode = .terrain
 	if IsKeyDown(KeyboardKey.FOUR)  do playerdata.curMapmode = .control
+	if IsKeyDown(KeyboardKey.FIVE)  do playerdata.curMapmode = .population
+	if IsKeyDown(KeyboardKey.SIX)   do playerdata.curMapmode = .ancestry
+	if IsKeyDown(KeyboardKey.SEVEN) do playerdata.curMapmode = .culture
+	if IsKeyDown(KeyboardKey.EIGHT) do playerdata.curMapmode = .religion
 }
 
 //* Date keybindings

@@ -25,4 +25,8 @@ Mapmode :: enum {
 	political,
 	terrain,
 	control,
+	population,
+	ancestry,
+	culture,
+	religion,
 }
