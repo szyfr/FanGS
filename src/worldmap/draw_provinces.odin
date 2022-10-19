@@ -21,6 +21,9 @@ draw_provinces :: proc() {
 		#partial switch playerdata.curMapmode {
 			case .overworld:
 			case .political:
+				if worlddata.provincesdata[col].owner == nil do disp = raylib.RAYWHITE
+				else do disp = worlddata.provincesdata[col].owner.color
+				// TODO: if prov is impassable get surrounding
 			case .terrain:
 				#partial switch worlddata.provincesdata[col].terrain {
 					// TODO: plains, swamp, other holds, caves

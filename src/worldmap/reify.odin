@@ -11,6 +11,7 @@ import "vendor:raylib"
 
 import "../localization"
 import "../gamedata"
+import "../nation"
 import "../settings"
 import "../utilities/colors"
 import "../utilities/matrix_math"
@@ -146,9 +147,7 @@ init :: proc(name : string) {
 		prov.provmodel   =  LoadModelFromMesh(prov.provmesh)
 		SetMaterialTexture(&prov.provmodel.materials[0], .ALBEDO, prov.currenttx)
 
-
-
-		//* Finish up
+		//* Finish up provinces
 		gamedata.worlddata.provincesdata[prov.color] = prov
 		append(&gamedata.worlddata.provincescolor, prov.color)
 
@@ -164,4 +163,38 @@ init :: proc(name : string) {
 
 	gamedata.worlddata.mapsettings = new(MapSettingsData)
 	gamedata.worlddata.mapsettings.loopMap = bool(mapSettings[0])
+
+	//* Load Nations
+	nationsdataLoc      := strings.concatenate({"data/mods/", name, "/map/nations.bin"})
+	nationsdata, result := os.read_entire_file(nationsdataLoc)
+
+	offset = 1
+	for i:=0;i<int(nationsdata[0]);i+=1 {
+		nation : gamedata.NationData = {}
+
+		nation.localID = settings.fuse_i32(nationsdata, offset)
+		nation.name    = &localizationdata.nationsLocalArray[nation.localID]
+		fmt.printf("%v\n",nation.name)
+		nation.color   = {
+			nationsdata[offset+4],
+			nationsdata[offset+5],
+			nationsdata[offset+6],
+			nationsdata[offset+7],
+		}
+
+		offset += 9
+		runs := int(nationsdata[offset-1])
+		for u:=0;u<runs;u+=1 {
+			col : raylib.Color = {
+				nationsdata[offset+0],
+				nationsdata[offset+1],
+				nationsdata[offset+2],
+				nationsdata[offset+3],
+			}
+			append(&nation.ownedProvinces, col)
+			offset += 4
+		}
+		append(&worlddata.nationsdata, nation)
+	}
+	nation.set_all_owned_provinces()
 }

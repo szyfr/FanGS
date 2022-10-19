@@ -24,4 +24,6 @@ LocalizationData :: struct {
 	terrainLocalArray   : [dynamic]cstring,
 	provincesLocalIndex : [dynamic]u32,
 	provincesLocalArray : [dynamic]cstring,
+	nationsLocalIndex   : [dynamic]u32,
+	nationsLocalArray   : [dynamic]cstring,
 }

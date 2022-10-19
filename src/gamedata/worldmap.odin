@@ -22,6 +22,8 @@ WorldData :: struct {
 	provincesdata  : map[raylib.Color]ProvinceData,
 	provincescolor : [dynamic]raylib.Color,
 
+	nationsdata    : [dynamic]NationData,
+
 	provincePixelCount : int,
 
 	mapsettings    : ^MapSettingsData,
@@ -61,6 +63,8 @@ ProvinceData :: struct {
 	buildings : [8]u8,
 
 	modifierList : [dynamic]ProvinceModifier,
+
+	owner : ^NationData,
 }
 
 Date :: struct {

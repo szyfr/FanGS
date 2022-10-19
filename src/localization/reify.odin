@@ -37,6 +37,11 @@ MODS_LOCATION_PRO_SPA :: "/localization/provinces/spanish.bin"
 MODS_LOCATION_PRO_GER :: "/localization/provinces/german.bin"
 MODS_LOCATION_PRO_FRA :: "/localization/provinces/french.bin"
 
+MODS_LOCATION_NAT_ENG :: "/localization/nations/english.bin"
+MODS_LOCATION_NAT_SPA :: "/localization/nations/spanish.bin"
+MODS_LOCATION_NAT_GER :: "/localization/nations/german.bin"
+MODS_LOCATION_NAT_FRA :: "/localization/nations/french.bin"
+
 
 //= Procedures
 
@@ -168,7 +173,7 @@ load_mod :: proc(mod : string) {
 	total += count
 	delete(rawData)
 
-	//* Terrain
+	//* Provinces
 	#partial switch settingsdata.language {
 		case .english:
 			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_PRO_ENG})
@@ -190,6 +195,33 @@ load_mod :: proc(mod : string) {
 		local, offset = copy_string(rawData, &offset)
 
 		append(&gamedata.localizationdata.provincesLocalArray, local)
+	}
+	total += count
+	delete(rawData)
+
+	//* Nations
+	#partial switch settingsdata.language {
+		case .english:
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_NAT_ENG})
+			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
+		case .spanish:
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_NAT_SPA})
+			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
+		case .german:
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_NAT_GER})
+			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
+		case .french:
+			directory = strings.concatenate({MODS_LOCATION_START, mod, MODS_LOCATION_NAT_FRA})
+			if os.is_file(directory) do rawData, success = os.read_entire_file_from_filename(directory)
+	}
+	offset = 0
+	count  = count_strings(rawData)
+	for i:=0;i<count-1;i+=1 {
+		local : cstring
+		local, offset = copy_string(rawData, &offset)
+			fmt.printf("%v\n",local)
+
+		append(&gamedata.localizationdata.nationsLocalArray, local)
 	}
 	total += count
 	delete(rawData)
