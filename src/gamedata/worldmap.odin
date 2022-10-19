@@ -41,6 +41,7 @@ ProvinceData :: struct {
 
 	provImage : raylib.Image,
 	currenttx : raylib.Texture,
+	nametx    : raylib.Texture,
 
 	position      : raylib.Vector3,
 	centerpoint   : raylib.Vector3,

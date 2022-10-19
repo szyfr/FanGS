@@ -11,7 +11,7 @@ import "vendor:raylib"
 
 import "../localization"
 import "../gamedata"
-import "../nation"
+import "../nations"
 import "../settings"
 import "../utilities/colors"
 import "../utilities/matrix_math"
@@ -44,6 +44,9 @@ init :: proc(name : string) {
 	//* General data
 	worlddata.mapWidth  = f32(worlddata.provinceImage.width)  / 25
 	worlddata.mapHeight = f32(worlddata.provinceImage.height) / 25
+
+	//* Load localization
+	localization.load_mod(name)
 
 	//* Time
 	// TODO: load date from settings
@@ -146,6 +149,15 @@ init :: proc(name : string) {
 		prov.provmesh    =  GenMeshPlane(prov.width / mod, prov.height / mod, 1, 1)
 		prov.provmodel   =  LoadModelFromMesh(prov.provmesh)
 		SetMaterialTexture(&prov.provmodel.materials[0], .ALBEDO, prov.currenttx)
+		if prov.provType != .impassable {
+			img := ImageTextEx(
+				graphicsdata.font,
+				localizationdata.provincesLocalArray[prov.localID],
+				20, 1,
+				BLACK,
+			)
+			prov.nametx      =  LoadTextureFromImage(img)
+		}
 
 		//* Finish up provinces
 		gamedata.worlddata.provincesdata[prov.color] = prov
@@ -153,9 +165,6 @@ init :: proc(name : string) {
 
 		offset += 48
 	}
-
-	//* Load localization
-	localization.load_mod(name)
 
 	//* Load settings
 	mapSettingsLoc    := strings.concatenate({"data/mods/", name, "/settings.bin"})
@@ -174,7 +183,6 @@ init :: proc(name : string) {
 
 		nation.localID = settings.fuse_i32(nationsdata, offset)
 		nation.name    = &localizationdata.nationsLocalArray[nation.localID]
-		fmt.printf("%v\n",nation.name)
 		nation.color   = {
 			nationsdata[offset+4],
 			nationsdata[offset+5],
@@ -194,7 +202,17 @@ init :: proc(name : string) {
 			append(&nation.ownedProvinces, col)
 			offset += 4
 		}
+
+		img := ImageTextEx(
+			graphicsdata.font,
+			localizationdata.nationsLocalArray[nation.localID],
+			20, 1,
+			BLACK,
+		)
+		nation.nametx =  LoadTextureFromImage(img)
+
+		nations.calculate_center(&nation)
 		append(&worlddata.nationsdata, nation)
 	}
-	nation.set_all_owned_provinces()
+	nations.set_all_owned_provinces()
 }

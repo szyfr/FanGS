@@ -7,13 +7,6 @@ import "vendor:raylib"
 import "../gamedata"
 
 
-//= Constants
-MOVE_SPD : f32 :   0.05
-ZOOM_MAX : f32 :  40
-ZOOM_MIN : f32 :   5
-EDGE_DIS : i32 :  50
-
-
 //= Procedures
 
 //* Initialize

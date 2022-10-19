@@ -1,4 +1,4 @@
-package nation
+package nations
 
 
 //= Imports

@@ -70,10 +70,7 @@ draw_provinces :: proc() {
 					case  3: disp = {104, 217, 118, 255} //goblin    // shamanism
 				}
 		}
-
-		if &worlddata.provincesdata[worlddata.provincescolor[i]] == playerdata.currentSelection {
-			disp = RED
-		}
+		if &worlddata.provincesdata[col] == playerdata.currentSelection do disp = RED
 
 		//* Draw center
 		DrawModelEx(
@@ -87,6 +84,28 @@ draw_provinces :: proc() {
 			{1, 1, 1},
 			disp,
 		)
+		if playerdata.zoom <= 8 {
+			//* Province names
+			DrawBillboardPro(
+				playerdata,
+				gamedata.worlddata.provincesdata[col].nametx,
+				{
+					0, 0,
+					f32(gamedata.worlddata.provincesdata[col].nametx.width),
+					f32(gamedata.worlddata.provincesdata[col].nametx.height),
+				},
+				{
+					-gamedata.worlddata.provincesdata[col].centerpoint.x,
+					-gamedata.worlddata.provincesdata[col].centerpoint.y,
+					-gamedata.worlddata.provincesdata[col].centerpoint.z,
+				},
+				{0,0,1},
+				{1,1},
+				{0,0},
+				1,
+				BLACK,
+			)
+		}
 
 		//* Draw left
 		if gamedata.worlddata.provincesdata[col].centerpoint.x > worlddata.mapWidth - 100 {
@@ -117,8 +136,31 @@ draw_provinces :: proc() {
 				disp,
 			)
 		}
-		
-	//	fmt.printf("%v\n",-gamedata.worlddata.provincesdata[col].centerpoint)
+	}
+
+	if playerdata.zoom > 8 {
+		for i:=0;i<len(gamedata.worlddata.nationsdata);i+=1 {
+			//* Nation names
+			DrawBillboardPro(
+				playerdata,
+				gamedata.worlddata.nationsdata[i].nametx,
+				{
+					0, 0,
+					f32(gamedata.worlddata.nationsdata[i].nametx.width),
+					f32(gamedata.worlddata.nationsdata[i].nametx.height),
+				},
+				{
+					-gamedata.worlddata.nationsdata[i].centerpoint.x,
+					-gamedata.worlddata.nationsdata[i].centerpoint.y,
+					-gamedata.worlddata.nationsdata[i].centerpoint.z,
+				},
+				{0,0,1},
+				{3.5,3.5},
+				{0,0},
+				1,
+				BLACK,
+			)
+		}
 	}
 
 	rlEnableDepthTest()

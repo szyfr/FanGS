@@ -219,7 +219,6 @@ load_mod :: proc(mod : string) {
 	for i:=0;i<count-1;i+=1 {
 		local : cstring
 		local, offset = copy_string(rawData, &offset)
-			fmt.printf("%v\n",local)
 
 		append(&gamedata.localizationdata.nationsLocalArray, local)
 	}
