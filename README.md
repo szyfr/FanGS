@@ -14,8 +14,6 @@ As the game is currently being built from the ground up, work on a custom world 
 Name is not final, and subject to change when either I come up with something better, or someone else gives me it.
 
 ## Resources
-[TODO](TODO.md)
-
 [Changelog](CHANGELOG.md)
 
 ---
