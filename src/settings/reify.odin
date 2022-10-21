@@ -24,6 +24,21 @@ KEY_MOVEDOWN       :: 0x34
 KEY_MOVELEFT       :: 0x38
 KEY_MOVERIGHT      :: 0x3C
 KEY_GRABMAP        :: 0x40
+KEY_ZOOMPOS        :: 0x44
+KEY_ZOOMNEG        :: 0x48
+
+KEY_DATE_PAUSE     :: 0x4C
+KEY_DATE_FAST      :: 0x50
+KEY_DATE_SLOW      :: 0x54
+
+KEY_MM_OVERWORLD   :: 0x58
+KEY_MM_POLITICAL   :: 0x5C
+KEY_MM_TERRAIN     :: 0x60
+KEY_MM_CONTROL     :: 0x64
+KEY_MM_POPULATION  :: 0x68
+KEY_MM_ANCESTRY    :: 0x6C
+KEY_MM_CULTURE     :: 0x70
+KEY_MM_RELIGION    :: 0x74
 
 
 //= Procedures
@@ -52,11 +67,26 @@ init :: proc() {
 	}
 
 	//* Grab keybindings
-	settingsdata.keybindings["up"]      = fuse_keybind(rawData, KEY_MOVEUP)
-	settingsdata.keybindings["down"]    = fuse_keybind(rawData, KEY_MOVEDOWN)
-	settingsdata.keybindings["left"]    = fuse_keybind(rawData, KEY_MOVELEFT)
-	settingsdata.keybindings["right"]   = fuse_keybind(rawData, KEY_MOVERIGHT)
-	settingsdata.keybindings["grabmap"] = fuse_keybind(rawData, KEY_GRABMAP)
+	settingsdata.keybindings["up"]       = fuse_keybind(rawData, KEY_MOVEUP)
+	settingsdata.keybindings["down"]     = fuse_keybind(rawData, KEY_MOVEDOWN)
+	settingsdata.keybindings["left"]     = fuse_keybind(rawData, KEY_MOVELEFT)
+	settingsdata.keybindings["right"]    = fuse_keybind(rawData, KEY_MOVERIGHT)
+	settingsdata.keybindings["grabmap"]  = fuse_keybind(rawData, KEY_GRABMAP)
+	settingsdata.keybindings["zoompos"]  = fuse_keybind(rawData, KEY_ZOOMPOS)
+	settingsdata.keybindings["zoomneg"]  = fuse_keybind(rawData, KEY_ZOOMNEG)
+
+	settingsdata.keybindings["pause"]    = fuse_keybind(rawData, KEY_DATE_PAUSE)
+	settingsdata.keybindings["faster"]   = fuse_keybind(rawData, KEY_DATE_FAST)
+	settingsdata.keybindings["slower"]   = fuse_keybind(rawData, KEY_DATE_SLOW)
+
+	settingsdata.keybindings["over"]     = fuse_keybind(rawData, KEY_MM_OVERWORLD)
+	settingsdata.keybindings["politic"]  = fuse_keybind(rawData, KEY_MM_POLITICAL)
+	settingsdata.keybindings["terrain"]  = fuse_keybind(rawData, KEY_MM_TERRAIN)
+	settingsdata.keybindings["control"]  = fuse_keybind(rawData, KEY_MM_CONTROL)
+	settingsdata.keybindings["pop"]      = fuse_keybind(rawData, KEY_MM_POPULATION)
+	settingsdata.keybindings["ancestry"] = fuse_keybind(rawData, KEY_MM_ANCESTRY)
+	settingsdata.keybindings["culture"]  = fuse_keybind(rawData, KEY_MM_CULTURE)
+	settingsdata.keybindings["religion"] = fuse_keybind(rawData, KEY_MM_RELIGION)
 
 	//* Logging
 	logging.add_to_log("[LOG]: Loaded program settings.")

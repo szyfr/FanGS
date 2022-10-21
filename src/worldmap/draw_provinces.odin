@@ -26,10 +26,15 @@ draw_provinces :: proc() {
 				// TODO: if prov is impassable get surrounding
 			case .terrain:
 				#partial switch worlddata.provincesdata[col].terrain {
-					// TODO: plains, swamp, other holds, caves
-					case .NULL:       disp = raylib.RAYWHITE
-					case .deep_road:  disp = {200, 146,  79, 255}
-					case .dwarf_hold: disp = {150, 104, 225, 255}
+					case .NULL:        disp = raylib.RAYWHITE
+					case .plains:      disp = {118, 209, 105, 255}
+					case .swamp:       disp = { 43, 128,  31, 255}
+					case .deep_road:   disp = {200, 146,  79, 255}
+					case .dwarf_hold:  disp = {150, 104, 225, 255}
+					case .goblin_hold: disp = { 30,  64,  25, 255}
+					case .kobold_hold: disp = { 82,  47,  20, 255}
+					case .orc_hold:    disp = { 44,  54,  43, 255}
+					case .cave:        disp = { 64,  66,  64, 255}
 				}
 			case .control:
 				#partial switch worlddata.provincesdata[col].provType {

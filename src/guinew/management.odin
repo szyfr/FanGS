@@ -22,7 +22,6 @@ update :: proc() {
 	}
 }
 
-// TODO: Keep an eye on this. Could be glitchy.
 draw :: proc() {
 	using gamedata
 	for i:=0; i<len(elements)+1; i+=1 {

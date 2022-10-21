@@ -48,12 +48,10 @@ draw :: proc() {
 	//= UI drawing
 	//* General GUI
 	//guinew.draw()
-	if titleScreen do guinew.draw_main_menu()
-	if pausemenu   do guinew.draw_pause_menu()
-	if optionsmenu do guinew.draw_options_menu()
-	//* Province view GUI
-	if playerdata.currentSelection != nil do guinew.draw_province_view()
-	//* Date GUI
+	if  titleScreen do guinew.draw_main_menu()
+	if  pausemenu   do guinew.draw_pause_menu()
+	if  optionsmenu do guinew.draw_options_menu()
+	if  playerdata.currentSelection != nil do guinew.draw_province_view()
 	if !titleScreen do guinew.draw_date_ui()
 
 	//= Debug

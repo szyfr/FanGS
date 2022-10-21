@@ -114,12 +114,13 @@ draw_main_menu :: proc() {
 	)
 
 	//* Button logic
+	// TODO: Load, Mods, and Options screens and functionality
 	if new     {
 		titleScreen = false
 		worldmap.init("anbennar")
 	}
-	if load    {} // TODO
-	if mods    {} // TODO
-	if options {} // TODO: do optionsmenu = true
+	if load    {}
+	if mods    {}
+	if options {} // do optionsmenu = true
 	if quit    do abort = true
 }

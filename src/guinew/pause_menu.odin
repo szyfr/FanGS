@@ -129,10 +129,11 @@ draw_pause_menu :: proc() {
 	)
 
 	//* Button logic
+	// TODO: Save, Load, and Options screens and functionality
 	if resume   do pausemenu = false
-	if save     {} // TODO
-	if load     {} // TODO
-	if options  {} // TODO: do optionsmenu = true
+	if save     {}
+	if load     {}
+	if options  {} // do optionsmenu = true
 	if quitmenu {
 		// TODO: Unload game
 		//titleScreen = true

@@ -72,11 +72,12 @@ update_player_movement :: proc() {
 
 //* Player camera
 update_player_camera :: proc() {
-	using gamedata
+	using gamedata, settings
 
 	//* Zoom
-	// TODO: set keybindings in file
-	playerdata.zoom -= raylib.GetMouseWheelMove() * 2
+	if      is_key_pressed("zoompos") do playerdata.zoom -= 2
+	else if is_key_pressed("zoomneg") do playerdata.zoom += 2
+	
 	if playerdata.zoom > ZOOM_MAX do playerdata.zoom = ZOOM_MAX;
 	if playerdata.zoom < ZOOM_MIN do playerdata.zoom = ZOOM_MIN;
 
@@ -163,30 +164,28 @@ update_player_mouse :: proc() {
 }
 
 //* Mapmode keybindings
-// TODO: set keybindings in file
 update_mapmodes :: proc() {
-	using raylib, gamedata
+	using raylib, settings, gamedata
 
-	if IsKeyDown(KeyboardKey.ONE)   do playerdata.curMapmode = .overworld
-	if IsKeyDown(KeyboardKey.TWO)   do playerdata.curMapmode = .political
-	if IsKeyDown(KeyboardKey.THREE) do playerdata.curMapmode = .terrain
-	if IsKeyDown(KeyboardKey.FOUR)  do playerdata.curMapmode = .control
-	if IsKeyDown(KeyboardKey.FIVE)  do playerdata.curMapmode = .population
-	if IsKeyDown(KeyboardKey.SIX)   do playerdata.curMapmode = .ancestry
-	if IsKeyDown(KeyboardKey.SEVEN) do playerdata.curMapmode = .culture
-	if IsKeyDown(KeyboardKey.EIGHT) do playerdata.curMapmode = .religion
+	if is_key_pressed("over")     do playerdata.curMapmode = .overworld
+	if is_key_pressed("politic")  do playerdata.curMapmode = .political
+	if is_key_pressed("terrain")  do playerdata.curMapmode = .terrain
+	if is_key_pressed("control")  do playerdata.curMapmode = .control
+	if is_key_pressed("pop")      do playerdata.curMapmode = .population
+	if is_key_pressed("ancestry") do playerdata.curMapmode = .ancestry
+	if is_key_pressed("culture")  do playerdata.curMapmode = .culture
+	if is_key_pressed("religion") do playerdata.curMapmode = .religion
 }
 
 //* Date keybindings
-// TODO: set keybindings in file
 update_date_controls :: proc() {
-	using raylib, gamedata
+	using raylib, settings, gamedata
 
-	if IsKeyPressed(KeyboardKey.SPACE) {
+	if is_key_pressed("pause") {
 		if worlddata.timePause do worlddata.timePause = false
 		else                   do worlddata.timePause = true
 	}
-	if IsKeyPressed(KeyboardKey.EQUAL) && (IsKeyDown(KeyboardKey.LEFT_SHIFT) || IsKeyDown(KeyboardKey.RIGHT_SHIFT)) {
+	if is_key_pressed("faster") {
 		switch worlddata.timeSpeed {
 			case 1: worlddata.timeSpeed = 0
 			case 2: worlddata.timeSpeed = 1
@@ -194,7 +193,7 @@ update_date_controls :: proc() {
 			case 4: worlddata.timeSpeed = 3
 		}
 	}
-	if IsKeyPressed(KeyboardKey.MINUS) {
+	if is_key_pressed("slower") {
 		switch worlddata.timeSpeed {
 			case 0: worlddata.timeSpeed = 1
 			case 1: worlddata.timeSpeed = 2
