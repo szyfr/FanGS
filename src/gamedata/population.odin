@@ -35,6 +35,4 @@ Population :: struct {
 15	kobold,
 16	troll,
 17	ogre,
-	ruinborn_elf,             //TODO: Seperate
-	ruinborn_elf_degenerated, //TODO: Seperate
 */

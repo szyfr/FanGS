@@ -9,14 +9,19 @@ import "vendor:raylib"
 import "../gamedata"
 
 
+//= Constants
+PROVIEW_WIDTH  : f32 : 300
+PROVIEW_HEIGHT : f32 : 400
+
+
 //= Procedures
 draw_province_view :: proc() {
-	topLeft := raylib.Vector2{0, f32(gamedata.settingsdata.windowHeight) - 400}
+	topLeft := raylib.Vector2{0, f32(gamedata.settingsdata.windowHeight) - PROVIEW_HEIGHT}
 
 	raylib.DrawTextureNPatch(
 		gamedata.graphicsdata.box,
 		gamedata.graphicsdata.box_nPatch,
-		{topLeft.x, topLeft.y, 300, 400},
+		{topLeft.x, topLeft.y, PROVIEW_WIDTH, PROVIEW_HEIGHT},
 		{0,0}, 0,
 		raylib.RAYWHITE,
 	)

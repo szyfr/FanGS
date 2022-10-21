@@ -47,7 +47,8 @@ draw :: proc() {
 
 	//= UI drawing
 	//* General GUI
-	guinew.draw()
+	//guinew.draw()
+	if titleScreen do guinew.draw_main_menu()
 	if pausemenu   do guinew.draw_pause_menu()
 	if optionsmenu do guinew.draw_options_menu()
 	//* Province view GUI

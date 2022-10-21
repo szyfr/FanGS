@@ -88,9 +88,47 @@ test_bounds_all :: proc(
 				if result == false do return false
 		}
 	}
+
+	//* Testing overlap province view
 	if playerdata.currentSelection != nil {
-		//TODO: Save this information somewhere so it will always be up to date
-		if test_bounds(position, {0, f32(gamedata.settingsdata.windowHeight) - 400, 300, 400}) do return false
+		if test_bounds(
+			position,
+			{
+				0,
+				f32(settingsdata.windowHeight) - PROVIEW_WIDTH,
+				PROVIEW_WIDTH, PROVIEW_HEIGHT,
+			},
+		) {
+			return false
+		}
+	}
+
+	//* Testing overlap pause menu
+	if pausemenu {
+		if test_bounds(
+			position,
+			{
+				(f32(settingsdata.windowWidth)/2)  - (PAUSE_WIDTH/2),
+				(f32(settingsdata.windowHeight)/2) - (PAUSE_HEIGHT/2),
+				PAUSE_WIDTH, PAUSE_HEIGHT,
+			},
+		) {
+			return false
+		}
+	}
+
+	//* Testing overlap options menu
+	if optionsmenu {
+		if test_bounds(
+			position,
+			{
+				(f32(settingsdata.windowWidth)/2)  - (MAIN_WIDTH/2),
+				(f32(settingsdata.windowHeight)/2) - (MAIN_HEIGHT/2),
+				MAIN_WIDTH, MAIN_HEIGHT,
+			},
+		) {
+			return false
+		}
 	}
 
 	return true

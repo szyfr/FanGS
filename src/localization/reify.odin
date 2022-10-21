@@ -81,6 +81,9 @@ init :: proc(lang : gamedata.Languages) {
 	localizationdata.options,      offset = copy_string(rawData, &offset)
 	localizationdata.quit,         offset = copy_string(rawData, &offset)
 	localizationdata.title,        offset = copy_string(rawData, &offset)
+	localizationdata.resume,       offset = copy_string(rawData, &offset)
+	localizationdata.save,         offset = copy_string(rawData, &offset)
+	localizationdata.mainmenu,     offset = copy_string(rawData, &offset)
 	
 	localizationdata.provTypes[0], offset = copy_string(rawData, &offset)
 	localizationdata.provTypes[1], offset = copy_string(rawData, &offset)

@@ -46,7 +46,7 @@ draw_pause_menu :: proc() {
 		graphicsdata.font,
 		16,
 		BLACK,
-		"RESUME",
+		localizationdata.resume,
 	)
 	save := draw_button_new(
 		{
@@ -62,7 +62,7 @@ draw_pause_menu :: proc() {
 		graphicsdata.font,
 		16,
 		BLACK,
-		"SAVE",
+		localizationdata.save,
 	)
 	load := draw_button_new(
 		{
@@ -78,7 +78,7 @@ draw_pause_menu :: proc() {
 		graphicsdata.font,
 		16,
 		BLACK,
-		"LOAD",
+		localizationdata.loadGame,
 	)
 	options := draw_button_new(
 		{
@@ -88,13 +88,13 @@ draw_pause_menu :: proc() {
 		},
 		graphicsdata.box,
 		graphicsdata.box_nPatch,
-	//	WHITE,
+		//WHITE,
 		GRAY,
 		GRAY,
 		graphicsdata.font,
 		16,
 		BLACK,
-		"OPTIONS",
+		localizationdata.options,
 	)
 	quitmenu := draw_button_new(
 		{
@@ -110,7 +110,7 @@ draw_pause_menu :: proc() {
 		graphicsdata.font,
 		16,
 		BLACK,
-		"MENU",
+		localizationdata.mainmenu,
 	)
 	quit := draw_button_new(
 		{
@@ -125,7 +125,7 @@ draw_pause_menu :: proc() {
 		graphicsdata.font,
 		16,
 		BLACK,
-		"QUIT",
+		localizationdata.quit,
 	)
 
 	//* Button logic

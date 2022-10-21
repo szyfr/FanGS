@@ -10,6 +10,9 @@ LocalizationData :: struct {
 	options  : cstring,
 	quit     : cstring,
 	title    : cstring,
+	resume   : cstring,
+	save     : cstring,
+	mainmenu : cstring,
 
 	missing  : cstring,
 
