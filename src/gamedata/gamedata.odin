@@ -18,5 +18,7 @@ elements         : map[int]rawptr
 
 
 titleScreen      : bool
+pausemenu        : bool
+optionsmenu      : bool
 selectedMap      : string
 abort            : bool

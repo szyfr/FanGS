@@ -27,35 +27,39 @@ update :: proc() {
 }
 
 draw :: proc() {
+	using gamedata, raylib
+
 	//* Begin drawing and clear the background
-	raylib.BeginDrawing()
-	raylib.ClearBackground(raylib.RAYWHITE)
+	BeginDrawing()
+	ClearBackground(RAYWHITE)
 
 	//= World drawing
-	if !gamedata.titleScreen {
-		raylib.BeginMode3D(gamedata.playerdata.camera)
+	if !titleScreen {
+		BeginMode3D(playerdata.camera)
 
 		//* Draw map
 		worldmap.draw_provinces()
 		//! Remove at some point
-		raylib.DrawGrid(100, 10)
+		DrawGrid(100, 10)
 
-		raylib.EndMode3D()
+		EndMode3D()
 	}
 
 	//= UI drawing
 	//* General GUI
 	guinew.draw()
+	if pausemenu   do guinew.draw_pause_menu()
+	if optionsmenu do guinew.draw_options_menu()
 	//* Province view GUI
-	if gamedata.playerdata.currentSelection != nil do guinew.draw_province_view()
+	if playerdata.currentSelection != nil do guinew.draw_province_view()
 	//* Date GUI
-	if !gamedata.titleScreen do guinew.draw_date_ui()
+	if !titleScreen do guinew.draw_date_ui()
 
 	//= Debug
-	raylib.DrawFPS(0,0)
+	DrawFPS(0,0)
 
 	//* End drawing
-	raylib.EndDrawing()
+	EndDrawing()
 }
 
 main_loop :: proc() {

@@ -43,6 +43,7 @@ main_initialization :: proc() {
 		"FanGS: Fantasy Grande Strategy",
 	)
 	raylib.SetTargetFPS(settingsdata.targetFPS)
+	raylib.SetExitKey(raylib.KeyboardKey.HOME)
 	
 	//* Init Graphics
 	graphics.init()

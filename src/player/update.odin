@@ -24,6 +24,7 @@ update :: proc() {
 	update_player_mouse()
 	update_mapmodes()
 	update_date_controls()
+	if raylib.IsKeyPressed(raylib.KeyboardKey.ESCAPE) && !gamedata.titleScreen do gamedata.pausemenu = !gamedata.pausemenu
 }
 
 //* Player movement
@@ -40,7 +41,7 @@ update_player_movement :: proc() {
 
 	//* Drag movement
 	if is_key_down("grabmap") {
-		mouseDelta: raylib.Vector2 = raylib.GetMouseDelta()
+		mouseDelta: Vector2 = GetMouseDelta()
 
 		playerdata.target.x += mouseDelta.x * mod
 		playerdata.target.z += mouseDelta.y * mod
@@ -48,10 +49,10 @@ update_player_movement :: proc() {
 
 	//* Edge scrolling
 	if settingsdata.edgeScrolling {
-		if raylib.GetMouseX() <= EDGE_DIS do playerdata.target.x   += MOVE_SPD
-		if raylib.GetMouseY() <= EDGE_DIS do playerdata.target.z   += MOVE_SPD
-		if raylib.GetMouseX() >= settingsdata.windowWidth - EDGE_DIS  do playerdata.target.x   -= MOVE_SPD
-		if raylib.GetMouseY() >= settingsdata.windowHeight - EDGE_DIS do playerdata.target.z   -= MOVE_SPD
+		if GetMouseX() <= EDGE_DIS do playerdata.target.x   += MOVE_SPD
+		if GetMouseY() <= EDGE_DIS do playerdata.target.z   += MOVE_SPD
+		if GetMouseX() >= settingsdata.windowWidth - EDGE_DIS  do playerdata.target.x   -= MOVE_SPD
+		if GetMouseY() >= settingsdata.windowHeight - EDGE_DIS do playerdata.target.z   -= MOVE_SPD
 	}
 
 	//* Edge contraints/looping

@@ -42,7 +42,7 @@ create_titlescreen :: proc() {
 		transform = {10, 480, 250, 50},
 		fontSize  =  20,
 		text      = &localizationdata.options,
-	//	effect    =  gui_effects.load_game,
+		effect    =  gui_effects.options_game,
 	)
 	guinew.create_button(
 		transform = {10, 540, 250, 50},

@@ -33,6 +33,9 @@ start_new_game :: proc() {
 //* Mods
 
 //* Options
+options_game :: proc() {
+//	gamedata.optionsmenu = !gamedata.optionsmenu
+}
 
 //* Quit
 quit_game :: proc() {
