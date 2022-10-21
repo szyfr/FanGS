@@ -14,6 +14,6 @@
 - 
 
 
-## 0.01_0 "Foundation" - 21/06/29 -> ??/??/??
-[Unreleased] Streams - 22
+## 0.01_0 "Foundations" - 22/06/29 -> 22/10/21
+Streams - 22
 Baseline version
