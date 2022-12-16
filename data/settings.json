@@ -1,0 +1,91 @@
+{
+	"screenwidth": 1080,
+	"screenheight": 720,
+	"targetfps": 80,
+	"language": "english",
+	"edgescrolling": false,
+	"fontsize": 12,
+
+	"keybindings": {
+		"up": {
+			"origin": 0,
+			"key": 265
+		},
+		"down": {
+			"origin": 0,
+			"key": 264
+		},
+		"left": {
+			"origin": 0,
+			"key": 263
+		},
+		"right": {
+			"origin": 0,
+			"key": 262
+		},
+		"grabmap": {
+			"origin": 1,
+			"key": 2
+		},
+		"zoompos": {
+			"origin": 2,
+			"key": 0
+		},
+		"zoomneg": {
+			"origin": 2,
+			"key": 1
+		},
+		"pause": {
+			"origin": 0,
+			"key": 32
+		},
+		"faster": {
+			"origin": 0,
+			"key": 61
+		},
+		"slower": {
+			"origin": 0,
+			"key": 45
+		},
+		"mm00": {
+			"origin": 0,
+			"key": 48
+		},
+		"mm01": {
+			"origin": 0,
+			"key": 49
+		},
+		"mm02": {
+			"origin": 0,
+			"key": 50
+		},
+		"mm03": {
+			"origin": 0,
+			"key": 51
+		},
+		"mm04": {
+			"origin": 0,
+			"key": 52
+		},
+		"mm05": {
+			"origin": 0,
+			"key": 53
+		},
+		"mm06": {
+			"origin": 0,
+			"key": 54
+		},
+		"mm07": {
+			"origin": 0,
+			"key": 55
+		},
+		"mm08": {
+			"origin": 0,
+			"key": 56
+		},
+		"mm09": {
+			"origin": 0,
+			"key": 57
+		}
+	}
+}

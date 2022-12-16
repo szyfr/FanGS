@@ -111,3 +111,8 @@ save_setting :: proc() {
 	if !res do logging.add_to_log(SETTING_SAVE_FAILURE)
 	else    do logging.add_to_log(SETTING_SAVE_SUCCESS)
 }
+
+//* Load settings from file
+load_settings :: proc() {
+	
+}

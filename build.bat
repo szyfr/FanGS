@@ -15,7 +15,7 @@ for /F "tokens=1-4 delims=:.," %%a in ("%time%") do (
 )
 
 
-odin build G:\FanGS\src -out=G:\FanGS\target\debug\%date%\FanGS.exe -subsystem:windows
+odin build G:\FanGS\src -out=G:\FanGS\target\debug\%date%\FanGS.exe -subsystem:console
 
 
 rem Get end time:
