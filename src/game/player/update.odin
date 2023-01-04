@@ -9,7 +9,7 @@ import "core:math/linalg/glsl"
 import "core:time"
 import "vendor:raylib"
 
-import "../../settings"
+import "../settings"
 import "../../utilities/matrix_math"
 
 

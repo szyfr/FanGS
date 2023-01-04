@@ -1,0 +1,19 @@
+
+{
+
+	"new_game":"New Game",
+	"load_game":"Load Game",
+	"mods":"Mods",
+	"options":"Options",
+	"quit":"Quit",
+	"game_name":"Alius Mundus",
+	"game_desc":"Alius Mundus: Fantasy grand strategy",
+	"resume":"Resume",
+	"main_menu":"Main Menu",
+	"empty":"NULL",
+	
+	"province_controllable":"Controllable",
+	"province_sea":"Sea",
+	"province_impassable":"Impassable"
+
+}

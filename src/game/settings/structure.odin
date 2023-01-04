@@ -14,7 +14,8 @@ SettingsData :: struct {
 	windowHeight  : i32,
 
 	targetFPS     : i32,
-	language      : Languages,
+//	language      : Languages,
+	language      : cstring,
 	edgeScrolling : bool,
 	fontSize      : f32,
 
@@ -31,10 +32,10 @@ Keybinding :: struct {
 }
 
 
-//= Enumerations
-Languages   :: enum i32 {
-	english = 0,
-	spanish,
-	german,
-	french,
-}
+////= Enumerations
+//Languages   :: enum i32 {
+//	english = 0,
+//	spanish,
+//	german,
+//	french,
+//}

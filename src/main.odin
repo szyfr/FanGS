@@ -5,9 +5,16 @@ package main
 import "vendor:raylib"
 
 import "debug"
+import "graphics"
+import "graphics/ui"
 import "game/player"
-import "settings"
+import "game/localization"
+import "game/settings"
 import "testing"
+
+
+//= global
+abort : bool = false
 
 
 //= Update
@@ -26,6 +33,15 @@ main_draw :: proc() {
 	//= Debug
 	raylib.DrawFPS(0,0)
 
+	result := ui.draw_mainmenu()
+	switch result {
+		case ui.out_quit:     abort = true
+		case ui.out_newgame:
+		case ui.out_loadgame:
+		case ui.out_options:
+		case ui.out_mods:
+	}
+
 	//* End drawing
 	raylib.EndDrawing()
 }
@@ -37,7 +53,7 @@ main :: proc() {
 	main_init()
 	defer main_free()
 
-	for !raylib.WindowShouldClose() /*&& !gamedata.abort*/ { //TODO
+	for !raylib.WindowShouldClose() && !abort {
 		main_update()
 		main_draw()
 	}
@@ -55,6 +71,7 @@ main_init :: proc() {
 	settings.init()
 
 	//* Localization
+	localization.init()
 
 	//* Player
 	player.init()
@@ -64,16 +81,16 @@ main_init :: proc() {
 	raylib.InitWindow(
 		settings.data.windowWidth,
 		settings.data.windowHeight,
-		"FanGS: Fantasy Grande Strategy",
+		localization.data["game_desc"],
 	)
 	raylib.SetTargetFPS(settings.data.targetFPS)
 	raylib.SetExitKey(raylib.KeyboardKey.NULL)
 
 	//* Graphics
-
+	graphics.init()
 
 	//* Testing
-	testing.test()
+	//testing.test()
 }
 
 
@@ -83,6 +100,8 @@ main_free :: proc() {
 	raylib.CloseWindow()
 
 	settings.close()
+	localization.close()
 	player.close()
+	graphics.close()
 
 }

@@ -4,7 +4,7 @@ package settings
 //= Imports
 import "core:os"
 import "vendor:raylib"
-import "../debug"
+import "../../debug"
 
 
 //= Constants

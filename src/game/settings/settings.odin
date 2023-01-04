@@ -7,7 +7,7 @@ import "core:os"
 import "core:strings"
 import "core:encoding/json"
 
-import "../debug"
+import "../../debug"
 
 
 //= Constants
@@ -47,16 +47,7 @@ init :: proc() {
 	data.targetFPS     = i32(jsonData.(json.Object)["targetfps"].(f64))
 	data.edgeScrolling =     jsonData.(json.Object)["edgescrolling"].(bool)
 	data.fontSize      = f32(jsonData.(json.Object)["fontsize"].(f64))
-	switch jsonData.(json.Object)["language"].(string) {
-		case "english": data.language = Languages.english ; break
-		case "spanish": data.language = Languages.spanish ; break
-		case "german" : data.language = Languages.german  ; break
-		case "french" : data.language = Languages.french  ; break
-		case:
-			data.language = Languages.english
-			debug.add_to_log(ERR_SETTINGS_LANG)
-			break
-	}
+	data.language      = strings.clone_to_cstring(jsonData.(json.Object)["language"].(string))
 
 	//* Grab keybindings
 	obj := jsonData.(json.Object)["keybindings"].(json.Object)
@@ -96,11 +87,11 @@ close :: proc() {
 
 //* Generate settings from defaults
 generate_default_settings :: proc() {
-	data.windowWidth   = 1080
+	data.windowWidth   = 1280
 	data.windowHeight  =  720
 	data.targetFPS     =   80
 	data.fontSize      =   12
-	data.language      = Languages.english
+	data.language      = "english"
 	data.edgeScrolling = false
 
 	data.keybindings["up"]       = {0,265}
@@ -144,14 +135,9 @@ save_settings :: proc() {
 	strings.write_int(&builder, int(data.targetFPS))
 	strings.write_string(&builder, ",\n")
 
-	strings.write_string(&builder, "\t\"language\": ")
-	switch data.language {
-		case Languages.english: strings.write_string(&builder, "\"english\"")
-		case Languages.spanish: strings.write_string(&builder, "\"spanish\"")
-		case Languages.german:  strings.write_string(&builder, "\"german\"")
-		case Languages.french:  strings.write_string(&builder, "\"french\"")
-	}
-	strings.write_string(&builder, ",\n")
+	strings.write_string(&builder, "\t\"language\": \"")
+	strings.write_string(&builder, strings.clone_from_cstring(data.language))
+	strings.write_string(&builder, "\",\n")
 
 	strings.write_string(&builder, "\t\"edgescrolling\": ")
 	if data.edgeScrolling do strings.write_string(&builder, "true")
