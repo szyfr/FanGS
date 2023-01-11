@@ -4,10 +4,13 @@ package ui
 //= Imports
 import "core:fmt"
 import "vendor:raylib"
+
+import "elements"
+import "../worldmap"
+import "../../game"
 import "../../game/settings"
 import "../../game/localization"
 import "../../graphics"
-import "elements"
 
 
 //= Constants
@@ -119,9 +122,9 @@ draw_mainmenu :: proc() -> i32 {
 
 	//* Button logic
 	// TODO: Load, Mods, and Options screens and functionality
-	if new     {
-		//titleScreen = false
-		//worldmap.init("anbennar")
+	if new {
+		game.mainMenu = false
+		worldmap.init("farophi")
 	}
 	if load    {}
 	if mods    {}

@@ -1,0 +1,32 @@
+
+{
+
+	"ancestry": {
+		"human": "Human",
+		"halfling": "Halfling",
+		"elf": "Elf"
+	},
+	"culture": {
+		"human": {
+			"riverlander": "Riverlander"
+		},
+		"halfling": {
+			"halfling_human": "Human"
+		},
+		"elf": {
+			"drow": "Drow"
+		}
+	},
+	"religion": {
+		"water_goddess": "Water Goddess",
+		"evil_drow": "Evil Drow God"
+	},
+
+	"terrain": {
+		"grassland": "Grassland",
+		"cave": "Cavern",
+		"mountain": "Mountain",
+		"drow_hold": "Drow Hold"
+	}
+
+}

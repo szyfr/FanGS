@@ -6,15 +6,13 @@ import "vendor:raylib"
 
 import "debug"
 import "graphics"
+import "graphics/worldmap"
 import "graphics/ui"
+import "game"
 import "game/player"
 import "game/localization"
 import "game/settings"
 import "testing"
-
-
-//= global
-abort : bool = false
 
 
 //= Update
@@ -29,18 +27,29 @@ main_draw :: proc() {
 	//* Begin drawing and clear the background
 	raylib.BeginDrawing()
 	raylib.ClearBackground(raylib.RAYWHITE)
+	
+	//* 3D elements
+	raylib.BeginMode3D(player.data)
+	raylib.DrawGrid(100,10)
+
+	if !game.mainMenu do worldmap.draw()
+	
+	raylib.EndMode3D()
+
+	//* 2D GUI
+	if game.mainMenu {
+		result := ui.draw_mainmenu()
+		switch result {
+			case ui.out_quit:     game.abort = true
+			case ui.out_newgame:
+			case ui.out_loadgame:
+			case ui.out_options:
+			case ui.out_mods:
+		}
+	}
 
 	//= Debug
 	raylib.DrawFPS(0,0)
-
-	result := ui.draw_mainmenu()
-	switch result {
-		case ui.out_quit:     abort = true
-		case ui.out_newgame:
-		case ui.out_loadgame:
-		case ui.out_options:
-		case ui.out_mods:
-	}
 
 	//* End drawing
 	raylib.EndDrawing()
@@ -53,7 +62,7 @@ main :: proc() {
 	main_init()
 	defer main_free()
 
-	for !raylib.WindowShouldClose() && !abort {
+	for !raylib.WindowShouldClose() && !game.abort {
 		main_update()
 		main_draw()
 	}

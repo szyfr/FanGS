@@ -1,0 +1,230 @@
+{
+	"1": {
+		"name": "Prov1",
+		"terrain": "grassland",
+		"type": "normal",
+		"color": {
+			"r": 219,
+			"g": 83,
+			"b": 203
+		},
+		"max_infrastructure": 80,
+		"cur_infrastructure": 10,
+
+		"population": {
+			"1": {
+				"ancestry": "human",
+				"culture": "riverlander",
+				"religion": "water_goddess",
+				"count": 2000
+			},
+			"2": {
+				"ancestry": "halfling",
+				"culture": "halfling_human",
+				"religion": "water_goddess",
+				"count": 1000
+			}
+		}
+	},
+	"2": {
+		"name": "Prov2",
+		"terrain": "grassland",
+		"type": "normal",
+		"color": {
+			"r": 125,
+			"g": 175,
+			"b": 219
+		},
+		"max_infrastructure": 80,
+		"cur_infrastructure": 10,
+
+		"population": {
+			"1": {
+				"ancestry": "human",
+				"culture": "riverlander",
+				"religion": "water_goddess",
+				"count": 1500
+			},
+			"2": {
+				"ancestry": "halfling",
+				"culture": "halfling_human",
+				"religion": "water_goddess",
+				"count": 500
+			}
+		}
+	},
+	"3": {
+		"name": "Prov3",
+		"terrain": "grassland",
+		"type": "normal",
+		"color": {
+			"r": 109,
+			"g": 219,
+			"b": 122
+		},
+		"max_infrastructure": 80,
+		"cur_infrastructure": 10,
+
+		"population": {
+			"1": {
+				"ancestry": "human",
+				"culture": "riverlander",
+				"religion": "water_goddess",
+				"count": 1000
+			},
+			"2": {
+				"ancestry": "halfling",
+				"culture": "halfling_human",
+				"religion": "water_goddess",
+				"count": 500
+			}
+		}
+	},
+	"4": {
+		"name": "Prov4",
+		"terrain": "cave",
+		"type": "controllable",
+		"color": {
+			"r": 100,
+			"g": 224,
+			"b": 146
+		},
+		"max_infrastructure": 10,
+		"cur_infrastructure": 10,
+
+		"population": { }
+	},
+	"5": {
+		"name": "Prov5",
+		"terrain": "mountain",
+		"type": "impassable",
+		"color": {
+			"r": 135,
+			"g": 191,
+			"b": 219
+		},
+		"max_infrastructure": 10,
+		"cur_infrastructure": 10,
+
+		"population": { }
+	},
+	"6": {
+		"name": "Prov6",
+		"terrain": "cave",
+		"type": "controllable",
+		"color": {
+			"r": 224,
+			"g": 38,
+			"b": 59
+		},
+		"max_infrastructure": 10,
+		"cur_infrastructure": 10,
+
+		"population": { }
+	},
+	"7": {
+		"name": "Prov7",
+		"terrain": "cave",
+		"type": "normal",
+		"color": {
+			"r": 121,
+			"g": 129,
+			"b": 224
+		},
+		"max_infrastructure": 30,
+		"cur_infrastructure": 10,
+
+		"population": { }
+	},
+	"8": {
+		"name": "Prov8",
+		"terrain": "cave",
+		"type": "normal",
+		"color": {
+			"r": 51,
+			"g": 233,
+			"b": 127
+		},
+		"max_infrastructure": 30,
+		"cur_infrastructure": 10,
+
+		"population": { }
+	},
+	"9": {
+		"name": "Prov9",
+		"terrain": "cave",
+		"type": "normal",
+		"color": {
+			"r": 51,
+			"g": 74,
+			"b": 127
+		},
+		"max_infrastructure": 30,
+		"cur_infrastructure": 10,
+
+		"population": { }
+	},
+	"10": {
+		"name": "Prov10",
+		"terrain": "cave",
+		"type": "normal",
+		"color": {
+			"r": 92,
+			"g": 133,
+			"b": 224
+		},
+		"max_infrastructure": 30,
+		"cur_infrastructure": 10,
+
+		"population": { }
+	},
+	"11": {
+		"name": "Prov11",
+		"terrain": "cave",
+		"type": "normal",
+		"color": {
+			"r": 92,
+			"g": 224,
+			"b": 178
+		},
+		"max_infrastructure": 10,
+		"cur_infrastructure": 10,
+
+		"population": { }
+	},
+	"12": {
+		"name": "Prov12",
+		"terrain": "cave",
+		"type": "controllable",
+		"color": {
+			"r": 164,
+			"g": 67,
+			"b": 224
+		},
+		"max_infrastructure": 10,
+		"cur_infrastructure": 10,
+
+		"population": { }
+	},
+	"13": {
+		"name": "Prov13",
+		"terrain": "drow_hold",
+		"type": "normal",
+		"color": {
+			"r": 224,
+			"g": 92,
+			"b": 178
+		},
+		"max_infrastructure": 80,
+		"cur_infrastructure": 10,
+
+		"population": {
+			"1": {
+				"ancestry": "elf",
+				"culture": "drow",
+				"religion": "evil_drow",
+				"count": 10000
+			}
+		}
+	}
+}
