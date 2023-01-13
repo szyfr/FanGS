@@ -47,7 +47,7 @@ ProvinceModifier :: struct {
 //= Enumerations
 Terrain :: enum {
 	NULL,
-	grasslands,
+	grassland,
 	swamp,
 	deep_road,
 	dwarf_hold,

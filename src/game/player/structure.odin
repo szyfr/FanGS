@@ -4,6 +4,8 @@ package player
 //= Imports
 import "vendor:raylib"
 
+import "../provinces"
+
 
 //= Globals
 //TODO Might want to move this to a "game" package
@@ -18,7 +20,7 @@ PlayerData :: struct {
 	lastMousePos     : raylib.Vector2,
 
 	ray              :  raylib.Ray,
-//	currentSelection : ^ProvinceData,
+	currentSelection : ^provinces.ProvinceData,
 
 	curMapmode       : Mapmode,
 }

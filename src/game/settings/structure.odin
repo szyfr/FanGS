@@ -14,13 +14,13 @@ SettingsData :: struct {
 	windowHeight  : i32,
 
 	targetFPS     : i32,
-//	language      : Languages,
 	language      : cstring,
 	edgeScrolling : bool,
 	fontSize      : f32,
 
 	keybindings   : map[string]Keybinding,
 }
+
 Keybinding :: struct {
 	origin : u8,
 		// 0 - Keyboard
@@ -30,12 +30,3 @@ Keybinding :: struct {
 		// 4 - Gamepad Axis
 	key    : u32,
 }
-
-
-////= Enumerations
-//Languages   :: enum i32 {
-//	english = 0,
-//	spanish,
-//	german,
-//	french,
-//}

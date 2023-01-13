@@ -7,9 +7,13 @@ import "core:math"
 import "core:math/linalg"
 import "core:math/linalg/glsl"
 import "core:time"
+
 import "vendor:raylib"
 
 import "../settings"
+import "../../game"
+import "../../game/provinces"
+import "../../graphics/worldmap"
 import "../../utilities/matrix_math"
 
 
@@ -19,10 +23,12 @@ import "../../utilities/matrix_math"
 update :: proc() {
 	update_player_movement()
 	update_player_camera()
-//	update_player_mouse() //TODO
+	update_player_mouse()
 //	update_mapmodes() //TODO
-//	update_date_controls() //TODO
-	//if raylib.IsKeyPressed(raylib.KeyboardKey.ESCAPE) && !gamedata.titleScreen do gamedata.pausemenu = !gamedata.pausemenu //TODO
+	update_date_controls()
+	if raylib.IsKeyPressed(raylib.KeyboardKey.ESCAPE) {
+		game.pauseMenu = !game.pauseMenu
+	}
 }
 
 //* Player movement
@@ -44,27 +50,27 @@ update_player_movement :: proc() {
 		data.target.z += mouseDelta.y * mod
 	}
 
-//	//* Edge scrolling //TODO
-//	if settings.data.edgeScrolling {
-//		if GetMouseX() <= EDGE_DIS do playerdata.target.x   += MOVE_SPD
-//		if GetMouseY() <= EDGE_DIS do playerdata.target.z   += MOVE_SPD
-//		if GetMouseX() >= settings.data.windowWidth - EDGE_DIS  do playerdata.target.x   -= MOVE_SPD
-//		if GetMouseY() >= settings.data.windowHeight - EDGE_DIS do playerdata.target.z   -= MOVE_SPD
-//	}
+	//* Edge scrolling
+	if settings.data.edgeScrolling {
+		if raylib.GetMouseX() <= EDGE_DIS do data.target.x   += MOVE_SPD
+		if raylib.GetMouseY() <= EDGE_DIS do data.target.z   += MOVE_SPD
+		if raylib.GetMouseX() >= settings.data.windowWidth - EDGE_DIS  do data.target.x -= MOVE_SPD
+		if raylib.GetMouseY() >= settings.data.windowHeight - EDGE_DIS do data.target.z -= MOVE_SPD
+	}
 
-//	//* Edge contraints/looping //TODO
-//	if worlddata != nil {
-//		if playerdata.target.z >  0                   do playerdata.target.z =  0
-//		if playerdata.target.z < -worlddata.mapHeight do playerdata.target.z = -worlddata.mapHeight
-//
-//		if worlddata.mapsettings.loopMap {
-//			if playerdata.target.x >  0                  do playerdata.target.x = -worlddata.mapWidth
-//			if playerdata.target.x < -worlddata.mapWidth do playerdata.target.x = 0
-//		} else {
-//			if playerdata.target.x >  0                  do playerdata.target.x = 0
-//			if playerdata.target.x < -worlddata.mapWidth do playerdata.target.x = -worlddata.mapWidth
-//		}
-//	}
+	//* Edge contraints/looping
+	if worldmap.data != nil {
+		if data.target.z >  0                   do data.target.z =  0
+		if data.target.z < -worldmap.data.mapHeight do data.target.z = -worldmap.data.mapHeight
+
+		if worldmap.data.mapsettings.loopMap {
+			if data.target.x >  0                  do data.target.x = -worldmap.data.mapWidth
+			if data.target.x < -worldmap.data.mapWidth do data.target.x = 0
+		} else {
+			if data.target.x >  0                  do data.target.x = 0
+			if data.target.x < -worldmap.data.mapWidth do data.target.x = -worldmap.data.mapWidth
+		}
+	}
 }
 
 //* Player camera
@@ -86,80 +92,79 @@ update_player_camera :: proc() {
 	
 }
 
-////* Map interaction //TODO
-//update_player_mouse :: proc() {
-//	if raylib.IsMouseButtonPressed(.LEFT) && !gamedata.titleScreen {
-//
-//		//* Getting mouse position and testing GUI
-//		position := raylib.GetMousePosition()
-//		result   := guinew.test_bounds_all(position)
-//		if !result do return
-//
-//		//* Creating ray and collision info
-//		gamedata.playerdata.ray = raylib.GetMouseRay(position, gamedata.playerdata)
-//		collision : raylib.RayCollision = {}
-//		width, height := -gamedata.worlddata.mapWidth/2, -gamedata.worlddata.mapHeight/2
-//		transformCenter : linalg.Matrix4x4f32 = {
-//			-1, 0,  0, 0,
-//			 0, 1,  0, 0,
-//			 0, 0, -1, 0,
-//			width, 0, height, 1,
-//		}
-//		transformLeft : linalg.Matrix4x4f32 = {
-//			-1, 0,  0, 0,
-//			 0, 1,  0, 0,
-//			 0, 0, -1, 0,
-//			width-gamedata.worlddata.mapWidth, 0, height, 1,
-//		}
-//		transformRight : linalg.Matrix4x4f32 = {
-//			-1, 0,  0, 0,
-//			 0, 1,  0, 0,
-//			 0, 0, -1, 0,
-//			width+gamedata.worlddata.mapWidth, 0, height, 1,
-//		}
-//
-//		//* Casting ray
-//		collision = raylib.GetRayCollisionMesh(
-//			gamedata.playerdata.ray,
-//			gamedata.worlddata.collisionMesh,
-//			transformCenter,
-//		)
-//		if !collision.hit {
-//			collision = raylib.GetRayCollisionMesh(
-//				gamedata.playerdata.ray,
-//				gamedata.worlddata.collisionMesh,
-//				transformLeft,
-//			)
-//			if !collision.hit {
-//				collision = raylib.GetRayCollisionMesh(
-//					gamedata.playerdata.ray,
-//					gamedata.worlddata.collisionMesh,
-//					transformRight,
-//				)
-//			}
-//		}
-//
-//		//* Calculate PosX
-//		posX : i32
-//		if collision.point.x*25 > 0 do posX =  i32(gamedata.worlddata.mapWidth*25) - i32(collision.point.x*25)
-//		else                        do posX = -i32(collision.point.x*25) % i32(gamedata.worlddata.mapWidth*25)
-//
-//		//* Grab color
-//		col := raylib.GetImageColor(
-//			gamedata.worlddata.provinceImage,
-//			posX,
-//			-i32(collision.point.z*25),
-//		)
-//
-//		//* Set selected province
-//		prov, res := &gamedata.worlddata.provincesdata[col]
-//		if res {
-//			if prov.provType == gamedata.ProvinceType.impassable do return
-//			gamedata.playerdata.currentSelection = prov
-//		} else do gamedata.playerdata.currentSelection = nil
-//	}
-//}
-//
+//* Map interaction
+update_player_mouse :: proc() {
+	if raylib.IsMouseButtonPressed(.LEFT) && !game.mainMenu {
+
+		//* Getting mouse position and testing GUI
+		position := raylib.GetMousePosition()
+		//TODO: Testing for clicks on windows
+
+		//* Creating ray and collision info
+		data.ray = raylib.GetMouseRay(position, data)
+		collision : raylib.RayCollision = {}
+		width, height := -worldmap.data.mapWidth/2, -worldmap.data.mapHeight/2
+		transformCenter : linalg.Matrix4x4f32 = {
+			-1, 0,  0, 0,
+			 0, 1,  0, 0,
+			 0, 0, -1, 0,
+			width, 0, height, 1,
+		}
+		transformLeft : linalg.Matrix4x4f32 = {
+			-1, 0,  0, 0,
+			 0, 1,  0, 0,
+			 0, 0, -1, 0,
+			width-worldmap.data.mapWidth, 0, height, 1,
+		}
+		transformRight : linalg.Matrix4x4f32 = {
+			-1, 0,  0, 0,
+			 0, 1,  0, 0,
+			 0, 0, -1, 0,
+			width+worldmap.data.mapWidth, 0, height, 1,
+		}
+
+		//* Casting ray
+		collision = raylib.GetRayCollisionMesh(
+			data.ray,
+			worldmap.data.collisionMesh,
+			transformCenter,
+		)
+		if !collision.hit {
+			collision = raylib.GetRayCollisionMesh(
+				data.ray,
+				worldmap.data.collisionMesh,
+				transformLeft,
+			)
+			if !collision.hit {
+				collision = raylib.GetRayCollisionMesh(
+					data.ray,
+					worldmap.data.collisionMesh,
+					transformRight,
+				)
+			}
+		}
+
+		//* Calculate PosX
+		posX : i32
+		if collision.point.x*25 > 0 do posX =  i32(worldmap.data.mapWidth*25) - i32(collision.point.x*25)
+		else                        do posX = -i32(collision.point.x*25) % i32(worldmap.data.mapWidth*25)
+
+		//* Grab color
+		col := raylib.GetImageColor(
+			worldmap.data.provinceImage,
+			posX,
+			-i32(collision.point.z*25),
+		)
+
+		//* Set selected province
+		prov, res := &worldmap.data.provincesdata[col]
+		if res {
+			if prov.type == provinces.ProvinceType.impassable do return
+			data.currentSelection = prov
+		} else do data.currentSelection = nil
+	}
+}
+
 ////* Mapmode keybindings //TODO
 //update_mapmodes :: proc() {
 //	using raylib, settings, gamedata
@@ -173,29 +178,24 @@ update_player_camera :: proc() {
 //	if is_key_pressed("culture")  do playerdata.curMapmode = .culture
 //	if is_key_pressed("religion") do playerdata.curMapmode = .religion
 //}
-//
-////* Date keybindings //TODO
-//update_date_controls :: proc() {
-//	using raylib, settings, gamedata
-//
-//	if is_key_pressed("pause") {
-//		if worlddata.timePause do worlddata.timePause = false
-//		else                   do worlddata.timePause = true
-//	}
-//	if is_key_pressed("faster") {
-//		switch worlddata.timeSpeed {
-//			case 1: worlddata.timeSpeed = 0
-//			case 2: worlddata.timeSpeed = 1
-//			case 3: worlddata.timeSpeed = 2
-//			case 4: worlddata.timeSpeed = 3
-//		}
-//	}
-//	if is_key_pressed("slower") {
-//		switch worlddata.timeSpeed {
-//			case 0: worlddata.timeSpeed = 1
-//			case 1: worlddata.timeSpeed = 2
-//			case 2: worlddata.timeSpeed = 3
-//			case 3: worlddata.timeSpeed = 4
-//		}
-//	}
-//}
+
+//* Date keybindings
+update_date_controls :: proc() {
+	if settings.is_key_pressed("pause") do worldmap.data.timePause = !worldmap.data.timePause
+	if settings.is_key_pressed("faster") {
+		switch worldmap.data.timeSpeed {
+			case 1: worldmap.data.timeSpeed = 0
+			case 2: worldmap.data.timeSpeed = 1
+			case 3: worldmap.data.timeSpeed = 2
+			case 4: worldmap.data.timeSpeed = 3
+		}
+	}
+	if settings.is_key_pressed("slower") {
+		switch worldmap.data.timeSpeed {
+			case 0: worldmap.data.timeSpeed = 1
+			case 1: worldmap.data.timeSpeed = 2
+			case 2: worldmap.data.timeSpeed = 3
+			case 3: worldmap.data.timeSpeed = 4
+		}
+	}
+}

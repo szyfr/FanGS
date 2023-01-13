@@ -4,7 +4,7 @@ package worldmap
 //= Imports
 import "vendor:raylib"
 
-import "../../game/player"
+//import "../../game/player"
 
 
 //= Procedures
@@ -29,10 +29,12 @@ draw :: proc() {
 			{1, 1, 1},
 			disp,
 		)
-		if player.data.zoom <= 8 {
+		//TODO: Figure out something to do with province names
+		//TODO: WHY THE EVERLOVING FUCK DOES REMOVING THIS FUNCTION STOP THE MODELS FROM DRAWING
+		//if player.data.zoom <= 8 {
 			//* Province names
 			raylib.DrawBillboardPro(
-				player.data,
+				{},
 				data.provincesdata[col].nametx,
 				{
 					0, 0,
@@ -50,7 +52,7 @@ draw :: proc() {
 				1,
 				raylib.BLACK,
 			)
-		}
+		//}
 
 		//* Draw left
 		if data.provincesdata[col].centerpoint.x > data.mapWidth - 100 {

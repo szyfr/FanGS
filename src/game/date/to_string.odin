@@ -5,13 +5,7 @@ package date
 import "core:fmt"
 import "core:strings"
 
-import "vendor:raylib"
-
-import "../gamedata"
-import "../worldmap"
-
-
-//= Constants
+import "../../graphics/worldmap"
 
 
 //= Procedures
@@ -20,9 +14,9 @@ to_string :: proc() -> cstring {
 	str := fmt.sbprintf(
 		&builder,
 		"%v %2v %2v",
-		gamedata.worlddata.date.year,
-		gamedata.worlddata.date.month,
-		gamedata.worlddata.date.day,
+		worldmap.data.date.year,
+		worldmap.data.date.month,
+		worldmap.data.date.day,
 	)
 
 	cstr := strings.clone_to_cstring(str)

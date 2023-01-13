@@ -47,6 +47,10 @@ init :: proc(mapname : string) {
 	data.provinceImage = raylib.LoadImage(strings.clone_to_cstring(provLoc))
 	data.terrainImage  = raylib.LoadImage(strings.clone_to_cstring(terrLoc))
 	data.provincePixelCount = int(data.provinceImage.height * data.provinceImage.width)
+
+	//* General data
+	data.mapWidth  = f32(data.provinceImage.width)  / 25
+	data.mapHeight = f32(data.provinceImage.height) / 25
 	
 	//* Collision Mesh
 	data.collisionMesh = raylib.GenMeshPlane(
@@ -74,10 +78,7 @@ init :: proc(mapname : string) {
 	data.date.year  = uint(dateObj["year"].(f64))
 	data.date.month = uint(dateObj["month"].(f64))
 	data.date.day   = uint(dateObj["day"].(f64))
-
-	//* General data
-	data.mapWidth  = f32(data.provinceImage.width)  / 25
-	data.mapHeight = f32(data.provinceImage.height) / 25
+	data.timePause  = true
 
 	delete(rawData)
 
@@ -168,9 +169,9 @@ init :: proc(mapname : string) {
 		//* Terrain
 		//TODO Set up actual data structure for terrain
 		switch provData["terrain"].(string) {
-			case "grasslands": prov.terrain = provinces.Terrain.grasslands
-			case "cave":       prov.terrain = provinces.Terrain.cave
-			case "drow_hold":  prov.terrain = provinces.Terrain.drow_hold
+			case "grassland": prov.terrain = provinces.Terrain.grassland
+			case "cave":      prov.terrain = provinces.Terrain.cave
+			case "drow_hold": prov.terrain = provinces.Terrain.drow_hold
 		}
 		//* Type
 		switch provData["type"].(string) {

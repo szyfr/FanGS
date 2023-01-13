@@ -2,6 +2,8 @@ package main
 
 
 //= Imports
+import "core:fmt"
+
 import "vendor:raylib"
 
 import "debug"
@@ -9,6 +11,7 @@ import "graphics"
 import "graphics/worldmap"
 import "graphics/ui"
 import "game"
+import "game/date"
 import "game/player"
 import "game/localization"
 import "game/settings"
@@ -17,7 +20,10 @@ import "testing"
 
 //= Update
 main_update :: proc() {
-	player.update()
+	if !game.mainMenu {
+		player.update()
+		date.update()
+	}
 }
 
 
@@ -32,7 +38,9 @@ main_draw :: proc() {
 	raylib.BeginMode3D(player.data)
 	raylib.DrawGrid(100,10)
 
-	if !game.mainMenu do worldmap.draw()
+	if !game.mainMenu {
+		worldmap.draw()
+	}
 	
 	raylib.EndMode3D()
 
@@ -46,6 +54,10 @@ main_draw :: proc() {
 			case ui.out_options:
 			case ui.out_mods:
 		}
+	} else {
+		ui.draw_datedisplay()
+		if game.pauseMenu do ui.draw_pausemenu()
+		if player.data.currentSelection != nil do ui.draw_provincemenu()
 	}
 
 	//= Debug

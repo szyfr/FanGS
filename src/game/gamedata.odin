@@ -5,10 +5,10 @@ package game
 
 
 //= Global
-mainMenu : bool = true
-abort    : bool = false
+//TODO: Look into making this a state instead
+mainMenu  : bool = true
+pauseMenu : bool = false
+abort     : bool = false
 
 
 //= Structures
-GameData :: struct {
-}

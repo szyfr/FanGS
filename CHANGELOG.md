@@ -2,8 +2,8 @@
 # Changelog
 
 
-## 0.02_0 "Governance" - ??/??/?? -> ??/??/??
-[Unreleased] Streams - 0
+## 0.02_0 "Governance" - 22/12/14 -> ??/??/??
+[Unreleased] Streams - 5
 ### Added
 - 
 ### Removed
