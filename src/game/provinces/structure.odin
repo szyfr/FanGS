@@ -11,6 +11,7 @@ import "../nations"
 //= Structures
 ProvinceData :: struct {
 	//* Image
+	//TODO move this to seperate files to make transition to shaders easier
 	provmesh  : raylib.Mesh,
 	provmodel : raylib.Model,
 

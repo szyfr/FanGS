@@ -294,6 +294,7 @@ init :: proc(mapname : string) {
 
 		fmt.printf("%v\n", nation.centerpoint)
 	}
+	set_all_owned_provinces()
 
 	delete(rawData)
 

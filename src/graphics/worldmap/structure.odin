@@ -14,6 +14,8 @@ data : ^WorldMapData
 
 //= Structures
 WorldMapData :: struct {
+	//* Drawing
+	//TODO move this to seperate files to make transition to shaders easier
 	provinceImage  : raylib.Image,
 	terrainImage   : raylib.Image,
 
@@ -21,6 +23,9 @@ WorldMapData :: struct {
 
 	mapHeight      : f32,
 	mapWidth       : f32,
+
+
+	//* Data
 
 	provincesdata  : map[raylib.Color]provinces.ProvinceData,
 
