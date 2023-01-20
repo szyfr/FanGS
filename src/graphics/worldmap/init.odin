@@ -17,6 +17,7 @@ import "../../game"
 import "../../game/settings"
 import "../../game/population"
 import "../../game/localization"
+import "../../game/nations"
 import "../../game/provinces"
 import "../../utilities/colors"
 
@@ -27,12 +28,14 @@ MAPSETTING_LOCATION  :: "/settings.json"
 MAPLOCAL_LOCATION    :: "/localization/"
 MAPLOCAL_ENDING      :: ".json"
 MAPPROVINCE_LOCATION :: "/map/provinces.json"
+MAPNATION_LOCATION   :: "/map/nations.json"
 PROVINCE_LOCATION    :: "/map/provincemap.png"
 TERRAIN_LOCATION     :: "/map/terrainmap.png"
 
 ERR_MAPSETTINGS_FIND :: "[ERROR]:\tFailed to find Map Settings file."
 ERR_MAPLOCAL_FIND    :: "[ERROR]:\tFailed to find Map Localization file."
 ERR_MAPPROVINCES_FIND:: "[ERROR]:\tFailed to find Map Provinces file."
+ERR_MAPNATIONS_FIND  :: "[ERROR]:\tFailed to find Map Nations file."
 
 
 //= Procedures
@@ -92,12 +95,13 @@ init :: proc(mapname : string) {
 	jsonData, er = json.parse(rawData)
 
 	//* Ancestry
-	//TODO: Redo ancestries to allow information to be put through. eg favored terrains.
 	ancestryObj := jsonData.(json.Object)["ancestry"].(json.Object)
 	for obj in ancestryObj {
-		localization.data[obj] = strings.clone_to_cstring(ancestryObj[obj].(string))
+		localization.data[obj] = strings.clone_to_cstring(ancestryObj[obj].(json.Object)["local"].(string))
 		anc : population.Ancestry = {
-			name = &localization.data[obj],
+			name   = &localization.data[obj],
+			growth = f32(ancestryObj[obj].(json.Object)["growth"].(f64)),
+			// Values
 		}
 		data.ancestryList[obj] = anc
 	}
@@ -108,37 +112,39 @@ init :: proc(mapname : string) {
 		anc := &data.ancestryList[obj]
 
 		for objc in cultureObj[obj].(json.Object) {
-			localization.data[objc] = strings.clone_to_cstring(cultureObj[obj].(json.Object)[objc].(string))
+			localization.data[objc] = strings.clone_to_cstring(cultureObj[obj].(json.Object)[objc].(json.Object)["local"].(string))
 			cul : population.Culture = {
 				name = &localization.data[objc],
 				ancestry = anc,
+				// Values
 			}
 			data.cultureList[objc] = cul
 		}
 	}
 	
 	//* Religion
-	//TODO: Redo religion to allow information to be put through. eg mechanics.
 	religionObj := jsonData.(json.Object)["religion"].(json.Object)
 	for obj in religionObj {
-		localization.data[obj] = strings.clone_to_cstring(religionObj[obj].(string))
+		localization.data[obj] = strings.clone_to_cstring(religionObj[obj].(json.Object)["local"].(string))
 		rel : population.Religion = {
 			name = &localization.data[obj],
+			// Values
 		}
 		data.religionList[obj] = rel
 	}
 
 	//* Terrains
-	//TODO: Redo ancestries to allow information to be put through. eg infrastructure bonuses.
-	//TODO Set up actual data structure for terrain
 	terrainObj := jsonData.(json.Object)["terrain"].(json.Object)
 	for obj in terrainObj {
-		localization.data[obj] = strings.clone_to_cstring(terrainObj[obj].(string))
-	//	rel : population.Religion = {
-	//		name = &localization.data[obj],
-	//	}
-	//	data.religionList[obj] = rel
+		localization.data[obj] = strings.clone_to_cstring(terrainObj[obj].(json.Object)["local"].(string))
+		ter : provinces.Terrain = {
+			name = &localization.data[obj],
+			// Values
+		}
+		data.terrainList[obj] = ter
 	}
+
+	delete(rawData)
 
 	//* Load Provinces
 	mapProvincesLoc := strings.concatenate({MAP_PREFIX, mapname, MAPPROVINCE_LOCATION})
@@ -150,6 +156,7 @@ init :: proc(mapname : string) {
 	jsonData, er = json.parse(rawData)
 	
 	//* Provinces
+	provinceList : map[u32]raylib.Color
 	for obj in jsonData.(json.Object) {
 		provData := jsonData.(json.Object)[obj].(json.Object)
 		value, ok := strconv.parse_u64(obj)
@@ -166,13 +173,9 @@ init :: proc(mapname : string) {
 			u8(provData["color"].(json.Object)["b"].(f64)),
 			255,
 		}
+		provinceList[prov.localID] = prov.color
 		//* Terrain
-		//TODO Set up actual data structure for terrain
-		switch provData["terrain"].(string) {
-			case "grassland": prov.terrain = provinces.Terrain.grassland
-			case "cave":      prov.terrain = provinces.Terrain.cave
-			case "drow_hold": prov.terrain = provinces.Terrain.drow_hold
-		}
+		prov.terrain = &data.terrainList[provData["terrain"].(string)]
 		//* Type
 		switch provData["type"].(string) {
 			case "normal":       prov.type = provinces.ProvinceType.base
@@ -186,7 +189,20 @@ init :: proc(mapname : string) {
 		prov.maxInfrastructure = i16(provData["max_infrastructure"].(f64))
 		prov.curInfrastructure = i16(provData["cur_infrastructure"].(f64))
 
-		//*TODO Population
+		//* Population
+		popData := provData["population"].(json.Array)
+		for pop in popData {
+			population : population.Population = {
+				count = u64(pop.(json.Object)["count"].(f64)),
+
+				ancestry = &data.ancestryList[pop.(json.Object)["ancestry"].(string)],
+				culture  = &data.cultureList[pop.(json.Object)["culture"].(string)],
+				religion = &data.religionList[pop.(json.Object)["religion"].(string)],
+			}
+			append(&prov.popList, population)
+		}
+		prov.avePop = provinces.avearge_province_pop(&prov)
+		
 		//*TODO Buildings
 		//*TODO Modifiers
 		//*TODO Nation
@@ -244,139 +260,42 @@ init :: proc(mapname : string) {
 		data.provincesdata[prov.color] = prov
 	}
 
+	//*TODO Nation
+	mapNationsLoc := strings.concatenate({MAP_PREFIX, mapname, MAPNATION_LOCATION})
+	if !os.is_file(mapNationsLoc) {
+		debug.add_to_log(ERR_MAPNATIONS_FIND)
+		return
+	}
+	rawData, err = os.read_entire_file_from_filename(mapNationsLoc)
+	jsonData, er = json.parse(rawData)
 
-
-	//for i:=0;i<len();i+=1 {}
-
-	//*TODO Load Nations
-
-
-}
-
-//* Generates an alpha mask
-//TODO Look at moving this
-generate_alpha_mask :: proc(
-	image : ^raylib.Image,
-	color : raylib.Color,
-) -> raylib.Image {
-	img := raylib.ImageCopy(image^)
-
-	for i:=0;i<int(image.width*image.height);i+=1 {
-		col := raylib.GetImageColor(
-			img,
-			i32(i)%img.width, i32(i)/img.width,
-		)
-		if colors.compare_colors(color, col) {
-			raylib.ImageDrawPixel(
-				&img,
-				i32(i)%img.width, i32(i)/img.width,
-				{255,255,255,255},
-			)
-		} else {
-			raylib.ImageDrawPixel(
-				&img,
-				i32(i)%img.width, i32(i)/img.width,
-				{0,0,0,0},
-			)
+	for obj in jsonData.(json.Object) {
+		localization.data[obj] = strings.clone_to_cstring(jsonData.(json.Object)[obj].(json.Object)["local"].(string))
+		nation : nations.Nation = {
+			localID = obj,
+			name    = &localization.data[obj], //TODO Remove this sort of thing
+			color   = {
+				u8(jsonData.(json.Object)[obj].(json.Object)["color"].(json.Object)["r"].(f64)),
+				u8(jsonData.(json.Object)[obj].(json.Object)["color"].(json.Object)["g"].(f64)),
+				u8(jsonData.(json.Object)[obj].(json.Object)["color"].(json.Object)["b"].(f64)),
+				255,
+			},
+			//TODO Name Texture?
 		}
-	}
 
-	return img
-}
-
-//* Generates border around image
-//TODO Look at moving this
-apply_borders :: proc(
-	image : ^raylib.Image,
-) {
-	collect_points(image)
-	//collect_points(image)
-}
-
-//* Clears province color to white
-//TODO Look at moving this
-remove_colors :: proc(
-	image : ^raylib.Image,
-	color :  raylib.Color,
-) {
-	for i:=0;i<int(image.width*image.height);i+=1 {
-		col := raylib.GetImageColor(
-			image^,
-			i32(i)%image.width, i32(i)/image.width,
-		)
-		if colors.compare_colors(color, col) {
-			raylib.ImageDrawPixel(
-				image,
-				i32(i)%image.width, i32(i)/image.width,
-				raylib.WHITE,
-			)
+		//* Owned provinces
+		for prov in jsonData.(json.Object)[obj].(json.Object)["provinces"].(json.Array) {
+			value, ok := strconv.parse_u64(prov.(string))
+			append(&nation.ownedProvinces, provinceList[u32(value)])
 		}
+		
+		//* Centerpoint
+		calculate_center(&nation)
+
+		fmt.printf("%v\n", nation.centerpoint)
 	}
-}
 
-//*
-//TODO Look at moving this
-collect_points :: proc(
-	image    : ^raylib.Image,
-) {
-	pixelCount := int(image.width * image.height)
-	array : [dynamic]raylib.Vector2
-	for i:=0;i<pixelCount;i+=1 {
-		posX, posY := i32(i)%image.width, i32(i)/image.width
-		col := raylib.GetImageColor(image^, posX, posY)
+	delete(rawData)
 
-		if check_surrounding(image, {f32(posX),f32(posY)}) && col == raylib.WHITE {
-			append(&array, raylib.Vector2{f32(posX),f32(posY)})
-		}
-	}
-	for i:=0;i<len(array);i+=1 {
-		raylib.ImageDrawPixel(	
-			image,
-			i32(array[i].x), i32(array[i].y),
-			raylib.GRAY,
-		)
-	}
-}
 
-//*
-//TODO Look at moving this
-check_surrounding :: proc(
-	image    : ^raylib.Image,
-	position :  raylib.Vector2,
-) -> bool {
-	result : bool = false
-	col    : raylib.Color
-
-	//* Edge
-	if position.y == 0                 do return true
-	if position.y == f32(image.height) do return true
-	if position.x == 0                 do return true
-	if position.x == f32(image.width)  do return true
-
-	//* Up
-	col = raylib.GetImageColor(image^, i32(position.x), i32(position.y-1))
-	if col != raylib.WHITE do return true
-	//* Upright
-	col = raylib.GetImageColor(image^, i32(position.x+1), i32(position.y-1))
-	if col != raylib.WHITE do return true
-	//* Right
-	col = raylib.GetImageColor(image^, i32(position.x+1), i32(position.y))
-	if col != raylib.WHITE do return true
-	//* Downright
-	col = raylib.GetImageColor(image^, i32(position.x+1), i32(position.y+1))
-	if col != raylib.WHITE do return true
-	//* Down
-	col = raylib.GetImageColor(image^, i32(position.x), i32(position.y+1))
-	if col != raylib.WHITE do return true
-	//* Downleft
-	col = raylib.GetImageColor(image^, i32(position.x-1), i32(position.y+1))
-	if col != raylib.WHITE do return true
-	//* Left
-	col = raylib.GetImageColor(image^, i32(position.x-1), i32(position.y))
-	if col != raylib.WHITE do return true
-	//* Upleft
-	col = raylib.GetImageColor(image^, i32(position.x-1), i32(position.y-1))
-	if col != raylib.WHITE do return true
-
-	return false
 }

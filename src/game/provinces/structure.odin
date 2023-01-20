@@ -4,6 +4,9 @@ package provinces
 //= Imports
 import "vendor:raylib"
 
+import "../population"
+import "../nations"
+
 
 //= Structures
 ProvinceData :: struct {
@@ -23,40 +26,45 @@ ProvinceData :: struct {
 	localID : u32,
 	color   : raylib.Color,
 
-	terrain : Terrain,
+	terrain : ^Terrain,
 	type    : ProvinceType,
 
 	maxInfrastructure : i16,
 	curInfrastructure : i16,
 
-//	popList   : [dynamic]Population,
-//	avePop    : Population,
+	popList   : [dynamic]population.Population,
+	avePop    : population.Population,
 
 	buildings : [8]u8,
 
 	modifierList : [dynamic]ProvinceModifier,
 
-//	owner : ^NationData,
+	owner : ^nations.Nation,
 }
 
 ProvinceModifier :: struct {
 	//etc
 }
 
+Terrain :: struct {
+	name   : ^cstring,
+}
+
 
 //= Enumerations
-Terrain :: enum {
-	NULL,
-	grassland,
-	swamp,
-	deep_road,
-	dwarf_hold,
-	goblin_hold,
-	kobold_hold,
-	orc_hold,
-	drow_hold,
-	cave,
-}
+////TODO Change to structure
+//Terrain :: enum {
+//	NULL,
+//	grassland,
+//	swamp,
+//	deep_road,
+//	dwarf_hold,
+//	goblin_hold,
+//	kobold_hold,
+//	orc_hold,
+//	drow_hold,
+//	cave,
+//}
 ProvinceType :: enum {
 	NULL,
 	base,

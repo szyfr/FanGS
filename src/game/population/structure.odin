@@ -7,7 +7,8 @@ import "vendor:raylib"
 
 //= Structures
 Ancestry :: struct {
-	name : ^cstring,
+	name   : ^cstring,
+	growth : f32,
 }
 Culture :: struct {
 	name     : ^cstring,
@@ -15,4 +16,12 @@ Culture :: struct {
 }
 Religion :: struct {
 	name : ^cstring,
+}
+
+Population :: struct {
+	count : u64,
+
+	ancestry : ^Ancestry,
+	culture  : ^Culture,
+	religion : ^Religion,
 }

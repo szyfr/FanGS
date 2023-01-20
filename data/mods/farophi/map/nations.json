@@ -1,0 +1,23 @@
+
+{
+
+	"drow_hold_1":{
+		"local": "DROW_TEMP",
+		"color": {
+			"r": 159,
+			"g": 137,
+			"b": 255
+		},
+		"provinces": [ "13" ]
+	},
+	"river_state_1":{
+		"local": "HUMAN_TEMP",
+		"color": { 
+			"r":   7,
+			"g": 201,
+			"b": 255
+		},
+		"provinces": [ "1","2","3" ]
+	}
+
+}

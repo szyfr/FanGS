@@ -6,6 +6,7 @@ import "core:fmt"
 import "core:strings"
 
 import "../../graphics/worldmap"
+import "../provinces"
 
 
 //= Procedures
@@ -49,7 +50,10 @@ increment_date :: proc() {
 		worldmap.data.date.day = 1
 
 		//! Monthly game logic
-	//	fmt.printf("Update\n")
+		fmt.printf("Update\n")
+		for prov in worldmap.data.provincesdata {
+			provinces.grow_province(&worldmap.data.provincesdata[prov])
+		}
 		//for i:=0;i<len(worldmap.data.provincescolor);i+=1 {
 		//	col := worldmap.data.provincescolor[i]
 		//	worldmap.grow_province(&worldmap.data.provincesdata[col])

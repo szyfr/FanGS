@@ -11,20 +11,20 @@
 		"max_infrastructure": 80,
 		"cur_infrastructure": 10,
 
-		"population": {
-			"1": {
+		"population": [
+			{
 				"ancestry": "human",
 				"culture": "riverlander",
 				"religion": "water_goddess",
 				"count": 2000
 			},
-			"2": {
+			{
 				"ancestry": "halfling",
 				"culture": "halfling_human",
 				"religion": "water_goddess",
 				"count": 1000
 			}
-		}
+		]
 	},
 	"2": {
 		"name": "Prov2",
@@ -38,20 +38,20 @@
 		"max_infrastructure": 80,
 		"cur_infrastructure": 10,
 
-		"population": {
-			"1": {
+		"population": [
+			{
 				"ancestry": "human",
 				"culture": "riverlander",
 				"religion": "water_goddess",
 				"count": 1500
 			},
-			"2": {
+			{
 				"ancestry": "halfling",
 				"culture": "halfling_human",
 				"religion": "water_goddess",
 				"count": 500
 			}
-		}
+		]
 	},
 	"3": {
 		"name": "Prov3",
@@ -65,20 +65,20 @@
 		"max_infrastructure": 80,
 		"cur_infrastructure": 10,
 
-		"population": {
-			"1": {
+		"population": [
+			{
 				"ancestry": "human",
 				"culture": "riverlander",
 				"religion": "water_goddess",
 				"count": 1000
 			},
-			"2": {
+			{
 				"ancestry": "halfling",
 				"culture": "halfling_human",
 				"religion": "water_goddess",
 				"count": 500
 			}
-		}
+		]
 	},
 	"4": {
 		"name": "Prov4",
@@ -92,7 +92,7 @@
 		"max_infrastructure": 10,
 		"cur_infrastructure": 10,
 
-		"population": { }
+		"population": []
 	},
 	"5": {
 		"name": "Prov5",
@@ -106,7 +106,7 @@
 		"max_infrastructure": 10,
 		"cur_infrastructure": 10,
 
-		"population": { }
+		"population": []
 	},
 	"6": {
 		"name": "Prov6",
@@ -120,7 +120,7 @@
 		"max_infrastructure": 10,
 		"cur_infrastructure": 10,
 
-		"population": { }
+		"population": []
 	},
 	"7": {
 		"name": "Prov7",
@@ -134,7 +134,7 @@
 		"max_infrastructure": 30,
 		"cur_infrastructure": 10,
 
-		"population": { }
+		"population": []
 	},
 	"8": {
 		"name": "Prov8",
@@ -148,7 +148,7 @@
 		"max_infrastructure": 30,
 		"cur_infrastructure": 10,
 
-		"population": { }
+		"population": []
 	},
 	"9": {
 		"name": "Prov9",
@@ -162,7 +162,7 @@
 		"max_infrastructure": 30,
 		"cur_infrastructure": 10,
 
-		"population": { }
+		"population": []
 	},
 	"10": {
 		"name": "Prov10",
@@ -176,7 +176,7 @@
 		"max_infrastructure": 30,
 		"cur_infrastructure": 10,
 
-		"population": { }
+		"population": []
 	},
 	"11": {
 		"name": "Prov11",
@@ -190,7 +190,7 @@
 		"max_infrastructure": 10,
 		"cur_infrastructure": 10,
 
-		"population": { }
+		"population": []
 	},
 	"12": {
 		"name": "Prov12",
@@ -204,7 +204,7 @@
 		"max_infrastructure": 10,
 		"cur_infrastructure": 10,
 
-		"population": { }
+		"population": []
 	},
 	"13": {
 		"name": "Prov13",
@@ -218,13 +218,13 @@
 		"max_infrastructure": 80,
 		"cur_infrastructure": 10,
 
-		"population": {
-			"1": {
+		"population": [
+			{
 				"ancestry": "elf",
 				"culture": "drow",
 				"religion": "evil_drow",
 				"count": 10000
 			}
-		}
+		]
 	}
 }

@@ -3,6 +3,7 @@ package worldmap
 
 //= Imports
 import "vendor:raylib"
+import "../../game/nations"
 import "../../game/provinces"
 import "../../game/population"
 
@@ -22,12 +23,12 @@ WorldMapData :: struct {
 	mapWidth       : f32,
 
 	provincesdata  : map[raylib.Color]provinces.ProvinceData,
-	provincescolor : [dynamic]raylib.Color,
 
-//	nationsdata    : [dynamic]NationData,
+	nationsList  : map[string]nations.Nation,
 	ancestryList : map[string]population.Ancestry,
 	cultureList  : map[string]population.Culture,
 	religionList : map[string]population.Religion,
+	terrainList  : map[string]provinces.Terrain,
 
 	provincePixelCount : int,
 

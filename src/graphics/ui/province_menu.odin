@@ -8,8 +8,6 @@ import "core:strings"
 
 import "vendor:raylib"
 
-import "elements"
-import "../worldmap"
 import "../../game"
 import "../../game/date"
 import "../../game/player"
@@ -17,6 +15,8 @@ import "../../game/settings"
 import "../../game/localization"
 import "../../game/provinces"
 import "../../graphics"
+import "elements"
+import "../worldmap"
 
 
 //= Constants
@@ -50,15 +50,9 @@ draw_provincemenu :: proc() {
 	)
 
 	//* Terrain
-	terrain : string
-	#partial switch player.data.currentSelection.terrain {
-		case provinces.Terrain.grassland: terrain = "grassland"
-		case provinces.Terrain.cave: terrain      = "cave"
-		case provinces.Terrain.drow_hold: terrain = "drow_hold"
-	}
 	raylib.DrawTextEx(
 		graphics.font,
-		localization.data[terrain],
+		player.data.currentSelection.terrain.name^,
 		{topLeft.x + 40, topLeft.y + 40},
 		settings.data.fontSize, 0,
 		raylib.BLACK,
@@ -99,24 +93,24 @@ draw_provincemenu :: proc() {
 	)
 	clear(&builder.buf)
 
-//	//* Populations
-//	if gamedata.playerdata.currentSelection.provType == .base {
-//		str = fmt.sbprintf(
-//			&builder,
-//			"%v | %v - %v - %v\n",
-//			gamedata.playerdata.currentSelection.avePop.pop,
-//			gamedata.playerdata.currentSelection.avePop.ancestry,
-//			gamedata.playerdata.currentSelection.avePop.culture,
-//			gamedata.playerdata.currentSelection.avePop.religion,
-//		)
-//		raylib.DrawTextEx(
-//			gamedata.graphicsdata.font,
-//			strings.clone_to_cstring(str),
-//			{topLeft.x + 20, topLeft.y + 120},
-//			gamedata.settingsdata.fontSize, 0,
-//			raylib.BLACK,
-//		)
-//	}
+	//* Populations
+	if player.data.currentSelection.type == .base && player.data.currentSelection.avePop.count > 0 {
+		str = fmt.sbprintf(
+			&builder,
+			"%v | %v - %v - %v\n",
+			player.data.currentSelection.avePop.count,
+			player.data.currentSelection.avePop.ancestry.name^,
+			player.data.currentSelection.avePop.culture.name^,
+			player.data.currentSelection.avePop.religion.name^,
+		)
+		raylib.DrawTextEx(
+			graphics.font,
+			strings.clone_to_cstring(str),
+			{topLeft.x + 20, topLeft.y + 120},
+			settings.data.fontSize, 0,
+			raylib.BLACK,
+		)
+	}
 	
 	delete(str)
 }

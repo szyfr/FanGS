@@ -2,31 +2,58 @@
 {
 
 	"ancestry": {
-		"human": "Human",
-		"halfling": "Halfling",
-		"elf": "Elf"
+		"human": {
+			"local": "Human",
+			"growth": 0.001
+		},
+		"halfling": {
+			"local": "Halfling",
+			"growth": 0.001
+		},
+		"elf":{
+			"local": "Elf",
+			"growth": 0.00025
+		}
 	},
 	"culture": {
 		"human": {
-			"riverlander": "Riverlander"
+			"riverlander": {
+				"local": "Riverlander"
+			}
 		},
 		"halfling": {
-			"halfling_human": "Human"
+			"halfling_human": {
+				"local": "Human"
+			}
 		},
 		"elf": {
-			"drow": "Drow"
+			"drow": {
+				"local": "Drow"
+			}
 		}
 	},
 	"religion": {
-		"water_goddess": "Water Goddess",
-		"evil_drow": "Evil Drow God"
+		"water_goddess": {
+			"local": "Water Goddess"
+		},
+		"evil_drow": {
+			"local": "Evil Drow God"
+		}
 	},
 
 	"terrain": {
-		"grassland": "Grassland",
-		"cave": "Cavern",
-		"mountain": "Mountain",
-		"drow_hold": "Drow Hold"
+		"grassland": {
+			"local": "Grassland"
+		},
+		"cave": {
+			"local": "Cavern"
+		},
+		"mountain": {
+			"local": "Mountain"
+		},
+		"drow_hold": {
+			"local": "Drow Hold"
+		}
 	}
 
 }
