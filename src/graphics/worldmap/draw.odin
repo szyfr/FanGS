@@ -15,7 +15,7 @@ draw :: proc() {
 	for prov in data.provincesdata {
 		//TODO remove this variable
 		col  := prov
-		disp := prov
+		disp := data.provincesdata[col].color
 
 		//* Draw center
 		raylib.DrawModelEx(

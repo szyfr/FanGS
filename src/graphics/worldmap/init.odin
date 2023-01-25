@@ -292,7 +292,7 @@ init :: proc(mapname : string) {
 		//* Centerpoint
 		calculate_center(&nation)
 
-		fmt.printf("%v\n", nation.centerpoint)
+		data.nationsList[nation.localID] = nation
 	}
 	set_all_owned_provinces()
 

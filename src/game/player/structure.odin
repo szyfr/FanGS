@@ -5,6 +5,7 @@ package player
 import "vendor:raylib"
 
 import "../provinces"
+import "../../graphics/mapmodes"
 
 
 //= Globals
@@ -22,19 +23,5 @@ PlayerData :: struct {
 	ray              :  raylib.Ray,
 	currentSelection : ^provinces.ProvinceData,
 
-	curMapmode       : Mapmode,
-}
-
-
-//= Enumerations
-//TODO
-Mapmode :: enum {
-	overworld,
-	political,
-	terrain,
-	control,
-	population,
-	ancestry,
-	culture,
-	religion,
+	curMapmode       : mapmodes.Mapmode,
 }

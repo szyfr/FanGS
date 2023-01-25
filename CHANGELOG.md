@@ -3,7 +3,7 @@
 
 
 ## 0.02_0 "Governance" - 22/12/14 -> ??/??/??
-[Unreleased] Streams - 6
+[Unreleased] Streams - 7
 ### Added
 - 
 ### Removed

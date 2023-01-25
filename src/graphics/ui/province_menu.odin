@@ -111,6 +111,17 @@ draw_provincemenu :: proc() {
 			raylib.BLACK,
 		)
 	}
+
+	//* TEST
+	if player.data.currentSelection.owner != nil {
+		raylib.DrawTextEx(
+			graphics.font,
+			"Owned",
+			{topLeft.x + 20, topLeft.y + 160},
+			settings.data.fontSize, 0,
+			raylib.BLACK,
+		)
+	}
 	
 	delete(str)
 }

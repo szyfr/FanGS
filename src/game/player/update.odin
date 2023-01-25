@@ -14,6 +14,7 @@ import "../settings"
 import "../../game"
 import "../../game/provinces"
 import "../../graphics/worldmap"
+import "../../graphics/mapmodes"
 import "../../utilities/matrix_math"
 
 
@@ -24,7 +25,7 @@ update :: proc() {
 	update_player_movement()
 	update_player_camera()
 	update_player_mouse()
-//	update_mapmodes() //TODO
+	update_mapmodes()
 	update_date_controls()
 	if raylib.IsKeyPressed(raylib.KeyboardKey.ESCAPE) {
 		game.pauseMenu = !game.pauseMenu
@@ -165,19 +166,31 @@ update_player_mouse :: proc() {
 	}
 }
 
-////* Mapmode keybindings //TODO
-//update_mapmodes :: proc() {
-//	using raylib, settings, gamedata
-//
-//	if is_key_pressed("over")     do playerdata.curMapmode = .overworld
-//	if is_key_pressed("politic")  do playerdata.curMapmode = .political
-//	if is_key_pressed("terrain")  do playerdata.curMapmode = .terrain
-//	if is_key_pressed("control")  do playerdata.curMapmode = .control
-//	if is_key_pressed("pop")      do playerdata.curMapmode = .population
-//	if is_key_pressed("ancestry") do playerdata.curMapmode = .ancestry
-//	if is_key_pressed("culture")  do playerdata.curMapmode = .culture
-//	if is_key_pressed("religion") do playerdata.curMapmode = .religion
-//}
+//* Mapmode keybindings //TODO
+update_mapmodes :: proc() {
+	if settings.is_key_pressed("mm01") {
+		fmt.printf("Overworld Mapmode\n")
+		data.curMapmode = .overworld
+	}
+	if settings.is_key_pressed("mm02") {
+		fmt.printf("Political Mapmode\n")
+		data.curMapmode = .political
+	}
+	//if settings.is_key_pressed("terrain")  do data.curMapmode = .terrain
+	//if settings.is_key_pressed("control")  do data.curMapmode = .control
+	//if settings.is_key_pressed("pop")      do data.curMapmode = .population
+	//if settings.is_key_pressed("ancestry") do data.curMapmode = .ancestry
+	//if settings.is_key_pressed("culture")  do data.curMapmode = .culture
+	//if settings.is_key_pressed("religion") do data.curMapmode = .religion
+
+	for provColor in worldmap.data.provincesdata {
+		mapmodes.decide_color(
+			&worldmap.data.provincesdata[provColor],
+			provColor,
+			data.curMapmode,
+		)
+	}
+}
 
 //* Date keybindings
 update_date_controls :: proc() {
