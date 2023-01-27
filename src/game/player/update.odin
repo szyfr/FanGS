@@ -147,20 +147,20 @@ update_player_mouse :: proc() {
 
 		//* Calculate PosX
 		posX : i32
-		if collision.point.x*25 > 0 do posX =  i32(worldmap.data.mapWidth*25) - i32(collision.point.x*25)
-		else                        do posX = -i32(collision.point.x*25) % i32(worldmap.data.mapWidth*25)
+		if collision.point.x*20 > 0 do posX =  i32(worldmap.data.mapWidth*20) - i32(collision.point.x*20)
+		else                        do posX = -i32(collision.point.x*20) % i32(worldmap.data.mapWidth*20)
 
 		//* Grab color
-		//col := raylib.GetImageColor(
-		//	worldmap.data.provinceImage,
-		//	posX,
-		//	-i32(collision.point.z*25),
-		//)
 		col := raylib.GetImageColor(
 			worldmap.data.provinceImage,
-			-i32(collision.point.x*20),
+			posX,
 			-i32(collision.point.z*20),
 		)
+		//col := raylib.GetImageColor(
+		//	worldmap.data.provinceImage,
+		//	-i32(collision.point.x*20),
+		//	-i32(collision.point.z*20),
+		//)
 		worldmap.data.shaderVar["chosenProv"] = [4]f32{
 			f32(col.r) / 255,
 			f32(col.g) / 255,
