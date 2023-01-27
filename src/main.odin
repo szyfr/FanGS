@@ -40,6 +40,7 @@ main_draw :: proc() {
 
 	if !game.mainMenu {
 		worldmap.draw()
+		raylib.DrawRay(player.data.ray, raylib.PURPLE)
 	}
 	
 	raylib.EndMode3D()

@@ -23,20 +23,13 @@ import "../../utilities/colors"
 
 
 //= Constants
-HEIGHTMAP_RESIZE     :: 4
-MAP_RESIZE           :: 20
-
 MAP_PREFIX           :: "data/mods/"
-
 MAPSETTING_LOCATION  :: "/settings.json"
 MAPLOCAL_LOCATION    :: "/localization/"
 MAPLOCAL_ENDING      :: ".json"
-
 MAPPROVINCE_LOCATION :: "/map/provinces.json"
 MAPNATION_LOCATION   :: "/map/nations.json"
-
 PROVINCE_LOCATION    :: "/map/provincemap.png"
-HEIGHT_LOCATION      :: "/map/provincemap.png"
 TERRAIN_LOCATION     :: "/map/terrainmap.png"
 
 ERR_MAPSETTINGS_FIND :: "[ERROR]:\tFailed to find Map Settings file."
@@ -49,50 +42,32 @@ ERR_MAPNATIONS_FIND  :: "[ERROR]:\tFailed to find Map Nations file."
 init :: proc(mapname : string) {
 	data = new(WorldMapData)
 
+	//* Generate location strings
 	provLoc := strings.concatenate({MAP_PREFIX, mapname, PROVINCE_LOCATION})
-	heigLoc := strings.concatenate({MAP_PREFIX, mapname, HEIGHT_LOCATION})
 	terrLoc := strings.concatenate({MAP_PREFIX, mapname, TERRAIN_LOCATION})
 
 	//* Load images
 	data.provinceImage = raylib.LoadImage(strings.clone_to_cstring(provLoc))
-	data.heightImage   = raylib.LoadImage(strings.clone_to_cstring(heigLoc))
 	data.terrainImage  = raylib.LoadImage(strings.clone_to_cstring(terrLoc))
-	data.provincePixelCount = int(data.provinceImage.height * data.provinceImage.width) //TODO look into this variable
+	data.provincePixelCount = int(data.provinceImage.height * data.provinceImage.width)
 
 	//* General data
-	data.mapWidth  = f32(data.provinceImage.width)  / MAP_RESIZE
-	data.mapHeight = f32(data.provinceImage.height) / MAP_RESIZE
-
-	//* Mesh / Model
-	height : raylib.Image = raylib.ImageCopy(data.heightImage)
-	raylib.ImageResize(&height, height.width/HEIGHTMAP_RESIZE, height.height/HEIGHTMAP_RESIZE)
-	data.collisionMesh = raylib.GenMeshHeightmap(height, {data.mapWidth+0.20, 0.5, data.mapHeight+0.20})
-	data.model = raylib.LoadModelFromMesh(data.collisionMesh)
-	raylib.UnloadImage(height)
-	data.model.materials[0].maps[0].texture = raylib.LoadTextureFromImage(data.provinceImage)
-
-	//* Shader
-	data.shader = raylib.LoadShader(nil,"data/gfx/shaders/shader.fs")
-	data.model.materials[0].shader = data.shader
-
-	data.shaderVarLoc["outlineSize"] = raylib.ShaderLocationIndex(raylib.GetShaderLocation(data.shader, "outlineSize"))
-	data.shaderVarLoc["textureSize"] = raylib.ShaderLocationIndex(raylib.GetShaderLocation(data.shader, "textureSize"))
-	data.shaderVarLoc["chosenProv"]  = raylib.ShaderLocationIndex(raylib.GetShaderLocation(data.shader, "chosenProv"))
-	data.shaderVarLoc["zoom"]        = raylib.ShaderLocationIndex(raylib.GetShaderLocation(data.shader, "zoom"))
+	data.mapWidth  = f32(data.provinceImage.width)  / 25
+	data.mapHeight = f32(data.provinceImage.height) / 25
 	
-	data.shaderVar["outlineSize"] = 2.0
-	data.shaderVar["textureSize"] = [2]f32{data.mapWidth*MAP_RESIZE, data.mapHeight*MAP_RESIZE}
-
-	//TODO Create a wrapper function to simplify this into having a single string input
-	raylib.SetShaderValue(data.shader, data.shaderVarLoc["outlineSize"], &data.shaderVar["outlineSize"], .FLOAT);
-	raylib.SetShaderValue(data.shader, data.shaderVarLoc["textureSize"], &data.shaderVar["textureSize"], .VEC2);
+	//* Collision Mesh
+	data.collisionMesh = raylib.GenMeshPlane(
+		data.mapWidth,
+		data.mapHeight,
+		1, 1,
+	)
 
 	//* Load settings
 	settingsLoc := strings.concatenate({MAP_PREFIX, mapname, MAPSETTING_LOCATION})
 	if !os.is_file(settingsLoc) {
 		debug.add_to_log(ERR_MAPSETTINGS_FIND)
 		game.mainMenu = true
-		//TODO Add in onscreen error message
+		//TODO: Add in onscreen error message
 		return
 	}
 	rawData, err := os.read_entire_file_from_filename(settingsLoc)
@@ -232,6 +207,56 @@ init :: proc(mapname : string) {
 		//*TODO Modifiers
 		//*TODO Nation
 
+		//* Data
+		width  : int = int(data.provinceImage.width)
+		height : int = int(data.provinceImage.height)
+
+		minX, maxX : f32 = f32(width),  0
+		minY, maxY : f32 = f32(height), 0
+		for i:=0;i<data.provincePixelCount;i+=1 {
+			col := raylib.GetImageColor(
+				data.provinceImage,
+				i32(i%width), i32(i/width),
+			)
+			if colors.compare_colors(prov.color, col) {
+				if f32(i%width) < minX do minX = f32(i%width)
+				if f32(i%width) > maxX do maxX = f32(i%width)
+				if f32(i/width) < minY do minY = f32(i/width)
+				if f32(i/width) > maxY do maxY = f32(i/width)
+			}
+		}
+		maxX += 1
+		maxY += 1
+		mod : f32 = 25
+		prov.position    = {minX / mod, 0, minY / mod}
+		prov.width       =  maxX-minX
+		prov.height      =  maxY-minY
+		prov.centerpoint = {
+			(minX + (prov.width / 2)) / mod,
+			0,
+			(minY + (prov.height / 2)) / mod,
+		}
+
+		rect : raylib.Rectangle = {minX, minY, prov.width, prov.height}
+		prov.provImage   =  raylib.ImageFromImage(data.provinceImage, rect)
+		raylib.ImageAlphaMask(&prov.provImage, generate_alpha_mask(&prov.provImage,prov.color))
+		remove_colors(&prov.provImage, prov.color)
+		apply_borders(&prov.provImage)
+		prov.currenttx   =  raylib.LoadTextureFromImage(prov.provImage)
+		// TODO: Test to see if it needs to by scaled
+		prov.provmesh    =  raylib.GenMeshPlane(prov.width / mod, prov.height / mod, 1, 1)
+		prov.provmodel   =  raylib.LoadModelFromMesh(prov.provmesh)
+		raylib.SetMaterialTexture(&prov.provmodel.materials[0], .ALBEDO, prov.currenttx)
+		if prov.type != .impassable {
+			img := raylib.ImageTextEx(
+				graphics.font,
+				localization.data[obj],
+				20, 1,
+				raylib.BLACK,
+			)
+			prov.nametx = raylib.LoadTextureFromImage(img)
+		}
+
 		data.provincesdata[prov.color] = prov
 	}
 
@@ -272,4 +297,6 @@ init :: proc(mapname : string) {
 	set_all_owned_provinces()
 
 	delete(rawData)
+
+
 }

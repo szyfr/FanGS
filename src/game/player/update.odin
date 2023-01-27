@@ -109,19 +109,19 @@ update_player_mouse :: proc() {
 			-1, 0,  0, 0,
 			 0, 1,  0, 0,
 			 0, 0, -1, 0,
-			width, 0, height, 1,
+			 0, 0,  0, 1,
 		}
 		transformLeft : linalg.Matrix4x4f32 = {
 			-1, 0,  0, 0,
 			 0, 1,  0, 0,
 			 0, 0, -1, 0,
-			width-worldmap.data.mapWidth, 0, height, 1,
+			-worldmap.data.mapWidth, 0, 0, 1,
 		}
 		transformRight : linalg.Matrix4x4f32 = {
 			-1, 0,  0, 0,
 			 0, 1,  0, 0,
 			 0, 0, -1, 0,
-			width+worldmap.data.mapWidth, 0, height, 1,
+			+worldmap.data.mapWidth, 0, 0, 1,
 		}
 
 		//* Casting ray
@@ -151,11 +151,25 @@ update_player_mouse :: proc() {
 		else                        do posX = -i32(collision.point.x*25) % i32(worldmap.data.mapWidth*25)
 
 		//* Grab color
+		//col := raylib.GetImageColor(
+		//	worldmap.data.provinceImage,
+		//	posX,
+		//	-i32(collision.point.z*25),
+		//)
 		col := raylib.GetImageColor(
 			worldmap.data.provinceImage,
-			posX,
-			-i32(collision.point.z*25),
+			-i32(collision.point.x*20),
+			-i32(collision.point.z*20),
 		)
+		worldmap.data.shaderVar["chosenProv"] = [4]f32{
+			f32(col.r) / 255,
+			f32(col.g) / 255,
+			f32(col.b) / 255,
+			f32(col.a) / 255,
+		}
+		//TODO Wrapper function
+		raylib.SetShaderValue(worldmap.data.shader, worldmap.data.shaderVarLoc["chosenProv"], &worldmap.data.shaderVar["chosenProv"], .VEC4);
+		fmt.printf("%v:%v\n", -i32(collision.point.x*25), -i32(collision.point.z*25),)
 
 		//* Set selected province
 		prov, res := &worldmap.data.provincesdata[col]

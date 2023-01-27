@@ -15,17 +15,11 @@ data : ^WorldMapData
 //= Structures
 WorldMapData :: struct {
 	//* Drawing
+	//TODO move this to seperate files to make transition to shaders easier
 	provinceImage  : raylib.Image,
-	heightImage    : raylib.Image,
 	terrainImage   : raylib.Image,
-	shaderImage    : raylib.Image,
 
 	collisionMesh  : raylib.Mesh,
-	model          : raylib.Model,
-	shader         : raylib.Shader,
-
-	shaderVarLoc   : map[string]raylib.ShaderLocationIndex,
-	shaderVar      : map[string]ShaderVariable,
 
 	mapHeight      : f32,
 	mapWidth       : f32,
@@ -49,14 +43,6 @@ WorldMapData :: struct {
 	timeSpeed : uint,
 	timeDelay : uint,
 	timePause : bool,
-}
-
-ShaderVariable :: union {
-	i32,
-	f32,
-	[2]f32,
-	[3]f32,
-	[4]f32,
 }
 
 MapSettingsData :: struct {
