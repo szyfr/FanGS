@@ -178,15 +178,13 @@ update_player_mouse :: proc() {
 //* Mapmode keybindings //TODO
 update_mapmodes :: proc() {
 	//* Unload shader image
-//	if worldmap.data.provinceImage != {} do 
+	if worldmap.data.provinceImage != {} do raylib.UnloadImage(worldmap.data.shaderImage)
 
 	if settings.is_key_pressed("mm01") {
 		fmt.printf("Overworld Mapmode\n")
 		data.curMapmode = .overworld
 
-		raylib.UnloadImage(worldmap.data.shaderImage)
 		worldmap.data.shaderImage = raylib.ImageCopy(worldmap.data.provinceImage)
-		raylib.UnloadTexture(worldmap.data.model.materials[0].maps[1].texture)
 
 	//	worldmap.data.shaderVar["mapmode"] = 0
 	}
@@ -194,7 +192,6 @@ update_mapmodes :: proc() {
 		fmt.printf("Political Mapmode\n")
 		data.curMapmode = .political
 
-		raylib.UnloadImage(worldmap.data.shaderImage)
 		worldmap.data.shaderImage = raylib.ImageCopy(worldmap.data.provinceImage)
 
 		for nation in worldmap.data.nationsList {
@@ -206,7 +203,6 @@ update_mapmodes :: proc() {
 				)
 			}
 		}
-		raylib.UnloadTexture(worldmap.data.model.materials[0].maps[1].texture)
 	//	worldmap.data.shaderVar["mapmode"] = 1
 	}
 	//if settings.is_key_pressed("terrain")  do data.curMapmode = .terrain
@@ -218,7 +214,7 @@ update_mapmodes :: proc() {
 
 //	raylib.SetShaderValue(worldmap.data.shader, worldmap.data.shaderVarLoc["mapmode"], &worldmap.data.shaderVar["mapmode"], .INT)
 	//* Unload old texture and apply new one
-//	if worldmap.data.model.materials[0].maps[1].texture != {} do raylib.UnloadTexture(worldmap.data.model.materials[0].maps[1].texture)
+	if worldmap.data.model.materials[0].maps[1].texture != {} do raylib.UnloadTexture(worldmap.data.model.materials[0].maps[1].texture)
 	worldmap.data.model.materials[0].maps[1].texture = raylib.LoadTextureFromImage(worldmap.data.shaderImage)
 }
 
