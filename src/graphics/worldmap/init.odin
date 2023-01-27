@@ -57,7 +57,7 @@ init :: proc(mapname : string) {
 	data.provinceImage = raylib.LoadImage(strings.clone_to_cstring(provLoc))
 	data.heightImage   = raylib.LoadImage(strings.clone_to_cstring(heigLoc))
 	data.terrainImage  = raylib.LoadImage(strings.clone_to_cstring(terrLoc))
-	data.provincePixelCount = int(data.provinceImage.height * data.provinceImage.width) //TODO look into this variable
+	data.shaderImage   = raylib.ImageCopy(data.provinceImage)
 
 	//* General data
 	data.mapWidth  = f32(data.provinceImage.width)  / MAP_RESIZE
@@ -70,6 +70,7 @@ init :: proc(mapname : string) {
 	data.model = raylib.LoadModelFromMesh(data.collisionMesh)
 	raylib.UnloadImage(height)
 	data.model.materials[0].maps[0].texture = raylib.LoadTextureFromImage(data.provinceImage)
+	data.model.materials[0].maps[1].texture = raylib.LoadTextureFromImage(data.shaderImage)
 
 	//* Shader
 	data.shader = raylib.LoadShader(nil,"data/gfx/shaders/shader.fs")
@@ -80,12 +81,14 @@ init :: proc(mapname : string) {
 	data.shaderVarLoc["chosenProv"]  = raylib.ShaderLocationIndex(raylib.GetShaderLocation(data.shader, "chosenProv"))
 	data.shaderVarLoc["zoom"]        = raylib.ShaderLocationIndex(raylib.GetShaderLocation(data.shader, "zoom"))
 	
+	data.shaderVar["mapmode"]     = 0
 	data.shaderVar["outlineSize"] = 2.0
 	data.shaderVar["textureSize"] = [2]f32{data.mapWidth*MAP_RESIZE, data.mapHeight*MAP_RESIZE}
 
-	//TODO Create a wrapper function to simplify this into having a single string input
-	raylib.SetShaderValue(data.shader, data.shaderVarLoc["outlineSize"], &data.shaderVar["outlineSize"], .FLOAT);
-	raylib.SetShaderValue(data.shader, data.shaderVarLoc["textureSize"], &data.shaderVar["textureSize"], .VEC2);
+	//TODO Create a wrapper function to simplify this into having a string input and the value to change it to
+	raylib.SetShaderValue(data.shader, data.shaderVarLoc["mapmode"], &data.shaderVar["mapmode"], .INT)
+	raylib.SetShaderValue(data.shader, data.shaderVarLoc["outlineSize"], &data.shaderVar["outlineSize"], .FLOAT)
+	raylib.SetShaderValue(data.shader, data.shaderVarLoc["textureSize"], &data.shaderVar["textureSize"], .VEC2)
 
 	//* Load settings
 	settingsLoc := strings.concatenate({MAP_PREFIX, mapname, MAPSETTING_LOCATION})

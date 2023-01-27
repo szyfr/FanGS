@@ -5,6 +5,7 @@ package mapmodes
 import "vendor:raylib"
 
 import "../../game/provinces"
+import "../worldmap"
 
 
 //= Procedures

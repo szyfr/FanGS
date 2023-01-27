@@ -156,11 +156,6 @@ update_player_mouse :: proc() {
 			posX,
 			-i32(collision.point.z*20),
 		)
-		//col := raylib.GetImageColor(
-		//	worldmap.data.provinceImage,
-		//	-i32(collision.point.x*20),
-		//	-i32(collision.point.z*20),
-		//)
 		worldmap.data.shaderVar["chosenProv"] = [4]f32{
 			f32(col.r) / 255,
 			f32(col.g) / 255,
@@ -182,13 +177,37 @@ update_player_mouse :: proc() {
 
 //* Mapmode keybindings //TODO
 update_mapmodes :: proc() {
+	//* Unload shader image
+//	if worldmap.data.provinceImage != {} do 
+
 	if settings.is_key_pressed("mm01") {
 		fmt.printf("Overworld Mapmode\n")
 		data.curMapmode = .overworld
+
+		raylib.UnloadImage(worldmap.data.shaderImage)
+		worldmap.data.shaderImage = raylib.ImageCopy(worldmap.data.provinceImage)
+		raylib.UnloadTexture(worldmap.data.model.materials[0].maps[1].texture)
+
+	//	worldmap.data.shaderVar["mapmode"] = 0
 	}
 	if settings.is_key_pressed("mm02") {
 		fmt.printf("Political Mapmode\n")
 		data.curMapmode = .political
+
+		raylib.UnloadImage(worldmap.data.shaderImage)
+		worldmap.data.shaderImage = raylib.ImageCopy(worldmap.data.provinceImage)
+
+		for nation in worldmap.data.nationsList {
+			for prov in worldmap.data.nationsList[nation].ownedProvinces {
+				raylib.ImageColorReplace(
+					&worldmap.data.shaderImage,
+					prov,
+					worldmap.data.nationsList[nation].color,
+				)
+			}
+		}
+		raylib.UnloadTexture(worldmap.data.model.materials[0].maps[1].texture)
+	//	worldmap.data.shaderVar["mapmode"] = 1
 	}
 	//if settings.is_key_pressed("terrain")  do data.curMapmode = .terrain
 	//if settings.is_key_pressed("control")  do data.curMapmode = .control
@@ -197,13 +216,10 @@ update_mapmodes :: proc() {
 	//if settings.is_key_pressed("culture")  do data.curMapmode = .culture
 	//if settings.is_key_pressed("religion") do data.curMapmode = .religion
 
-	for provColor in worldmap.data.provincesdata {
-		mapmodes.decide_color(
-			&worldmap.data.provincesdata[provColor],
-			provColor,
-			data.curMapmode,
-		)
-	}
+//	raylib.SetShaderValue(worldmap.data.shader, worldmap.data.shaderVarLoc["mapmode"], &worldmap.data.shaderVar["mapmode"], .INT)
+	//* Unload old texture and apply new one
+//	if worldmap.data.model.materials[0].maps[1].texture != {} do raylib.UnloadTexture(worldmap.data.model.materials[0].maps[1].texture)
+	worldmap.data.model.materials[0].maps[1].texture = raylib.LoadTextureFromImage(worldmap.data.shaderImage)
 }
 
 //* Date keybindings
