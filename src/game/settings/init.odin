@@ -72,6 +72,25 @@ init :: proc() {
 	data.keybindings["mm08"]     = create_keybinding(obj["mm08"].(json.Object))
 	data.keybindings["mm09"]     = create_keybinding(obj["mm09"].(json.Object))
 
+	//* Grab mapmodes
+	arr := jsonData.(json.Object)["mapmodes"].(json.Array)
+	cnt := 0
+	for a in arr {
+		str := a.(string)
+		
+		switch str {
+			case "overworld": data.mapmodesTool[cnt]  = .overworld
+			case "political": data.mapmodesTool[cnt]  = .political
+			case "terrain": data.mapmodesTool[cnt]    = .terrain
+			case "control": data.mapmodesTool[cnt]    = .control
+			case "population": data.mapmodesTool[cnt] = .population
+			case "ancestry": data.mapmodesTool[cnt]   = .ancestry
+			case "culture": data.mapmodesTool[cnt]    = .culture
+			case "religion": data.mapmodesTool[cnt]   = .religion
+		}
+		cnt += 1
+	}
+
 	//* Logging
 	debug.add_to_log(SETTINGS_LOADED)
 

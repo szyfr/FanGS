@@ -76,19 +76,9 @@ init :: proc(mapname : string) {
 	data.shader = raylib.LoadShader(nil,"data/gfx/shaders/shader.fs")
 	data.model.materials[0].shader = data.shader
 
-	data.shaderVarLoc["outlineSize"] = raylib.ShaderLocationIndex(raylib.GetShaderLocation(data.shader, "outlineSize"))
-	data.shaderVarLoc["textureSize"] = raylib.ShaderLocationIndex(raylib.GetShaderLocation(data.shader, "textureSize"))
-	data.shaderVarLoc["chosenProv"]  = raylib.ShaderLocationIndex(raylib.GetShaderLocation(data.shader, "chosenProv"))
-	data.shaderVarLoc["zoom"]        = raylib.ShaderLocationIndex(raylib.GetShaderLocation(data.shader, "zoom"))
-	
-	data.shaderVar["mapmode"]     = 0
-	data.shaderVar["outlineSize"] = 2.0
-	data.shaderVar["textureSize"] = [2]f32{data.mapWidth*MAP_RESIZE, data.mapHeight*MAP_RESIZE}
+	create_shader_variable("mapmode", 0)
+	create_shader_variable("textureSize", [2]f32{data.mapWidth*MAP_RESIZE, data.mapHeight*MAP_RESIZE})
 
-	//TODO Create a wrapper function to simplify this into having a string input and the value to change it to
-	raylib.SetShaderValue(data.shader, data.shaderVarLoc["mapmode"], &data.shaderVar["mapmode"], .INT)
-	raylib.SetShaderValue(data.shader, data.shaderVarLoc["outlineSize"], &data.shaderVar["outlineSize"], .FLOAT)
-	raylib.SetShaderValue(data.shader, data.shaderVarLoc["textureSize"], &data.shaderVar["textureSize"], .VEC2)
 
 	//* Load settings
 	settingsLoc := strings.concatenate({MAP_PREFIX, mapname, MAPSETTING_LOCATION})
@@ -161,12 +151,18 @@ init :: proc(mapname : string) {
 		data.religionList[obj] = rel
 	}
 
-	//* Terrains
+	//* Terrain
 	terrainObj := jsonData.(json.Object)["terrain"].(json.Object)
 	for obj in terrainObj {
 		localization.data[obj] = strings.clone_to_cstring(terrainObj[obj].(json.Object)["local"].(string))
 		ter : provinces.Terrain = {
-			name = &localization.data[obj],
+			name  = &localization.data[obj],
+			color = {
+				u8(terrainObj[obj].(json.Object)["color"].(json.Array)[0].(f64)),
+				u8(terrainObj[obj].(json.Object)["color"].(json.Array)[1].(f64)),
+				u8(terrainObj[obj].(json.Object)["color"].(json.Array)[2].(f64)),
+				u8(terrainObj[obj].(json.Object)["color"].(json.Array)[3].(f64)),
+			},
 			// Values
 		}
 		data.terrainList[obj] = ter
@@ -184,6 +180,9 @@ init :: proc(mapname : string) {
 	jsonData, er = json.parse(rawData)
 	
 	//* Provinces
+	array := make([]ShaderProvince, 100)
+	count := 0
+
 	provinceList : map[u32]raylib.Color
 	for obj in jsonData.(json.Object) {
 		provData := jsonData.(json.Object)[obj].(json.Object)
@@ -235,8 +234,27 @@ init :: proc(mapname : string) {
 		//*TODO Modifiers
 		//*TODO Nation
 
+		//* Shader info
+		array[count].baseColor = [4]f32{
+			f32(prov.color.r) / 255,
+			f32(prov.color.g) / 255,
+			f32(prov.color.b) / 255,
+			f32(prov.color.a) / 255,
+		}
+		array[count].mapColor = [4]f32{
+			f32(prov.color.r/2) / 255,
+			f32(prov.color.g/2) / 255,
+			f32(prov.color.b/2) / 255,
+			f32(prov.color.a/2) / 255,
+		}
+		prov.shaderIndex = count
+		count += 1
+
 		data.provincesdata[prov.color] = prov
 	}
+
+	//*TESTING
+	create_shader_variable("prov", array, 100)
 
 	//*TODO Nation
 	mapNationsLoc := strings.concatenate({MAP_PREFIX, mapname, MAPNATION_LOCATION})

@@ -57,6 +57,13 @@ ShaderVariable :: union {
 	[2]f32,
 	[3]f32,
 	[4]f32,
+	[2]i32,
+	[3]i32,
+	[4]i32,
+}
+ShaderProvince :: struct {
+	baseColor : ShaderVariable,
+	mapColor  : ShaderVariable,
 }
 
 MapSettingsData :: struct {

@@ -26,6 +26,7 @@ ProvinceData :: struct {
 	//* Data
 	localID : u32,
 	color   : raylib.Color,
+	shaderIndex: int,
 
 	terrain : ^Terrain,
 	type    : ProvinceType,
@@ -48,7 +49,8 @@ ProvinceModifier :: struct {
 }
 
 Terrain :: struct {
-	name   : ^cstring,
+	name  : ^cstring,
+	color : raylib.Color,
 }
 
 

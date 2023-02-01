@@ -19,6 +19,7 @@ SettingsData :: struct {
 	fontSize      : f32,
 
 	keybindings   : map[string]Keybinding,
+	mapmodesTool  : [10]Mapmode,
 }
 
 Keybinding :: struct {
@@ -29,4 +30,15 @@ Keybinding :: struct {
 		// 3 - Gamepad Button
 		// 4 - Gamepad Axis
 	key    : u32,
+}
+
+Mapmode :: enum {
+	overworld,
+	political,
+	terrain,
+	control,
+	population,
+	ancestry,
+	culture,
+	religion,
 }

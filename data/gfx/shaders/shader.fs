@@ -1,5 +1,14 @@
 #version 330
 
+
+struct province {
+	vec4 baseColor;
+	vec4 mapColor;
+};
+
+
+
+
 // Input vertex attributes (from vertex shader)
 in vec2  fragTexCoord;
 in vec4  fragColor;
@@ -7,14 +16,13 @@ in vec4  fragColor;
 // Input uniform values
 uniform sampler2D texture0;
 uniform sampler2D texture1;
-uniform vec4 colDiffuse;
+//uniform vec4 colDiffuse;
 
-uniform float hasColor;
-uniform float outlineSize;
 uniform vec2 textureSize;
 uniform vec4 chosenProv;
 uniform int mapmode;
-uniform float zoom;
+
+uniform province prov[100];
 
 // Output fragment color
 out vec4 finalColor;
@@ -46,9 +54,15 @@ void main() {
 
 	if (texelColor != tcUp || texelColor != tcDown || texelColor != tcLeft || texelColor != tcRight) {
 		if (texelColor == chosenProv) finalColor = vec4(1,0,0,1);
-		else finalColor = mix(vec4(1,1,1,1), texelColor, 4);
+		else finalColor = vec4(0,0,0,1);
 	} else {
-		finalColor = texelColor2;
+		//finalColor = texelColor2;
+		for (int i = 0; i < 100; i++) {
+			if (texelColor == prov[i].baseColor) {
+				finalColor = prov[i].mapColor;
+				return;
+			}
+		}
 	}
 	//finalColor = (texelColor + texelColor2) / 2;
 }

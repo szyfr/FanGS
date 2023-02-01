@@ -87,5 +87,18 @@
 			"origin": 0,
 			"key": 57
 		}
-	}
+	},
+
+	"mapmodes": [
+		"",
+		"overworld",
+		"political",
+		"terrain",
+		"control",
+		"population",
+		"ancestry",
+		"culture",
+		"religion",
+		""
+	]
 }

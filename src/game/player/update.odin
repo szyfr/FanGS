@@ -6,6 +6,7 @@ import "core:fmt"
 import "core:math"
 import "core:math/linalg"
 import "core:math/linalg/glsl"
+import "core:strings"
 import "core:time"
 
 import "vendor:raylib"
@@ -156,70 +157,84 @@ update_player_mouse :: proc() {
 			posX,
 			-i32(collision.point.z*20),
 		)
-		worldmap.data.shaderVar["chosenProv"] = [4]f32{
-			f32(col.r) / 255,
-			f32(col.g) / 255,
-			f32(col.b) / 255,
-			f32(col.a) / 255,
-		}
-		//TODO Wrapper function
-		raylib.SetShaderValue(worldmap.data.shader, worldmap.data.shaderVarLoc["chosenProv"], &worldmap.data.shaderVar["chosenProv"], .VEC4);
-		fmt.printf("%v:%v\n", -i32(collision.point.x*25), -i32(collision.point.z*25),)
 
 		//* Set selected province
 		prov, res := &worldmap.data.provincesdata[col]
 		if res {
 			if prov.type == provinces.ProvinceType.impassable do return
 			data.currentSelection = prov
+
+			worldmap.data.shaderVar["chosenProv"] = [4]f32{
+				f32(col.r) / 255,
+				f32(col.g) / 255,
+				f32(col.b) / 255,
+				f32(col.a) / 255,
+			}
+			//TODO Wrapper function
+			raylib.SetShaderValue(worldmap.data.shader, worldmap.data.shaderVarLoc["chosenProv"], &worldmap.data.shaderVar["chosenProv"], .VEC4)
 		} else do data.currentSelection = nil
 	}
 }
 
 //* Mapmode keybindings //TODO
 update_mapmodes :: proc() {
-	//* Unload shader image
-//	if worldmap.data.provinceImage != {} do 
+	//* Check input
+	res, mapmode := settings.is_mapmode_pressed()
 
-	if settings.is_key_pressed("mm01") {
-		fmt.printf("Overworld Mapmode\n")
-		data.curMapmode = .overworld
+	if res {
+		//* Unload shader image
+		//raylib.UnloadImage(worldmap.data.shaderImage)
+		//raylib.UnloadTexture(worldmap.data.model.materials[0].maps[1].texture)
+		//worldmap.data.shaderImage = raylib.ImageCopy(worldmap.data.provinceImage)
 
-		raylib.UnloadImage(worldmap.data.shaderImage)
-		worldmap.data.shaderImage = raylib.ImageCopy(worldmap.data.provinceImage)
-		raylib.UnloadTexture(worldmap.data.model.materials[0].maps[1].texture)
-
-	//	worldmap.data.shaderVar["mapmode"] = 0
-	}
-	if settings.is_key_pressed("mm02") {
-		fmt.printf("Political Mapmode\n")
-		data.curMapmode = .political
-
-		raylib.UnloadImage(worldmap.data.shaderImage)
-		worldmap.data.shaderImage = raylib.ImageCopy(worldmap.data.provinceImage)
-
-		for nation in worldmap.data.nationsList {
-			for prov in worldmap.data.nationsList[nation].ownedProvinces {
-				raylib.ImageColorReplace(
-					&worldmap.data.shaderImage,
-					prov,
-					worldmap.data.nationsList[nation].color,
-				)
-			}
+		#partial switch mapmode {
+			case .political:
+				//for nation in worldmap.data.nationsList {
+				//	for prov in worldmap.data.nationsList[nation].ownedProvinces {
+				//		raylib.ImageColorReplace(
+				//			&worldmap.data.shaderImage,
+				//			prov,
+				//			worldmap.data.nationsList[nation].color,
+				//		)
+				//	}
+				//}
+				builder : strings.Builder
+				for p in worldmap.data.provincesdata {
+					index := worldmap.data.provincesdata[p].shaderIndex
+					str   := fmt.sbprintf(&builder, "prov[%i].mapColor", index)
+					if worldmap.data.provincesdata[p].owner != nil {
+						vari = [4]f32{
+							f32(worldmap.data.provincesdata[p].owner.color.r)/255,
+							f32(worldmap.data.provincesdata[p].owner.color.g)/255,
+							f32(worldmap.data.provincesdata[p].owner.color.b)/255,
+							f32(worldmap.data.provincesdata[p].owner.color.a)/255,
+						}
+					} else {
+						vari = [4]f32{
+							0.75,
+							0.75,
+							0.75,
+							1,
+						}
+					}
+					worldmap.change_shader_variable(str, vari)
+					strings.builder_reset(&builder)
+				}
+				break
+			case .terrain:
+				//for prov in worldmap.data.provincesdata {
+				//	raylib.ImageColorReplace(
+				//		&worldmap.data.shaderImage,
+				//		prov,
+				//		worldmap.data.provincesdata[prov].terrain.color,
+				//	)
+				//}
+				break
 		}
-		raylib.UnloadTexture(worldmap.data.model.materials[0].maps[1].texture)
-	//	worldmap.data.shaderVar["mapmode"] = 1
-	}
-	//if settings.is_key_pressed("terrain")  do data.curMapmode = .terrain
-	//if settings.is_key_pressed("control")  do data.curMapmode = .control
-	//if settings.is_key_pressed("pop")      do data.curMapmode = .population
-	//if settings.is_key_pressed("ancestry") do data.curMapmode = .ancestry
-	//if settings.is_key_pressed("culture")  do data.curMapmode = .culture
-	//if settings.is_key_pressed("religion") do data.curMapmode = .religion
 
-//	raylib.SetShaderValue(worldmap.data.shader, worldmap.data.shaderVarLoc["mapmode"], &worldmap.data.shaderVar["mapmode"], .INT)
-	//* Unload old texture and apply new one
-//	if worldmap.data.model.materials[0].maps[1].texture != {} do raylib.UnloadTexture(worldmap.data.model.materials[0].maps[1].texture)
-	worldmap.data.model.materials[0].maps[1].texture = raylib.LoadTextureFromImage(worldmap.data.shaderImage)
+		//* Unload old texture and apply new one
+		//worldmap.data.model.materials[0].maps[1].texture = raylib.LoadTextureFromImage(worldmap.data.shaderImage)
+	}
 }
 
 //* Date keybindings

@@ -54,9 +54,5 @@ increment_date :: proc() {
 		for prov in worldmap.data.provincesdata {
 			provinces.grow_province(&worldmap.data.provincesdata[prov])
 		}
-		//for i:=0;i<len(worldmap.data.provincescolor);i+=1 {
-		//	col := worldmap.data.provincescolor[i]
-		//	worldmap.grow_province(&worldmap.data.provincesdata[col])
-		//}
 	}
 }

@@ -7,15 +7,18 @@ import "core:fmt"
 import "vendor:raylib"
 
 import "debug"
-import "graphics"
-import "graphics/worldmap"
-import "graphics/ui"
+import "testing"
+
 import "game"
 import "game/date"
 import "game/player"
 import "game/localization"
 import "game/settings"
-import "testing"
+
+import "graphics"
+import "graphics/worldmap"
+import "graphics/ui"
+
 
 
 //= Update
@@ -36,11 +39,10 @@ main_draw :: proc() {
 	
 	//* 3D elements
 	raylib.BeginMode3D(player.data)
-	raylib.DrawGrid(100,10)
+	//raylib.DrawGrid(100,10)
 
 	if !game.mainMenu {
 		worldmap.draw()
-		raylib.DrawRay(player.data.ray, raylib.PURPLE)
 	}
 	
 	raylib.EndMode3D()
@@ -99,7 +101,7 @@ main_init :: proc() {
 	player.init()
 
 	//* Raylib
-	raylib.SetTraceLogLevel(.NONE)
+	//raylib.SetTraceLogLevel(.NONE)
 	raylib.InitWindow(
 		settings.data.windowWidth,
 		settings.data.windowHeight,
