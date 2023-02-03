@@ -4,40 +4,48 @@
 	"ancestry": {
 		"human": {
 			"local": "Human",
+			"color": [160,160,160,255],
 			"growth": 0.001
 		},
 		"halfling": {
 			"local": "Halfling",
+			"color": [183,121,73,255],
 			"growth": 0.001
 		},
 		"elf":{
 			"local": "Elf",
+			"color": [86,183,96,255],
 			"growth": 0.00025
 		}
 	},
 	"culture": {
 		"human": {
 			"riverlander": {
-				"local": "Riverlander"
+				"local": "Riverlander",
+				"color": [89,155,183,255]
 			}
 		},
 		"halfling": {
 			"halfling_human": {
-				"local": "Human"
+				"local": "Human",
+				"color": [183,173,117,255]
 			}
 		},
 		"elf": {
 			"drow": {
-				"local": "Drow"
+				"local": "Drow",
+				"color": [183,108,176,255]
 			}
 		}
 	},
 	"religion": {
 		"water_goddess": {
-			"local": "Water Goddess"
+			"local": "Water Goddess",
+			"color": [64,106,183,255]
 		},
 		"evil_drow": {
-			"local": "Evil Drow God"
+			"local": "Evil Drow God",
+			"color": [183,14,107,255]
 		}
 	},
 

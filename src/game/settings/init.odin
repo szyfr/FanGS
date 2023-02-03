@@ -11,12 +11,59 @@ import "../../debug"
 
 
 //= Constants
-SETTINGS_LOCATION  :: "data/settings.json"
+SETTINGS_LOCATION   :: "data/settings.json"
 
-ERR_SETTINGS_FIND  :: "[ERROR]:\tFailed to find Settings file."
-ERR_SETTINGS_LANG  :: "[ERROR]:\tInput language does not currently exist."
-SETTINGS_LOADED    :: "[LOG]:\tLoaded program settings."
-SETTINGS_SAVED     :: "[LOG]:\tSaved program settings."
+SETTINGS_SCREENWIDTH  :: "screenwidth"
+SETTINGS_SCREENHEIGHT :: "screenheight"
+SETTINGS_TARGETFPS    :: "targetfps"
+SETTINGS_EDGESCROLL   :: "edgescrolling"
+SETTINGS_FONTSIZE     :: "fontsize"
+SETTINGS_LANGUAGE     :: "language"
+SETTINGS_KEYBINDINGS  :: "keybindings"
+SETTINGS_MAPMODES     :: "mapmodes"
+
+SETTINGS_ORIGIN     :: "origin"
+SETTINGS_KEY        :: "key"
+
+SETINGS_KEY_UP      :: "up"
+SETINGS_KEY_DOWN    :: "down"
+SETINGS_KEY_LEFT    :: "left"
+SETINGS_KEY_RIGHT   :: "right"
+SETINGS_KEY_GRABMAP :: "grabmap"
+SETINGS_KEY_ZOOM_POSITIVE :: "zoompos"
+SETINGS_KEY_ZOOM_NEGATIVE :: "zoomneg"
+SETINGS_KEY_PAUSE   :: "pause"
+SETINGS_KEY_FASTER  :: "faster"
+SETINGS_KEY_SLOWER  :: "slower"
+SETINGS_KEY_MM00    :: "mm00"
+SETINGS_KEY_MM01    :: "mm01"
+SETINGS_KEY_MM02    :: "mm02"
+SETINGS_KEY_MM03    :: "mm03"
+SETINGS_KEY_MM04    :: "mm04"
+SETINGS_KEY_MM05    :: "mm05"
+SETINGS_KEY_MM06    :: "mm06"
+SETINGS_KEY_MM07    :: "mm07"
+SETINGS_KEY_MM08    :: "mm08"
+SETINGS_KEY_MM09    :: "mm09"
+
+SETTINGS_MAPMODE_OVERWORLD      :: "overworld"
+SETTINGS_MAPMODE_POLITICAL      :: "political"
+SETTINGS_MAPMODE_TERRAIN        :: "terrain"
+SETTINGS_MAPMODE_CONTROL        :: "control"
+SETTINGS_MAPMODE_AUTONOMY       :: "autonomy"
+SETTINGS_MAPMODE_POPULATION     :: "population"
+SETTINGS_MAPMODE_INFRASTRUCTURE :: "infrastructure"
+SETTINGS_MAPMODE_ANCESTRY       :: "ancestry"
+SETTINGS_MAPMODE_CULTURE        :: "culture"
+SETTINGS_MAPMODE_RELIGION       :: "religion"
+
+SETTINGS_DEFAULT_LANGUAGE :: "english"
+
+ERR_SETTINGS_FIND   :: "[ERROR]:\tFailed to find Settings file."
+ERR_SETTINGS_LANG   :: "[ERROR]:\tInput language does not currently exist."
+ERR_SETTINGS_ORIG   :: "[ERROR]:\tInput key lacks a valid origin."
+SETTINGS_LOADED     :: "[LOG]:\tLoaded program settings."
+SETTINGS_SAVED      :: "[LOG]:\tSaved program settings."
 
 
 //= Procedures
@@ -42,51 +89,53 @@ init :: proc() {
 	jsonData, er := json.parse(rawData)
 
 	//* Grab settings
-	data.windowWidth   = i32(jsonData.(json.Object)["screenwidth"].(f64))
-	data.windowHeight  = i32(jsonData.(json.Object)["screenheight"].(f64))
-	data.targetFPS     = i32(jsonData.(json.Object)["targetfps"].(f64))
-	data.edgeScrolling =     jsonData.(json.Object)["edgescrolling"].(bool)
-	data.fontSize      = f32(jsonData.(json.Object)["fontsize"].(f64))
-	data.language      = strings.clone_to_cstring(jsonData.(json.Object)["language"].(string))
+	data.windowWidth   = i32(jsonData.(json.Object)[SETTINGS_SCREENWIDTH].(f64))
+	data.windowHeight  = i32(jsonData.(json.Object)[SETTINGS_SCREENHEIGHT].(f64))
+	data.targetFPS     = i32(jsonData.(json.Object)[SETTINGS_TARGETFPS].(f64))
+	data.edgeScrolling =     jsonData.(json.Object)[SETTINGS_EDGESCROLL].(bool)
+	data.fontSize      = f32(jsonData.(json.Object)[SETTINGS_FONTSIZE].(f64))
+	data.language      = strings.clone_to_cstring(jsonData.(json.Object)[SETTINGS_LANGUAGE].(string))
 
 	//* Grab keybindings
-	obj := jsonData.(json.Object)["keybindings"].(json.Object)
-	data.keybindings["up"]       = create_keybinding(obj["up"].(json.Object))
-	data.keybindings["down"]     = create_keybinding(obj["down"].(json.Object))
-	data.keybindings["left"]     = create_keybinding(obj["left"].(json.Object))
-	data.keybindings["right"]    = create_keybinding(obj["right"].(json.Object))
-	data.keybindings["grabmap"]  = create_keybinding(obj["grabmap"].(json.Object))
-	data.keybindings["zoompos"]  = create_keybinding(obj["zoompos"].(json.Object))
-	data.keybindings["zoomneg"]  = create_keybinding(obj["zoomneg"].(json.Object))
-	data.keybindings["pause"]    = create_keybinding(obj["pause"].(json.Object))
-	data.keybindings["faster"]   = create_keybinding(obj["faster"].(json.Object))
-	data.keybindings["slower"]   = create_keybinding(obj["slower"].(json.Object))
-	data.keybindings["mm00"]     = create_keybinding(obj["mm00"].(json.Object))
-	data.keybindings["mm01"]     = create_keybinding(obj["mm01"].(json.Object))
-	data.keybindings["mm02"]     = create_keybinding(obj["mm02"].(json.Object))
-	data.keybindings["mm03"]     = create_keybinding(obj["mm03"].(json.Object))
-	data.keybindings["mm04"]     = create_keybinding(obj["mm04"].(json.Object))
-	data.keybindings["mm05"]     = create_keybinding(obj["mm05"].(json.Object))
-	data.keybindings["mm06"]     = create_keybinding(obj["mm06"].(json.Object))
-	data.keybindings["mm07"]     = create_keybinding(obj["mm07"].(json.Object))
-	data.keybindings["mm08"]     = create_keybinding(obj["mm08"].(json.Object))
-	data.keybindings["mm09"]     = create_keybinding(obj["mm09"].(json.Object))
+	obj := jsonData.(json.Object)[SETTINGS_KEYBINDINGS].(json.Object)
+	data.keybindings[SETINGS_KEY_UP]            = create_keybinding(obj[SETINGS_KEY_UP].(json.Object))
+	data.keybindings[SETINGS_KEY_DOWN]          = create_keybinding(obj[SETINGS_KEY_DOWN].(json.Object))
+	data.keybindings[SETINGS_KEY_LEFT]          = create_keybinding(obj[SETINGS_KEY_LEFT].(json.Object))
+	data.keybindings[SETINGS_KEY_RIGHT]         = create_keybinding(obj[SETINGS_KEY_RIGHT].(json.Object))
+	data.keybindings[SETINGS_KEY_GRABMAP]       = create_keybinding(obj[SETINGS_KEY_GRABMAP].(json.Object))
+	data.keybindings[SETINGS_KEY_ZOOM_POSITIVE] = create_keybinding(obj[SETINGS_KEY_ZOOM_POSITIVE].(json.Object))
+	data.keybindings[SETINGS_KEY_ZOOM_NEGATIVE] = create_keybinding(obj[SETINGS_KEY_ZOOM_NEGATIVE].(json.Object))
+	data.keybindings[SETINGS_KEY_PAUSE]         = create_keybinding(obj[SETINGS_KEY_PAUSE].(json.Object))
+	data.keybindings[SETINGS_KEY_FASTER]        = create_keybinding(obj[SETINGS_KEY_FASTER].(json.Object))
+	data.keybindings[SETINGS_KEY_SLOWER]        = create_keybinding(obj[SETINGS_KEY_SLOWER].(json.Object))
+	data.keybindings[SETINGS_KEY_MM00]          = create_keybinding(obj[SETINGS_KEY_MM00].(json.Object))
+	data.keybindings[SETINGS_KEY_MM01]          = create_keybinding(obj[SETINGS_KEY_MM01].(json.Object))
+	data.keybindings[SETINGS_KEY_MM02]          = create_keybinding(obj[SETINGS_KEY_MM02].(json.Object))
+	data.keybindings[SETINGS_KEY_MM03]          = create_keybinding(obj[SETINGS_KEY_MM03].(json.Object))
+	data.keybindings[SETINGS_KEY_MM04]          = create_keybinding(obj[SETINGS_KEY_MM04].(json.Object))
+	data.keybindings[SETINGS_KEY_MM05]          = create_keybinding(obj[SETINGS_KEY_MM05].(json.Object))
+	data.keybindings[SETINGS_KEY_MM06]          = create_keybinding(obj[SETINGS_KEY_MM06].(json.Object))
+	data.keybindings[SETINGS_KEY_MM07]          = create_keybinding(obj[SETINGS_KEY_MM07].(json.Object))
+	data.keybindings[SETINGS_KEY_MM08]          = create_keybinding(obj[SETINGS_KEY_MM08].(json.Object))
+	data.keybindings[SETINGS_KEY_MM09]          = create_keybinding(obj[SETINGS_KEY_MM09].(json.Object))
 
 	//* Grab mapmodes
-	arr := jsonData.(json.Object)["mapmodes"].(json.Array)
+	arr := jsonData.(json.Object)[SETTINGS_MAPMODES].(json.Array)
 	cnt := 0
 	for a in arr {
 		str := a.(string)
 		
 		switch str {
-			case "overworld": data.mapmodesTool[cnt]  = .overworld
-			case "political": data.mapmodesTool[cnt]  = .political
-			case "terrain": data.mapmodesTool[cnt]    = .terrain
-			case "control": data.mapmodesTool[cnt]    = .control
-			case "population": data.mapmodesTool[cnt] = .population
-			case "ancestry": data.mapmodesTool[cnt]   = .ancestry
-			case "culture": data.mapmodesTool[cnt]    = .culture
-			case "religion": data.mapmodesTool[cnt]   = .religion
+			case SETTINGS_MAPMODE_OVERWORLD:      data.mapmodesTool[cnt] = .overworld
+			case SETTINGS_MAPMODE_POLITICAL:      data.mapmodesTool[cnt] = .political
+			case SETTINGS_MAPMODE_TERRAIN:        data.mapmodesTool[cnt] = .terrain
+			case SETTINGS_MAPMODE_CONTROL:        data.mapmodesTool[cnt] = .control
+			case SETTINGS_MAPMODE_AUTONOMY:       data.mapmodesTool[cnt] = .autonomy
+			case SETTINGS_MAPMODE_POPULATION:     data.mapmodesTool[cnt] = .population
+			case SETTINGS_MAPMODE_INFRASTRUCTURE: data.mapmodesTool[cnt] = .infrastructure
+			case SETTINGS_MAPMODE_ANCESTRY:       data.mapmodesTool[cnt] = .ancestry
+			case SETTINGS_MAPMODE_CULTURE:        data.mapmodesTool[cnt] = .culture
+			case SETTINGS_MAPMODE_RELIGION:       data.mapmodesTool[cnt] = .religion
 		}
 		cnt += 1
 	}
@@ -110,32 +159,33 @@ generate_default_settings :: proc() {
 	data.windowHeight  =  720
 	data.targetFPS     =   80
 	data.fontSize      =   12
-	data.language      = "english"
+	data.language      = SETTINGS_DEFAULT_LANGUAGE
 	data.edgeScrolling = false
 
-	data.keybindings["up"]       = {0,265}
-	data.keybindings["down"]     = {0,264}
-	data.keybindings["left"]     = {0,263}
-	data.keybindings["right"]    = {0,262}
-	data.keybindings["grabmap"]  = {1,2}
-	data.keybindings["zoompos"]  = {2,0}
-	data.keybindings["zoomneg"]  = {2,1}
-	data.keybindings["pause"]    = {0,32}
-	data.keybindings["faster"]   = {0,61}
-	data.keybindings["slower"]   = {0,45}
-	data.keybindings["mm00"]     = {0,48}
-	data.keybindings["mm01"]     = {0,49}
-	data.keybindings["mm02"]     = {0,50}
-	data.keybindings["mm03"]     = {0,51}
-	data.keybindings["mm04"]     = {0,52}
-	data.keybindings["mm05"]     = {0,53}
-	data.keybindings["mm06"]     = {0,54}
-	data.keybindings["mm07"]     = {0,55}
-	data.keybindings["mm08"]     = {0,56}
-	data.keybindings["mm09"]     = {0,57}
+	data.keybindings[SETINGS_KEY_UP]       = {0,265,true}
+	data.keybindings[SETINGS_KEY_DOWN]     = {0,264,true}
+	data.keybindings[SETINGS_KEY_LEFT]     = {0,263,true}
+	data.keybindings[SETINGS_KEY_RIGHT]    = {0,262,true}
+	data.keybindings[SETINGS_KEY_GRABMAP]  = {1,2,true}
+	data.keybindings[SETINGS_KEY_ZOOM_POSITIVE]  = {2,0,true}
+	data.keybindings[SETINGS_KEY_ZOOM_NEGATIVE]  = {2,1,true}
+	data.keybindings[SETINGS_KEY_PAUSE]    = {0,32,true}
+	data.keybindings[SETINGS_KEY_FASTER]   = {0,61,true}
+	data.keybindings[SETINGS_KEY_SLOWER]   = {0,45,true}
+	data.keybindings[SETINGS_KEY_MM00]     = {0,48,true}
+	data.keybindings[SETINGS_KEY_MM01]     = {0,49,true}
+	data.keybindings[SETINGS_KEY_MM02]     = {0,50,true}
+	data.keybindings[SETINGS_KEY_MM03]     = {0,51,true}
+	data.keybindings[SETINGS_KEY_MM04]     = {0,52,true}
+	data.keybindings[SETINGS_KEY_MM05]     = {0,53,true}
+	data.keybindings[SETINGS_KEY_MM06]     = {0,54,true}
+	data.keybindings[SETINGS_KEY_MM07]     = {0,55,true}
+	data.keybindings[SETINGS_KEY_MM08]     = {0,56,true}
+	data.keybindings[SETINGS_KEY_MM09]     = {0,57,true}
 }
 
 //* Save settings to file
+//TODO Rework this
 save_settings :: proc() {
 
 	builder : strings.Builder = {}

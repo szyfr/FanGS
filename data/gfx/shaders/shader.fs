@@ -6,7 +6,7 @@ struct province {
 	vec4 mapColor;
 };
 
-
+#define PROV_COUNT 100
 
 
 // Input vertex attributes (from vertex shader)
@@ -22,7 +22,7 @@ uniform vec2 textureSize;
 uniform vec4 chosenProv;
 uniform int mapmode;
 
-uniform province prov[100];
+uniform province prov[PROV_COUNT];
 
 // Output fragment color
 out vec4 finalColor;
@@ -56,13 +56,11 @@ void main() {
 		if (texelColor == chosenProv) finalColor = vec4(1,0,0,1);
 		else finalColor = vec4(0,0,0,1);
 	} else {
-		//finalColor = texelColor2;
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < PROV_COUNT; i++) {
 			if (texelColor == prov[i].baseColor) {
 				finalColor = prov[i].mapColor;
 				return;
 			}
 		}
 	}
-	//finalColor = (texelColor + texelColor2) / 2;
 }

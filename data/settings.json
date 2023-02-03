@@ -96,9 +96,9 @@
 		"terrain",
 		"control",
 		"population",
+		"infrastructure",
 		"ancestry",
 		"culture",
-		"religion",
-		""
+		"religion"
 	]
 }

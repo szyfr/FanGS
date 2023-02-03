@@ -7,21 +7,12 @@ import "vendor:raylib"
 import "../population"
 import "../nations"
 
-
 //= Structures
 ProvinceData :: struct {
-	//* Image
-	//TODO move this to seperate files to make transition to shaders easier
-	provmesh  : raylib.Mesh,
-	provmodel : raylib.Model,
-
-	provImage : raylib.Image,
-	currenttx : raylib.Texture,
-	nametx    : raylib.Texture,
-
-	position      : raylib.Vector3,
-	centerpoint   : raylib.Vector3,
-	height, width : f32,
+	//* Map data
+	//TODO Figure out how i want to do this
+	nametx      : raylib.Texture,
+	centerpoint : raylib.Vector3,
 
 	//* Data
 	localID : u32,
@@ -52,22 +43,6 @@ Terrain :: struct {
 	name  : ^cstring,
 	color : raylib.Color,
 }
-
-
-//= Enumerations
-////TODO Change to structure
-//Terrain :: enum {
-//	NULL,
-//	grassland,
-//	swamp,
-//	deep_road,
-//	dwarf_hold,
-//	goblin_hold,
-//	kobold_hold,
-//	orc_hold,
-//	drow_hold,
-//	cave,
-//}
 ProvinceType :: enum {
 	NULL,
 	base,

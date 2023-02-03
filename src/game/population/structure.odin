@@ -9,13 +9,16 @@ import "vendor:raylib"
 Ancestry :: struct {
 	name   : ^cstring,
 	growth : f32,
+	color  : raylib.Color,
 }
 Culture :: struct {
 	name     : ^cstring,
 	ancestry : ^Ancestry,
+	color  : raylib.Color,
 }
 Religion :: struct {
 	name : ^cstring,
+	color  : raylib.Color,
 }
 
 Population :: struct {

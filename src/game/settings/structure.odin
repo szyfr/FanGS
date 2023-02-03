@@ -30,6 +30,7 @@ Keybinding :: struct {
 		// 3 - Gamepad Button
 		// 4 - Gamepad Axis
 	key    : u32,
+	valid  : bool,
 }
 
 Mapmode :: enum {
@@ -37,7 +38,9 @@ Mapmode :: enum {
 	political,
 	terrain,
 	control,
+	autonomy, //TODO Autonomy
 	population,
+	infrastructure,
 	ancestry,
 	culture,
 	religion,

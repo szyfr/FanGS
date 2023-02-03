@@ -16,6 +16,7 @@ create_shader_variable :: proc{
 	create_shader_variable_single,
 	create_shader_variable_array,
 	create_shader_variable_array_province,
+	create_shader_variable_single_province,
 }
 create_shader_variable_name :: proc(
 	name : string,
@@ -26,12 +27,31 @@ create_shader_variable_name :: proc(
 create_shader_variable_single :: proc(
 	name  : string,
 	value : ShaderVariable,
-) {
+) -> raylib.ShaderLocationIndex {
 	cstr := strings.clone_to_cstring(name)
 	data.shaderVarLoc[name] = raylib.ShaderLocationIndex(raylib.GetShaderLocation(data.shader, cstr))
 	data.shaderVar[name]    = value
 
 	change_shader_variable(name)
+
+	return data.shaderVarLoc[name]
+}
+create_shader_variable_single_province :: proc(
+	name  : string,
+	value : ShaderProvince,
+	index : u32,
+) -> raylib.ShaderLocationIndex {
+	builder : strings.Builder
+
+	str := fmt.sbprintf(&builder, "%s[%i].baseColor", name, index)
+	res := create_shader_variable_single(str, value.baseColor)
+	strings.builder_reset(&builder)
+
+	str = fmt.sbprintf(&builder, "%s[%i].mapColor", name, index)
+	create_shader_variable_single(str, value.mapColor)
+	strings.builder_reset(&builder)
+
+	return res
 }
 create_shader_variable_array :: proc(
 	name  : string,
@@ -125,20 +145,3 @@ change_shader_variable_external_array :: proc(
 		strings.builder_reset(&builder)
 	}
 }
-//change_shader_variable_external_array_province :: proc(
-//	name  : string,
-//	value : []ShaderVariable,
-//	count : int,
-//) {
-//	builder : strings.Builder
-//
-//	for i:=0;i<len(value);i+=1 {
-//		str := fmt.sbprintf(&builder, "%s[%i].baseColor", name, i)
-//		change_shader_variable_external_single(str, value[i].baseColor)
-//		strings.builder_reset(&builder)
-//
-//		str := fmt.sbprintf(&builder, "%s[%i].mapColor", name, i)
-//		change_shader_variable_external_single(str, value[i].mapColor)
-//		strings.builder_reset(&builder)
-//	}
-//}

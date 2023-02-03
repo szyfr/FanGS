@@ -119,6 +119,12 @@ init :: proc(mapname : string) {
 		anc : population.Ancestry = {
 			name   = &localization.data[obj],
 			growth = f32(ancestryObj[obj].(json.Object)["growth"].(f64)),
+			color = {
+				u8(ancestryObj[obj].(json.Object)["color"].(json.Array)[0].(f64)),
+				u8(ancestryObj[obj].(json.Object)["color"].(json.Array)[1].(f64)),
+				u8(ancestryObj[obj].(json.Object)["color"].(json.Array)[2].(f64)),
+				u8(ancestryObj[obj].(json.Object)["color"].(json.Array)[3].(f64)),
+			},
 			// Values
 		}
 		data.ancestryList[obj] = anc
@@ -134,6 +140,12 @@ init :: proc(mapname : string) {
 			cul : population.Culture = {
 				name = &localization.data[objc],
 				ancestry = anc,
+				color = {
+					u8(cultureObj[obj].(json.Object)[objc].(json.Object)["color"].(json.Array)[0].(f64)),
+					u8(cultureObj[obj].(json.Object)[objc].(json.Object)["color"].(json.Array)[1].(f64)),
+					u8(cultureObj[obj].(json.Object)[objc].(json.Object)["color"].(json.Array)[2].(f64)),
+					u8(cultureObj[obj].(json.Object)[objc].(json.Object)["color"].(json.Array)[3].(f64)),
+				},
 				// Values
 			}
 			data.cultureList[objc] = cul
@@ -146,6 +158,12 @@ init :: proc(mapname : string) {
 		localization.data[obj] = strings.clone_to_cstring(religionObj[obj].(json.Object)["local"].(string))
 		rel : population.Religion = {
 			name = &localization.data[obj],
+			color = {
+				u8(religionObj[obj].(json.Object)["color"].(json.Array)[0].(f64)),
+				u8(religionObj[obj].(json.Object)["color"].(json.Array)[1].(f64)),
+				u8(religionObj[obj].(json.Object)["color"].(json.Array)[2].(f64)),
+				u8(religionObj[obj].(json.Object)["color"].(json.Array)[3].(f64)),
+			},
 			// Values
 		}
 		data.religionList[obj] = rel
@@ -180,9 +198,6 @@ init :: proc(mapname : string) {
 	jsonData, er = json.parse(rawData)
 	
 	//* Provinces
-	array := make([]ShaderProvince, 100)
-	count := 0
-
 	provinceList : map[u32]raylib.Color
 	for obj in jsonData.(json.Object) {
 		provData := jsonData.(json.Object)[obj].(json.Object)
@@ -193,6 +208,7 @@ init :: proc(mapname : string) {
 		//TODO Names
 		prov.localID = u32(value)
 		localization.data[obj] = strings.clone_to_cstring(provData["name"].(string))
+
 		//* Color
 		prov.color = {
 			u8(provData["color"].(json.Object)["r"].(f64)),
@@ -201,8 +217,10 @@ init :: proc(mapname : string) {
 			255,
 		}
 		provinceList[prov.localID] = prov.color
+
 		//* Terrain
 		prov.terrain = &data.terrainList[provData["terrain"].(string)]
+
 		//* Type
 		switch provData["type"].(string) {
 			case "normal":       prov.type = provinces.ProvinceType.base
@@ -211,8 +229,9 @@ init :: proc(mapname : string) {
 			case "lake":         prov.type = provinces.ProvinceType.lake
 			case "impassable":   prov.type = provinces.ProvinceType.impassable
 		}
+
 		//* Infrastructure
-		//TODO: Remove max infrastructure and freplace with calculation using terrain and mods
+		//TODO Remove max infrastructure and replace with calculation using terrain and mods
 		prov.maxInfrastructure = i16(provData["max_infrastructure"].(f64))
 		prov.curInfrastructure = i16(provData["cur_infrastructure"].(f64))
 
@@ -235,28 +254,26 @@ init :: proc(mapname : string) {
 		//*TODO Nation
 
 		//* Shader info
-		array[count].baseColor = [4]f32{
-			f32(prov.color.r) / 255,
-			f32(prov.color.g) / 255,
-			f32(prov.color.b) / 255,
-			f32(prov.color.a) / 255,
+		shaderInfo : ShaderProvince = {
+			baseColor = [4]f32{
+				f32(prov.color.r) / 255,
+				f32(prov.color.g) / 255,
+				f32(prov.color.b) / 255,
+				f32(prov.color.a) / 255,
+			},
+			mapColor = [4]f32{
+				f32(prov.color.r) / 255,
+				f32(prov.color.g) / 255,
+				f32(prov.color.b) / 255,
+				f32(prov.color.a) / 255,
+			},
 		}
-		array[count].mapColor = [4]f32{
-			f32(prov.color.r/2) / 255,
-			f32(prov.color.g/2) / 255,
-			f32(prov.color.b/2) / 255,
-			f32(prov.color.a/2) / 255,
-		}
-		prov.shaderIndex = count
-		count += 1
+		prov.shaderIndex = int(create_shader_variable("prov", shaderInfo, prov.localID))
 
 		data.provincesdata[prov.color] = prov
 	}
 
-	//*TESTING
-	create_shader_variable("prov", array, 100)
-
-	//*TODO Nation
+	//* Nation
 	mapNationsLoc := strings.concatenate({MAP_PREFIX, mapname, MAPNATION_LOCATION})
 	if !os.is_file(mapNationsLoc) {
 		debug.add_to_log(ERR_MAPNATIONS_FIND)

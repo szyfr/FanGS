@@ -163,77 +163,196 @@ update_player_mouse :: proc() {
 		if res {
 			if prov.type == provinces.ProvinceType.impassable do return
 			data.currentSelection = prov
-
-			worldmap.data.shaderVar["chosenProv"] = [4]f32{
+			shaderVariable := [4]f32{
 				f32(col.r) / 255,
 				f32(col.g) / 255,
 				f32(col.b) / 255,
 				f32(col.a) / 255,
 			}
-			//TODO Wrapper function
-			raylib.SetShaderValue(worldmap.data.shader, worldmap.data.shaderVarLoc["chosenProv"], &worldmap.data.shaderVar["chosenProv"], .VEC4)
+			worldmap.change_shader_variable("chosenProv", shaderVariable)
 		} else do data.currentSelection = nil
 	}
 }
 
-//* Mapmode keybindings //TODO
+//* Mapmode keybindings
 update_mapmodes :: proc() {
 	//* Check input
 	res, mapmode := settings.is_mapmode_pressed()
 
 	if res {
-		//* Unload shader image
-		//raylib.UnloadImage(worldmap.data.shaderImage)
-		//raylib.UnloadTexture(worldmap.data.model.materials[0].maps[1].texture)
-		//worldmap.data.shaderImage = raylib.ImageCopy(worldmap.data.provinceImage)
-
 		#partial switch mapmode {
-			case .political:
-				//for nation in worldmap.data.nationsList {
-				//	for prov in worldmap.data.nationsList[nation].ownedProvinces {
-				//		raylib.ImageColorReplace(
-				//			&worldmap.data.shaderImage,
-				//			prov,
-				//			worldmap.data.nationsList[nation].color,
-				//		)
-				//	}
-				//}
+			case .overworld:
 				builder : strings.Builder
 				for p in worldmap.data.provincesdata {
-					index := worldmap.data.provincesdata[p].shaderIndex
-					str   := fmt.sbprintf(&builder, "prov[%i].mapColor", index)
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+					shaderVariable := [4]f32{
+						f32(worldmap.data.provincesdata[p].color.r)/255,
+						f32(worldmap.data.provincesdata[p].color.g)/255,
+						f32(worldmap.data.provincesdata[p].color.b)/255,
+						f32(worldmap.data.provincesdata[p].color.a)/255,
+					}
+					worldmap.change_shader_variable(shaderVarName, shaderVariable)
+					strings.builder_reset(&builder)
+				}
+				break
+
+			case .political:
+				builder : strings.Builder
+				for p in worldmap.data.provincesdata {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+					shaderVariable := [4]f32{ 0.75, 0.75, 0.75, 1 }
+
 					if worldmap.data.provincesdata[p].owner != nil {
-						vari = [4]f32{
+						shaderVariable = [4]f32{
 							f32(worldmap.data.provincesdata[p].owner.color.r)/255,
 							f32(worldmap.data.provincesdata[p].owner.color.g)/255,
 							f32(worldmap.data.provincesdata[p].owner.color.b)/255,
 							f32(worldmap.data.provincesdata[p].owner.color.a)/255,
 						}
-					} else {
-						vari = [4]f32{
-							0.75,
-							0.75,
-							0.75,
-							1,
-						}
 					}
-					worldmap.change_shader_variable(str, vari)
+					worldmap.change_shader_variable(shaderVarName, shaderVariable)
 					strings.builder_reset(&builder)
 				}
 				break
+
 			case .terrain:
-				//for prov in worldmap.data.provincesdata {
-				//	raylib.ImageColorReplace(
-				//		&worldmap.data.shaderImage,
-				//		prov,
-				//		worldmap.data.provincesdata[prov].terrain.color,
-				//	)
-				//}
+				builder : strings.Builder
+				for p in worldmap.data.provincesdata {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+					shaderVariable := [4]f32{
+						f32(worldmap.data.provincesdata[p].terrain.color.r)/255,
+						f32(worldmap.data.provincesdata[p].terrain.color.g)/255,
+						f32(worldmap.data.provincesdata[p].terrain.color.b)/255,
+						f32(worldmap.data.provincesdata[p].terrain.color.a)/255,
+					}
+					worldmap.change_shader_variable(shaderVarName, shaderVariable)
+					strings.builder_reset(&builder)
+				}
+				break
+
+			case .control:
+				builder : strings.Builder
+				for p in worldmap.data.provincesdata {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+					shaderVariable : [4]f32
+					#partial switch worldmap.data.provincesdata[p].type {
+						case .base:
+							shaderVariable = [4]f32{ 0.75, 0.75, 0.75, 1 }
+							break
+						case .controllable:
+							shaderVariable = [4]f32{ 0.50, 0.50, 0.50, 1 }
+							break
+						case .ocean:
+							shaderVariable = [4]f32{ 0.50, 0.50, 1.00, 1 }
+							break
+						case .lake:
+							shaderVariable = [4]f32{ 0.25, 0.25, 1.00, 1 }
+							break
+						case .impassable:
+							shaderVariable = [4]f32{ 0.00, 0.00, 0.00, 1 }
+							break
+					}
+					worldmap.change_shader_variable(shaderVarName, shaderVariable)
+					strings.builder_reset(&builder)
+				}
+				break
+
+			case .population:
+				builder : strings.Builder
+				maxPopulation : u64 = 0 
+				for p in worldmap.data.provincesdata {
+					count := worldmap.data.provincesdata[p].avePop.count
+					if maxPopulation < count do maxPopulation = count
+					fmt.printf("",count)
+				}
+				for p in worldmap.data.provincesdata {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+					shaderVariable := [4]f32{ 0.75, 0.75, 0.75, 1 }
+					if maxPopulation > 0 && worldmap.data.provincesdata[p].type != .impassable {
+						populationRatio : f32 = f32(worldmap.data.provincesdata[p].avePop.count) / f32(maxPopulation)
+						shaderVariable = [4]f32{
+							1 - populationRatio,
+							populationRatio,
+							0, 1,
+						}
+					}
+					worldmap.change_shader_variable(shaderVarName, shaderVariable)
+					strings.builder_reset(&builder)
+				}
+				break
+
+			case .infrastructure:
+				builder : strings.Builder
+				for p in worldmap.data.provincesdata {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+					infraRatio     := f32(worldmap.data.provincesdata[p].curInfrastructure) / f32(worldmap.data.provincesdata[p].maxInfrastructure)
+					shaderVariable := [4]f32{ 0.75, 0.75, 0.75, 1 }
+					if worldmap.data.provincesdata[p].type != .impassable {
+						shaderVariable = [4]f32{
+							1 - infraRatio,
+							infraRatio,
+							0, 1,
+						}
+					}
+					worldmap.change_shader_variable(shaderVarName, shaderVariable)
+					strings.builder_reset(&builder)
+				}
+				break
+
+			case .ancestry:
+				builder : strings.Builder
+				for p in worldmap.data.provincesdata {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+					shaderVariable := [4]f32{ 1, 1, 1, 1 }
+					if worldmap.data.provincesdata[p].avePop != {} {
+						shaderVariable = [4]f32{
+							f32(worldmap.data.provincesdata[p].avePop.ancestry.color.r)/255,
+							f32(worldmap.data.provincesdata[p].avePop.ancestry.color.g)/255,
+							f32(worldmap.data.provincesdata[p].avePop.ancestry.color.b)/255,
+							f32(worldmap.data.provincesdata[p].avePop.ancestry.color.a)/255,
+						}
+					}
+					worldmap.change_shader_variable(shaderVarName, shaderVariable)
+					strings.builder_reset(&builder)
+				}
+				break
+
+			case .culture:
+				builder : strings.Builder
+				for p in worldmap.data.provincesdata {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+					shaderVariable := [4]f32{ 1, 1, 1, 1 }
+					if worldmap.data.provincesdata[p].avePop != {} {
+						shaderVariable = [4]f32{
+							f32(worldmap.data.provincesdata[p].avePop.culture.color.r)/255,
+							f32(worldmap.data.provincesdata[p].avePop.culture.color.g)/255,
+							f32(worldmap.data.provincesdata[p].avePop.culture.color.b)/255,
+							f32(worldmap.data.provincesdata[p].avePop.culture.color.a)/255,
+						}
+					}
+					worldmap.change_shader_variable(shaderVarName, shaderVariable)
+					strings.builder_reset(&builder)
+				}
+				break
+
+			case .religion:
+				builder : strings.Builder
+				for p in worldmap.data.provincesdata {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+					shaderVariable := [4]f32{ 1, 1, 1, 1 }
+					if worldmap.data.provincesdata[p].avePop != {} {
+						shaderVariable = [4]f32{
+							f32(worldmap.data.provincesdata[p].avePop.religion.color.r)/255,
+							f32(worldmap.data.provincesdata[p].avePop.religion.color.g)/255,
+							f32(worldmap.data.provincesdata[p].avePop.religion.color.b)/255,
+							f32(worldmap.data.provincesdata[p].avePop.religion.color.a)/255,
+						}
+					}
+					worldmap.change_shader_variable(shaderVarName, shaderVariable)
+					strings.builder_reset(&builder)
+				}
 				break
 		}
-
-		//* Unload old texture and apply new one
-		//worldmap.data.model.materials[0].maps[1].texture = raylib.LoadTextureFromImage(worldmap.data.shaderImage)
 	}
 }
 
