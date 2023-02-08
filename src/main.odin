@@ -23,9 +23,22 @@ import "graphics/ui"
 
 //= Update
 main_update :: proc() {
-	if !game.mainMenu {
-		player.update()
-		date.update()
+	#partial switch game.state {
+		case .mainmenu:
+		case .choose:
+			player.update()
+		case .play:
+			player.update()
+			date.update()
+		case .observer:
+			player.update()
+			date.update()
+	}
+
+	if raylib.IsKeyPressed(raylib.KeyboardKey.O) {
+		for obj in localization.data {
+			fmt.printf("%v:%v\n", obj, localization.data[obj])
+		}
 	}
 }
 
@@ -41,26 +54,45 @@ main_draw :: proc() {
 	raylib.BeginMode3D(player.data)
 	//raylib.DrawGrid(100,10)
 
-	if !game.mainMenu {
-		worldmap.draw()
+	#partial switch game.state {
+		case .mainmenu:
+		case .choose:
+			worldmap.draw()
+		case .play:
+			worldmap.draw()
+		case .observer:
+			worldmap.draw()
 	}
 	
 	raylib.EndMode3D()
 
 	//* 2D GUI
-	if game.mainMenu {
-		result := ui.draw_mainmenu()
-		switch result {
-			case ui.out_quit:     game.abort = true
-			case ui.out_newgame:
-			case ui.out_loadgame:
-			case ui.out_options:
-			case ui.out_mods:
-		}
-	} else {
-		ui.draw_datedisplay()
-		if game.pauseMenu do ui.draw_pausemenu()
-		if player.data.currentSelection != nil do ui.draw_provincemenu()
+	#partial switch game.state {
+		case .mainmenu:
+			result := ui.draw_mainmenu()
+			switch result {
+				case ui.out_quit:     game.abort = true
+				case ui.out_newgame:
+				case ui.out_loadgame:
+				case ui.out_options:
+				case ui.out_mods:
+			}
+
+		case .choose:
+			if game.pauseMenu do ui.draw_pausemenu()
+			if player.data.currentSelection != nil do ui.draw_nationchooser()
+
+		case .play:
+			ui.draw_datedisplay()
+			ui.draw_nationcontroller()
+			if game.pauseMenu do ui.draw_pausemenu()
+			if player.data.currentSelection != nil do ui.draw_provincemenu()
+
+		case .observer:
+			ui.draw_datedisplay()
+			ui.draw_nationcontroller()
+			if game.pauseMenu do ui.draw_pausemenu()
+			if player.data.currentSelection != nil do ui.draw_provincemenu()
 	}
 
 	//= Debug

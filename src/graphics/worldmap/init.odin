@@ -32,6 +32,9 @@ MAPSETTING_LOCATION  :: "/settings.json"
 MAPLOCAL_LOCATION    :: "/localization/"
 MAPLOCAL_ENDING      :: ".json"
 
+MAPFLAG_PREFIX       :: "/gfx/flags/"
+MAPFLAG_EXT          :: ".png"
+
 MAPPROVINCE_LOCATION :: "/map/provinces.json"
 MAPNATION_LOCATION   :: "/map/nations.json"
 
@@ -84,7 +87,7 @@ init :: proc(mapname : string) {
 	settingsLoc := strings.concatenate({MAP_PREFIX, mapname, MAPSETTING_LOCATION})
 	if !os.is_file(settingsLoc) {
 		debug.add_to_log(ERR_MAPSETTINGS_FIND)
-		game.mainMenu = true
+		game.state = .mainmenu
 		//TODO Add in onscreen error message
 		return
 	}
@@ -186,6 +189,18 @@ init :: proc(mapname : string) {
 		data.terrainList[obj] = ter
 	}
 
+	//* Province localization
+	provObj := jsonData.(json.Object)["provinces"].(json.Object)
+	for obj in provObj {
+		localization.data[obj] = strings.clone_to_cstring(provObj[obj].(string))
+	}
+
+	//* Nation localization
+	nationObj := jsonData.(json.Object)["nations"].(json.Object)
+	for obj in nationObj {
+		localization.data[obj] = strings.clone_to_cstring(nationObj[obj].(string))
+	}
+
 	delete(rawData)
 
 	//* Load Provinces
@@ -207,7 +222,7 @@ init :: proc(mapname : string) {
 		//* ID number
 		//TODO Names
 		prov.localID = u32(value)
-		localization.data[obj] = strings.clone_to_cstring(provData["name"].(string))
+		prov.name = &localization.data[provData["name"].(string)]
 
 		//* Color
 		prov.color = {
@@ -273,7 +288,7 @@ init :: proc(mapname : string) {
 		data.provincesdata[prov.color] = prov
 	}
 
-	//* Nation
+	//* Nations
 	mapNationsLoc := strings.concatenate({MAP_PREFIX, mapname, MAPNATION_LOCATION})
 	if !os.is_file(mapNationsLoc) {
 		debug.add_to_log(ERR_MAPNATIONS_FIND)
@@ -283,10 +298,8 @@ init :: proc(mapname : string) {
 	jsonData, er = json.parse(rawData)
 
 	for obj in jsonData.(json.Object) {
-		localization.data[obj] = strings.clone_to_cstring(jsonData.(json.Object)[obj].(json.Object)["local"].(string))
 		nation : nations.Nation = {
-			localID = obj,
-			name    = &localization.data[obj], //TODO Remove this sort of thing
+			localID = jsonData.(json.Object)[obj].(json.Object)["local"].(string),
 			color   = {
 				u8(jsonData.(json.Object)[obj].(json.Object)["color"].(json.Object)["r"].(f64)),
 				u8(jsonData.(json.Object)[obj].(json.Object)["color"].(json.Object)["g"].(f64)),
@@ -295,6 +308,11 @@ init :: proc(mapname : string) {
 			},
 			//TODO Name Texture?
 		}
+
+		//* Flag
+		flaglocation := strings.clone_to_cstring(strings.concatenate({MAP_PREFIX, mapname, MAPFLAG_PREFIX, nation.localID, MAPFLAG_EXT}))
+		nation.flag   = raylib.LoadTexture(flaglocation)
+		delete(flaglocation)
 
 		//* Owned provinces
 		for prov in jsonData.(json.Object)[obj].(json.Object)["provinces"].(json.Array) {

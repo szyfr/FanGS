@@ -5,10 +5,18 @@ package game
 
 
 //= Global
-//TODO: Look into making this a state instead
-mainMenu  : bool = true
+state     : Gamestate = .mainmenu
 pauseMenu : bool = false
 abort     : bool = false
 
 
 //= Structures
+
+
+//= Enumerations
+Gamestate :: enum {
+	mainmenu,
+	choose,
+	play,
+	observer,
+}

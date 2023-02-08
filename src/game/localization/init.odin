@@ -26,7 +26,7 @@ data : map[string]cstring
 //= Procedure
 
 init :: proc() {
-	data = make(map[string]cstring)
+	data = make(map[string]cstring, 10000)
 
 	//* Generate path to file
 	builder : strings.Builder

@@ -16,6 +16,7 @@ ProvinceData :: struct {
 
 	//* Data
 	localID : u32,
+	name    : ^cstring,
 	color   : raylib.Color,
 	shaderIndex: int,
 

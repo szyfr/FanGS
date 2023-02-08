@@ -66,6 +66,27 @@
 			"local": "Drow Hold",
 			"color": [137,78,128,255]
 		}
+	},
+
+	"provinces": {
+		"prov1":  "Prov1",
+		"prov2":  "Prov2",
+		"prov3":  "Prov3",
+		"prov4":  "Prov4",
+		"prov5":  "Prov5",
+		"prov6":  "Prov6",
+		"prov7":  "Prov7",
+		"prov8":  "Prov8",
+		"prov9":  "Prov9",
+		"prov10": "Prov10",
+		"prov11": "Prov11",
+		"prov12": "Prov12",
+		"prov13": "Prov13"
+	},
+
+	"nations": {
+		"HUMAN_TEMP": "Humania",
+		"DROW_TEMP":  "Drowtopia"
 	}
 
 }

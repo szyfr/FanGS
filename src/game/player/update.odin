@@ -96,11 +96,32 @@ update_player_camera :: proc() {
 
 //* Map interaction
 update_player_mouse :: proc() {
-	if raylib.IsMouseButtonPressed(.LEFT) && !game.mainMenu {
+	if raylib.IsMouseButtonPressed(.LEFT) && game.state != .mainmenu {
 
 		//* Getting mouse position and testing GUI
 		position := raylib.GetMousePosition()
 		//TODO: Testing for clicks on windows
+		#partial switch game.state {
+			case .choose:
+				//* Check nation viewer
+				elementWidth  : f32 = f32(settings.data.windowWidth) / 4
+				elementHeight : f32 = f32(settings.data.windowHeight)
+				topright      : f32 = f32(settings.data.windowWidth) - elementWidth
+				botleft       : f32 = f32(settings.data.windowHeight) - 50
+				res := is_within(
+					position,
+					{ topright, 0, elementWidth, elementHeight },
+				)
+				if !res do return
+
+				//* Check play button
+				res = is_within(
+					position,
+					{ 25, botleft - 25, 200, 50 },
+				)
+				if !res do return
+			case .play, .observer:
+		}
 
 		//* Creating ray and collision info
 		data.ray = raylib.GetMouseRay(position, data)
@@ -160,8 +181,7 @@ update_player_mouse :: proc() {
 
 		//* Set selected province
 		prov, res := &worldmap.data.provincesdata[col]
-		if res {
-			if prov.type == provinces.ProvinceType.impassable do return
+		if res && prov.type != provinces.ProvinceType.impassable {
 			data.currentSelection = prov
 			shaderVariable := [4]f32{
 				f32(col.r) / 255,
@@ -170,7 +190,11 @@ update_player_mouse :: proc() {
 				f32(col.a) / 255,
 			}
 			worldmap.change_shader_variable("chosenProv", shaderVariable)
-		} else do data.currentSelection = nil
+		} else {
+			data.currentSelection = nil
+			shaderVariable := [4]f32{ 255, 255, 255, 255 }
+			worldmap.change_shader_variable("chosenProv", shaderVariable)
+		}
 	}
 }
 
@@ -375,4 +399,16 @@ update_date_controls :: proc() {
 			case 3: worldmap.data.timeSpeed = 4
 		}
 	}
+}
+
+//*
+is_within :: proc(
+	v1 : raylib.Vector2,
+	r1 : raylib.Rectangle,
+) -> bool {
+	if  (v1.x > r1.x && v1.x < r1.x + r1.width) &&
+		(v1.y > r1.y && v1.y < r1.y + r1.height) {
+			return false
+	}
+	return true
 }

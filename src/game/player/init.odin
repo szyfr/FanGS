@@ -27,7 +27,6 @@ init :: proc() {
 
 	data.zoom        = 5
 	data.cameraSlope = {0, 1, -5}
-
 }
 
 //* Close

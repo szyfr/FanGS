@@ -5,6 +5,7 @@ package player
 import "vendor:raylib"
 
 import "../provinces"
+import "../nations"
 import "../../graphics/mapmodes"
 
 
@@ -22,6 +23,7 @@ PlayerData :: struct {
 
 	ray              :  raylib.Ray,
 	currentSelection : ^provinces.ProvinceData,
+	nation           : ^nations.Nation,
 
 	curMapmode       : mapmodes.Mapmode,
 }

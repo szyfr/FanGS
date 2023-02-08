@@ -8,8 +8,9 @@ import "vendor:raylib"
 //= Structures
 Nation :: struct {
 	localID        :  string,
-	name           : ^cstring,
 	color          :  raylib.Color,
+
+	flag           :  raylib.Texture2D,
 
 	centerpoint    :  raylib.Vector3,
 	nametx         :  raylib.Texture,

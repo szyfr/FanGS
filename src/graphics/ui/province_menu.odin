@@ -40,10 +40,9 @@ draw_provincemenu :: proc() {
 	builder : strings.Builder
 
 	//* Province name
-	name := fmt.sbprintf(&builder, "%v", player.data.currentSelection.localID)
 	raylib.DrawTextEx(
 		graphics.font,
-		localization.data[name],
+		player.data.currentSelection.name^,
 		{topLeft.x + 20, topLeft.y + 20},
 		settings.data.fontSize, 0,
 		raylib.BLACK,
@@ -112,16 +111,16 @@ draw_provincemenu :: proc() {
 		)
 	}
 
-	//* TEST
-	if player.data.currentSelection.owner != nil {
-		raylib.DrawTextEx(
-			graphics.font,
-			"Owned",
-			{topLeft.x + 20, topLeft.y + 160},
-			settings.data.fontSize, 0,
-			raylib.BLACK,
-		)
-	}
-	
-	delete(str)
+	////* TEST
+	//if player.data.currentSelection.owner != nil {
+	//	raylib.DrawTextEx(
+	//		graphics.font,
+	//		"Owned",
+	//		{topLeft.x + 20, topLeft.y + 160},
+	//		settings.data.fontSize, 0,
+	//		raylib.BLACK,
+	//	)
+	//}
+
+	//delete(str)
 }

@@ -123,7 +123,7 @@ draw_mainmenu :: proc() -> i32 {
 	//* Button logic
 	// TODO: Load, Mods, and Options screens and functionality
 	if new {
-		game.mainMenu = false
+		game.state = .choose
 		worldmap.init("farophi")
 	}
 	if load    {}
