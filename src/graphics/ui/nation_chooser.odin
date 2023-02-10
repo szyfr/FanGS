@@ -14,7 +14,6 @@ import "../../game/player"
 import "../../game/settings"
 import "../../game/localization"
 import "../../game/provinces"
-import "../../graphics"
 import "elements"
 import "../worldmap"
 
@@ -26,17 +25,17 @@ PLAY_HEIGHT :: 50
 
 //= Procedures
 draw_nationchooser :: proc() {
-	centerpoint : raylib.Vector2 = { 0, f32(settings.data.windowHeight)/2 }
+	centerpoint : raylib.Vector2 = { 0, f32(game.settings.windowHeight)/2 }
 	topleft     : raylib.Vector2 = { 0, 0 }
 
-	elementWidth  : f32 = f32(settings.data.windowWidth) / 4
-	elementHeight : f32 = f32(settings.data.windowHeight)
-	topright      : raylib.Vector2 = { f32(settings.data.windowWidth) - elementWidth, 0 }
-	botleft       : raylib.Vector2 = { 0, f32(settings.data.windowHeight) - PLAY_HEIGHT }
+	elementWidth  : f32 = f32(game.settings.windowWidth) / 4
+	elementHeight : f32 = f32(game.settings.windowHeight)
+	topright      : raylib.Vector2 = { f32(game.settings.windowWidth) - elementWidth, 0 }
+	botleft       : raylib.Vector2 = { 0, f32(game.settings.windowHeight) - PLAY_HEIGHT }
 	
 	builder : strings.Builder
 
-	if player.data.currentSelection.owner != nil {
+	if game.player.currentSelection.owner != nil {
 		//* Play
 		play := elements.draw_button(
 			{
@@ -44,44 +43,44 @@ draw_nationchooser :: proc() {
 				botleft.y - 25,
 				PLAY_WIDTH, PLAY_HEIGHT,
 			},
-			&graphics.general_textbox,
-			&graphics.general_textbox_npatch,
+			&game.general_textbox,
+			&game.general_textbox_npatch,
 			raylib.WHITE,
 			raylib.GRAY,
-			&graphics.font,
-			settings.data.fontSize,
+			&game.font,
+			game.settings.fontSize,
 			raylib.BLACK,
-			&localization.data["play"],
+			&game.localization["play"],
 		)
 
 		//* BG
 		raylib.DrawTextureNPatch(
-			graphics.general_textbox,
-			graphics.general_textbox_npatch,
+			game.general_textbox,
+			game.general_textbox_npatch,
 			{ topright.x, topright.y, elementWidth, elementHeight },
 			{0,0}, 0,
 			raylib.RAYWHITE,
 		)
 
 		//* Name
-		name         := localization.data[player.data.currentSelection.owner.localID]
-		nameWidth    := f32(len(name)) * (settings.data.fontSize + 8)
+		name         := game.localization[game.player.currentSelection.owner.localID]
+		nameWidth    := f32(len(name)) * (game.settings.fontSize + 8)
 		namePosition := (elementWidth / 2) - (nameWidth / 2)
 		raylib.DrawTextEx(
-			graphics.font,
+			game.font,
 			name,
 			{ topright.x + namePosition, topright.y + 20 },
-			settings.data.fontSize + 8, 0,
+			game.settings.fontSize + 8, 0,
 			raylib.BLACK,
 		)
 
 		//* Flag
 		flagPosition := (elementWidth / 2) - 50
 		raylib.DrawTexturePro(
-			player.data.currentSelection.owner.flag,
+			game.player.currentSelection.owner.flag,
 			{
 				0,0,
-				f32(player.data.currentSelection.owner.flag.width), f32(player.data.currentSelection.owner.flag.height),
+				f32(game.player.currentSelection.owner.flag.width), f32(game.player.currentSelection.owner.flag.height),
 			},
 			{ topright.x + flagPosition, topright.y + 50, 100, 60 },
 			{ 0, 0 },
@@ -90,9 +89,9 @@ draw_nationchooser :: proc() {
 		)
 
 		if play {
-			player.data.nation = player.data.currentSelection.owner
+			game.player.nation = game.player.currentSelection.owner
 			//TODO Create function for this
-			player.data.currentSelection = nil
+			game.player.currentSelection = nil
 			shaderVariable := [4]f32{ 255, 255, 255, 255 }
 			worldmap.change_shader_variable("chosenProv", shaderVariable)
 			game.state = .play

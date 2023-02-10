@@ -1,18 +1,18 @@
-package worldmap
+package nations
 
 
 //= Imports
 import "vendor:raylib"
 
-import "../../game/nations"
+import "../../game"
 
 
 //= Procedures
 calculate_center :: proc(
-	nation : ^nations.Nation,
+	nation : ^game.Nation,
 ) {
 	total : raylib.Vector3 = {0,0,0}
-	for prov in nation.ownedProvinces do total += data.provincesdata[prov].centerpoint
+	for prov in nation.ownedProvinces do total += game.provinces[prov].centerpoint
 
 	total = {
 		total.x / f32(len(nation.ownedProvinces)),

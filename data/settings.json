@@ -1,6 +1,6 @@
 {
-	"screenwidth": 1280,
-	"screenheight": 720,
+	"screenwidth": 1920,
+	"screenheight": 1080,
 	"targetfps": 80,
 	"language": "english",
 	"edgescrolling": false,
@@ -100,5 +100,9 @@
 		"ancestry",
 		"culture",
 		"religion"
+	],
+
+	"mods": [
+		"farophi"
 	]
 }

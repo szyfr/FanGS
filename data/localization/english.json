@@ -13,6 +13,11 @@
 	"main_menu":"Main Menu",
 	"save":"Save Game",
 	"empty":"NULL",
+	"mod_name":"Name",
+	"mod_enable":"Enabled",
+	"mod_enabled":"Enable",
+	"mod_disabled":"Disable",
+	"mod_refresh":"Refresh",
 	
 	"province_controllable":"Controllable",
 	"province_sea":"Sea",

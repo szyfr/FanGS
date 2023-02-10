@@ -5,29 +5,29 @@ package date
 import "core:fmt"
 import "core:strings"
 
-import "../../graphics/worldmap"
+import "../../game"
 import "../provinces"
 
 
 //= Procedures
 update :: proc() {
-	if !worldmap.data.timePause && (worldmap.data.timeDelay == 0 || worldmap.data.timeSpeed == 0) {
-		switch worldmap.data.timeSpeed {
-			case 1: worldmap.data.timeDelay = 5
-			case 2: worldmap.data.timeDelay = 20
-			case 3: worldmap.data.timeDelay = 35
-			case 4: worldmap.data.timeDelay = 50
+	if !game.worldmap.timePause && (game.worldmap.timeDelay == 0 || game.worldmap.timeSpeed == 0) {
+		switch game.worldmap.timeSpeed {
+			case 1: game.worldmap.timeDelay = 5
+			case 2: game.worldmap.timeDelay = 20
+			case 3: game.worldmap.timeDelay = 35
+			case 4: game.worldmap.timeDelay = 50
 		}
 		increment_date()
 	}
-	if worldmap.data.timeDelay > 0 do worldmap.data.timeDelay -= 1
+	if game.worldmap.timeDelay > 0 do game.worldmap.timeDelay -= 1
 }
 
 increment_date :: proc() {
-	worldmap.data.date.day += 1
+	game.worldmap.date.day += 1
 
 	maxDay : uint = 0
-	switch worldmap.data.date.month {
+	switch game.worldmap.date.month {
 		case  1: maxDay = 31
 		case  2: maxDay = 28
 		case  3: maxDay = 31
@@ -42,17 +42,17 @@ increment_date :: proc() {
 		case 12: maxDay = 31
 	}
 
-	if worldmap.data.date.day > maxDay {
-		if worldmap.data.date.month == 12 {
-			worldmap.data.date.year  += 1
-			worldmap.data.date.month  = 1
-		} else do worldmap.data.date.month += 1
-		worldmap.data.date.day = 1
+	if game.worldmap.date.day > maxDay {
+		if game.worldmap.date.month == 12 {
+			game.worldmap.date.year  += 1
+			game.worldmap.date.month  = 1
+		} else do game.worldmap.date.month += 1
+		game.worldmap.date.day = 1
 
 		//! Monthly game logic
 		fmt.printf("Update\n")
-		for prov in worldmap.data.provincesdata {
-			provinces.grow_province(&worldmap.data.provincesdata[prov])
+		for prov in game.provinces {
+			provinces.grow_province(&game.provinces[prov])
 		}
 	}
 }

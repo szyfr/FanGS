@@ -4,6 +4,8 @@ package player
 //= Imports
 import "vendor:raylib"
 
+import "../../game"
+
 
 //= Constants
 MOVE_SPD : f32 :   0.05
@@ -17,19 +19,19 @@ EDGE_DIS : i32 :  50
 //* Initialization
 init :: proc() {
 
-	data = new(PlayerData)
+	game.player = new(game.Player)
 
-	data.position    = {0, 5, -1}
-	data.target      = {0, 0,  0}
-	data.up          = {0, 1,  0}
-	data.fovy        = 60
-	data.projection  = .PERSPECTIVE
+	game.player.position    = {0, 5, -1}
+	game.player.target      = {0, 0,  0}
+	game.player.up          = {0, 1,  0}
+	game.player.fovy        = 60
+	game.player.projection  = .PERSPECTIVE
 
-	data.zoom        = 5
-	data.cameraSlope = {0, 1, -5}
+	game.player.zoom        = 5
+	game.player.cameraSlope = {0, 1, -5}
 }
 
 //* Close
 close :: proc() {
-	free(data)
+	free(game.player)
 }

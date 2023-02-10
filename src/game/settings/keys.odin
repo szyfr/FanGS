@@ -3,7 +3,11 @@ package settings
 
 //= Imports
 import "core:os"
+
 import "vendor:raylib"
+
+import "../../game"
+
 import "../../debug"
 
 
@@ -19,7 +23,7 @@ is_key_down :: proc(
 ) -> bool {
 
 	//* Check for key's existance
-	keybind, res := data.keybindings[key]
+	keybind, res := game.settings.keybindings[key]
 	if !res do debug.add_to_log(ERR_KEYBINDING_ATTEMPT)
 
 	switch keybind.origin {
@@ -41,7 +45,7 @@ is_key_pressed :: proc(
 ) -> bool {
 
 	//* Check for key's existance
-	keybind, res := data.keybindings[key]
+	keybind, res := game.settings.keybindings[key]
 	if !res do debug.add_to_log(ERR_KEYBINDING_ATTEMPT)
 
 	switch keybind.origin {
@@ -59,17 +63,17 @@ is_key_pressed :: proc(
 
 }
 
-is_mapmode_pressed :: proc() -> (bool, Mapmode) {
-	if is_key_pressed("mm01") do return true, data.mapmodesTool[1]
-	if is_key_pressed("mm02") do return true, data.mapmodesTool[2]
-	if is_key_pressed("mm03") do return true, data.mapmodesTool[3]
-	if is_key_pressed("mm04") do return true, data.mapmodesTool[4]
-	if is_key_pressed("mm05") do return true, data.mapmodesTool[5]
-	if is_key_pressed("mm06") do return true, data.mapmodesTool[6]
-	if is_key_pressed("mm07") do return true, data.mapmodesTool[7]
-	if is_key_pressed("mm08") do return true, data.mapmodesTool[8]
-	if is_key_pressed("mm09") do return true, data.mapmodesTool[9]
-	if is_key_pressed("mm00") do return true, data.mapmodesTool[0]
+is_mapmode_pressed :: proc() -> (bool, game.Mapmode) {
+	if is_key_pressed("mm01") do return true, game.settings.mapmodesTool[1]
+	if is_key_pressed("mm02") do return true, game.settings.mapmodesTool[2]
+	if is_key_pressed("mm03") do return true, game.settings.mapmodesTool[3]
+	if is_key_pressed("mm04") do return true, game.settings.mapmodesTool[4]
+	if is_key_pressed("mm05") do return true, game.settings.mapmodesTool[5]
+	if is_key_pressed("mm06") do return true, game.settings.mapmodesTool[6]
+	if is_key_pressed("mm07") do return true, game.settings.mapmodesTool[7]
+	if is_key_pressed("mm08") do return true, game.settings.mapmodesTool[8]
+	if is_key_pressed("mm09") do return true, game.settings.mapmodesTool[9]
+	if is_key_pressed("mm00") do return true, game.settings.mapmodesTool[0]
 
 	return false, .overworld
 }

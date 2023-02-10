@@ -6,13 +6,15 @@ import "core:fmt"
 
 import "vendor:raylib"
 
+import "../../game"
+
 
 //= Procedures
 draw :: proc() {
 
 	//* Center
 	raylib.DrawModelEx(
-		data.model,
+		game.worldmap.model,
 		{},
 		{0,1,0},
 		180,
@@ -21,8 +23,8 @@ draw :: proc() {
 	)
 	//* Left
 	raylib.DrawModelEx(
-		data.model,
-		{-data.mapWidth,0,0},
+		game.worldmap.model,
+		{-game.worldmap.mapWidth,0,0},
 		{0,1,0},
 		180,
 		{1,1,1},
@@ -30,8 +32,8 @@ draw :: proc() {
 	)
 	//* Right
 	raylib.DrawModelEx(
-		data.model,
-		{data.mapWidth,0,0},
+		game.worldmap.model,
+		{game.worldmap.mapWidth,0,0},
 		{0,1,0},
 		180,
 		{1,1,1},

@@ -15,10 +15,10 @@ import "../../graphics"
 import "../../debug"
 import "../../game"
 import "../../game/settings"
-import "../../game/population"
 import "../../game/localization"
-import "../../game/nations"
 import "../../game/provinces"
+import "../../game/nations"
+import "../../game/population"
 import "../../utilities/colors"
 
 
@@ -49,38 +49,51 @@ ERR_MAPNATIONS_FIND  :: "[ERROR]:\tFailed to find Map Nations file."
 
 
 //= Procedures
+init_new :: proc() {
+	//* Load
+	//* - List of mods
+	//* - Localization
+	//* - Ancestry
+	//* - Culture
+	//* - Religion
+	//* - Terrain
+	//* - 
+	//* - Map
+	//? - Maybe add in multiple map functionality?
+	//* - Provinces
+	//* - Nations
+}
+
 init :: proc(mapname : string) {
-	data = new(WorldMapData)
+	game.worldmap = new(game.Worldmap)
 
 	provLoc := strings.concatenate({MAP_PREFIX, mapname, PROVINCE_LOCATION})
 	heigLoc := strings.concatenate({MAP_PREFIX, mapname, HEIGHT_LOCATION})
 	terrLoc := strings.concatenate({MAP_PREFIX, mapname, TERRAIN_LOCATION})
 
 	//* Load images
-	data.provinceImage = raylib.LoadImage(strings.clone_to_cstring(provLoc))
-	data.heightImage   = raylib.LoadImage(strings.clone_to_cstring(heigLoc))
-	data.terrainImage  = raylib.LoadImage(strings.clone_to_cstring(terrLoc))
-	data.shaderImage   = raylib.ImageCopy(data.provinceImage)
+	game.worldmap.provinceImage = raylib.LoadImage(strings.clone_to_cstring(provLoc))
+	game.worldmap.heightImage   = raylib.LoadImage(strings.clone_to_cstring(heigLoc))
+	game.worldmap.terrainImage  = raylib.LoadImage(strings.clone_to_cstring(terrLoc))
 
 	//* General data
-	data.mapWidth  = f32(data.provinceImage.width)  / MAP_RESIZE
-	data.mapHeight = f32(data.provinceImage.height) / MAP_RESIZE
+	game.worldmap.mapWidth  = f32(game.worldmap.provinceImage.width)  / MAP_RESIZE
+	game.worldmap.mapHeight = f32(game.worldmap.provinceImage.height) / MAP_RESIZE
 
 	//* Mesh / Model
-	height : raylib.Image = raylib.ImageCopy(data.heightImage)
+	height : raylib.Image = raylib.ImageCopy(game.worldmap.heightImage)
 	raylib.ImageResize(&height, height.width/HEIGHTMAP_RESIZE, height.height/HEIGHTMAP_RESIZE)
-	data.collisionMesh = raylib.GenMeshHeightmap(height, {data.mapWidth+0.20, 0.5, data.mapHeight+0.20})
-	data.model = raylib.LoadModelFromMesh(data.collisionMesh)
+	game.worldmap.collisionMesh = raylib.GenMeshHeightmap(height, {game.worldmap.mapWidth+0.20, 0.5, game.worldmap.mapHeight+0.20})
+	game.worldmap.model = raylib.LoadModelFromMesh(game.worldmap.collisionMesh)
 	raylib.UnloadImage(height)
-	data.model.materials[0].maps[0].texture = raylib.LoadTextureFromImage(data.provinceImage)
-	data.model.materials[0].maps[1].texture = raylib.LoadTextureFromImage(data.shaderImage)
+	game.worldmap.model.materials[0].maps[0].texture = raylib.LoadTextureFromImage(game.worldmap.provinceImage)
 
 	//* Shader
-	data.shader = raylib.LoadShader(nil,"data/gfx/shaders/shader.fs")
-	data.model.materials[0].shader = data.shader
+	game.worldmap.shader = raylib.LoadShader(nil,"data/gfx/shaders/shader.fs")
+	game.worldmap.model.materials[0].shader = game.worldmap.shader
 
 	create_shader_variable("mapmode", 0)
-	create_shader_variable("textureSize", [2]f32{data.mapWidth*MAP_RESIZE, data.mapHeight*MAP_RESIZE})
+	create_shader_variable("textureSize", [2]f32{game.worldmap.mapWidth*MAP_RESIZE, game.worldmap.mapHeight*MAP_RESIZE})
 
 
 	//* Load settings
@@ -94,20 +107,20 @@ init :: proc(mapname : string) {
 	rawData, err := os.read_entire_file_from_filename(settingsLoc)
 	jsonData, er := json.parse(rawData)
 
-	data.mapsettings = new(MapSettingsData)
-	data.mapsettings.loopMap = jsonData.(json.Object)["loopmap"].(bool)
+	game.worldmap.mapsettings = new(game.MapSettingsData)
+	game.worldmap.mapsettings.loopMap = jsonData.(json.Object)["loopmap"].(bool)
 	
 	//* Load time
 	dateObj := jsonData.(json.Object)["time"].(json.Object)
-	data.date.year  = uint(dateObj["year"].(f64))
-	data.date.month = uint(dateObj["month"].(f64))
-	data.date.day   = uint(dateObj["day"].(f64))
-	data.timePause  = true
+	game.worldmap.date.year  = uint(dateObj["year"].(f64))
+	game.worldmap.date.month = uint(dateObj["month"].(f64))
+	game.worldmap.date.day   = uint(dateObj["day"].(f64))
+	game.worldmap.timePause  = true
 
 	delete(rawData)
 
 	//* Load mod localization
-	localizationsLoc := strings.concatenate({MAP_PREFIX, mapname, MAPLOCAL_LOCATION, strings.clone_from_cstring(settings.data.language), MAPLOCAL_ENDING})
+	localizationsLoc := strings.concatenate({MAP_PREFIX, mapname, MAPLOCAL_LOCATION, strings.clone_from_cstring(game.settings.language), MAPLOCAL_ENDING})
 	if !os.is_file(localizationsLoc) {
 		debug.add_to_log(ERR_MAPLOCAL_FIND)
 		return
@@ -118,9 +131,9 @@ init :: proc(mapname : string) {
 	//* Ancestry
 	ancestryObj := jsonData.(json.Object)["ancestry"].(json.Object)
 	for obj in ancestryObj {
-		localization.data[obj] = strings.clone_to_cstring(ancestryObj[obj].(json.Object)["local"].(string))
-		anc : population.Ancestry = {
-			name   = &localization.data[obj],
+		game.localization[obj] = strings.clone_to_cstring(ancestryObj[obj].(json.Object)["local"].(string))
+		anc : game.Ancestry = {
+			name   = &game.localization[obj],
 			growth = f32(ancestryObj[obj].(json.Object)["growth"].(f64)),
 			color = {
 				u8(ancestryObj[obj].(json.Object)["color"].(json.Array)[0].(f64)),
@@ -130,18 +143,18 @@ init :: proc(mapname : string) {
 			},
 			// Values
 		}
-		data.ancestryList[obj] = anc
+		game.ancestries[obj] = anc
 	}
 
 	//* Culture
 	cultureObj := jsonData.(json.Object)["culture"].(json.Object)
 	for obj in cultureObj {
-		anc := &data.ancestryList[obj]
+		anc := &game.ancestries[obj]
 
 		for objc in cultureObj[obj].(json.Object) {
-			localization.data[objc] = strings.clone_to_cstring(cultureObj[obj].(json.Object)[objc].(json.Object)["local"].(string))
-			cul : population.Culture = {
-				name = &localization.data[objc],
+			game.localization[objc] = strings.clone_to_cstring(cultureObj[obj].(json.Object)[objc].(json.Object)["local"].(string))
+			cul : game.Culture = {
+				name = &game.localization[objc],
 				ancestry = anc,
 				color = {
 					u8(cultureObj[obj].(json.Object)[objc].(json.Object)["color"].(json.Array)[0].(f64)),
@@ -151,16 +164,16 @@ init :: proc(mapname : string) {
 				},
 				// Values
 			}
-			data.cultureList[objc] = cul
+			game.cultures[objc] = cul
 		}
 	}
 	
 	//* Religion
 	religionObj := jsonData.(json.Object)["religion"].(json.Object)
 	for obj in religionObj {
-		localization.data[obj] = strings.clone_to_cstring(religionObj[obj].(json.Object)["local"].(string))
-		rel : population.Religion = {
-			name = &localization.data[obj],
+		game.localization[obj] = strings.clone_to_cstring(religionObj[obj].(json.Object)["local"].(string))
+		rel : game.Religion = {
+			name = &game.localization[obj],
 			color = {
 				u8(religionObj[obj].(json.Object)["color"].(json.Array)[0].(f64)),
 				u8(religionObj[obj].(json.Object)["color"].(json.Array)[1].(f64)),
@@ -169,15 +182,15 @@ init :: proc(mapname : string) {
 			},
 			// Values
 		}
-		data.religionList[obj] = rel
+		game.religions[obj] = rel
 	}
 
 	//* Terrain
 	terrainObj := jsonData.(json.Object)["terrain"].(json.Object)
 	for obj in terrainObj {
-		localization.data[obj] = strings.clone_to_cstring(terrainObj[obj].(json.Object)["local"].(string))
-		ter : provinces.Terrain = {
-			name  = &localization.data[obj],
+		game.localization[obj] = strings.clone_to_cstring(terrainObj[obj].(json.Object)["local"].(string))
+		ter : game.Terrain = {
+			name  = &game.localization[obj],
 			color = {
 				u8(terrainObj[obj].(json.Object)["color"].(json.Array)[0].(f64)),
 				u8(terrainObj[obj].(json.Object)["color"].(json.Array)[1].(f64)),
@@ -186,19 +199,19 @@ init :: proc(mapname : string) {
 			},
 			// Values
 		}
-		data.terrainList[obj] = ter
+		game.terrains[obj] = ter
 	}
 
 	//* Province localization
 	provObj := jsonData.(json.Object)["provinces"].(json.Object)
 	for obj in provObj {
-		localization.data[obj] = strings.clone_to_cstring(provObj[obj].(string))
+		game.localization[obj] = strings.clone_to_cstring(provObj[obj].(string))
 	}
 
 	//* Nation localization
 	nationObj := jsonData.(json.Object)["nations"].(json.Object)
 	for obj in nationObj {
-		localization.data[obj] = strings.clone_to_cstring(nationObj[obj].(string))
+		game.localization[obj] = strings.clone_to_cstring(nationObj[obj].(string))
 	}
 
 	delete(rawData)
@@ -217,12 +230,12 @@ init :: proc(mapname : string) {
 	for obj in jsonData.(json.Object) {
 		provData := jsonData.(json.Object)[obj].(json.Object)
 		value, ok := strconv.parse_u64(obj)
-		prov : provinces.ProvinceData = {}
+		prov : game.Province = {}
 
 		//* ID number
 		//TODO Names
 		prov.localID = u32(value)
-		prov.name = &localization.data[provData["name"].(string)]
+		prov.name = &game.localization[provData["name"].(string)]
 
 		//* Color
 		prov.color = {
@@ -234,15 +247,15 @@ init :: proc(mapname : string) {
 		provinceList[prov.localID] = prov.color
 
 		//* Terrain
-		prov.terrain = &data.terrainList[provData["terrain"].(string)]
+		prov.terrain = &game.terrains[provData["terrain"].(string)]
 
 		//* Type
 		switch provData["type"].(string) {
-			case "normal":       prov.type = provinces.ProvinceType.base
-			case "controllable": prov.type = provinces.ProvinceType.controllable
-			case "ocean":        prov.type = provinces.ProvinceType.ocean
-			case "lake":         prov.type = provinces.ProvinceType.lake
-			case "impassable":   prov.type = provinces.ProvinceType.impassable
+			case "normal":       prov.type = .base
+			case "controllable": prov.type = .controllable
+			case "ocean":        prov.type = .ocean
+			case "lake":         prov.type = .lake
+			case "impassable":   prov.type = .impassable
 		}
 
 		//* Infrastructure
@@ -253,23 +266,23 @@ init :: proc(mapname : string) {
 		//* Population
 		popData := provData["population"].(json.Array)
 		for pop in popData {
-			population : population.Population = {
+			population : game.Population = {
 				count = u64(pop.(json.Object)["count"].(f64)),
 
-				ancestry = &data.ancestryList[pop.(json.Object)["ancestry"].(string)],
-				culture  = &data.cultureList[pop.(json.Object)["culture"].(string)],
-				religion = &data.religionList[pop.(json.Object)["religion"].(string)],
+				ancestry = &game.ancestries[pop.(json.Object)["ancestry"].(string)],
+				culture  = &game.cultures[pop.(json.Object)["culture"].(string)],
+				religion = &game.religions[pop.(json.Object)["religion"].(string)],
 			}
 			append(&prov.popList, population)
 		}
-		prov.avePop = provinces.avearge_province_pop(&prov)
+		prov.avePop = population.avearge_province_pop(&prov)
 		
 		//*TODO Buildings
 		//*TODO Modifiers
 		//*TODO Nation
 
 		//* Shader info
-		shaderInfo : ShaderProvince = {
+		shaderInfo : game.ShaderProvince = {
 			baseColor = [4]f32{
 				f32(prov.color.r) / 255,
 				f32(prov.color.g) / 255,
@@ -285,7 +298,7 @@ init :: proc(mapname : string) {
 		}
 		prov.shaderIndex = int(create_shader_variable("prov", shaderInfo, prov.localID))
 
-		data.provincesdata[prov.color] = prov
+		game.provinces[prov.color] = prov
 	}
 
 	//* Nations
@@ -298,7 +311,7 @@ init :: proc(mapname : string) {
 	jsonData, er = json.parse(rawData)
 
 	for obj in jsonData.(json.Object) {
-		nation : nations.Nation = {
+		nation : game.Nation = {
 			localID = jsonData.(json.Object)[obj].(json.Object)["local"].(string),
 			color   = {
 				u8(jsonData.(json.Object)[obj].(json.Object)["color"].(json.Object)["r"].(f64)),
@@ -321,11 +334,40 @@ init :: proc(mapname : string) {
 		}
 		
 		//* Centerpoint
-		calculate_center(&nation)
+		nations.calculate_center(&nation)
 
-		data.nationsList[nation.localID] = nation
+		game.nations[nation.localID] = nation
 	}
-	set_all_owned_provinces()
+	nations.set_all_owned_provinces()
 
 	delete(rawData)
+}
+
+close :: proc() {
+	//* Worldmap
+	raylib.UnloadImage(game.worldmap.provinceImage)
+	raylib.UnloadImage(game.worldmap.heightImage)
+	raylib.UnloadImage(game.worldmap.terrainImage)
+	raylib.UnloadModel(game.worldmap.model)
+	raylib.UnloadShader(game.worldmap.shader)
+
+	delete(game.worldmap.shaderVarLoc)
+	delete(game.worldmap.shaderVar)
+
+	free(game.worldmap.mapsettings)
+	free(game.worldmap)
+
+	//* Mod data
+	delete(game.provinces)
+	game.provinces  = make(map[raylib.Color]game.Province)
+	delete(game.nations)
+	game.nations    = make(map[string]game.Nation)
+	delete(game.ancestries)
+	game.ancestries = make(map[string]game.Ancestry)
+	delete(game.cultures)
+	game.cultures   = make(map[string]game.Culture)
+	delete(game.religions)
+	game.religions  = make(map[string]game.Religion)
+	delete(game.terrains)
+	game.terrains   = make(map[string]game.Terrain)
 }

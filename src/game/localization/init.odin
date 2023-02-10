@@ -6,7 +6,8 @@ import "core:encoding/json"
 import "core:fmt"
 import "core:os"
 import "core:strings"
-import "../settings"
+
+import "../../game"
 import "../../debug"
 
 
@@ -20,18 +21,17 @@ LOCALIZATION_LOADED    :: "[LOG]:\tLoaded localization strings.."
 
 
 //= Global
-data : map[string]cstring
 
 
 //= Procedure
 
 init :: proc() {
-	data = make(map[string]cstring, 10000)
+	game.localization = make(map[string]cstring, 10000)
 
 	//* Generate path to file
 	builder : strings.Builder
 	strings.write_string(&builder, LOCAL_LOCATION)
-	strings.write_string(&builder, strings.clone_from_cstring(settings.data.language))
+	strings.write_string(&builder, strings.clone_from_cstring(game.settings.language))
 	strings.write_string(&builder, LOCAL_EXT)
 	location := strings.to_string(builder)
 
@@ -40,7 +40,7 @@ init :: proc() {
 		builderdebug : strings.Builder
 		strings.write_string(&builderdebug, ERR_LOCALIZATION_FIND)
 		strings.write_string(&builderdebug, ERR_LOCALIZATION_INFO)
-		strings.write_string(&builderdebug, strings.clone_from_cstring(settings.data.language))
+		strings.write_string(&builderdebug, strings.clone_from_cstring(game.settings.language))
 		strings.write_string(&builderdebug, LOCAL_EXT)
 		debug.add_to_log(strings.to_string(builderdebug))
 	}
@@ -51,7 +51,7 @@ init :: proc() {
 
 	//* Grab localization
 	for value in jsonData.(json.Object) {
-		data[value] = strings.clone_to_cstring(jsonData.(json.Object)[value].(string))
+		game.localization[value] = strings.clone_to_cstring(jsonData.(json.Object)[value].(string))
 	}
 
 	//* Logging
@@ -62,5 +62,5 @@ init :: proc() {
 }
 
 close :: proc() {
-	delete(data)
+	delete(game.localization)
 }

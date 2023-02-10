@@ -14,7 +14,6 @@ import "../../game/player"
 import "../../game/settings"
 import "../../game/localization"
 import "../../game/provinces"
-import "../../graphics"
 import "elements"
 import "../worldmap"
 
@@ -26,10 +25,10 @@ import "../worldmap"
 draw_nationcontroller :: proc() {
 
 	raylib.DrawTexturePro(
-		player.data.nation.flag,
+		game.player.nation.flag,
 		{
 			0,0,
-			f32(player.data.nation.flag.width), f32(player.data.nation.flag.height),
+			f32(game.player.nation.flag.width), f32(game.player.nation.flag.height),
 		},
 		{ 25, 25, 100, 60 },
 		{ 0, 0 },

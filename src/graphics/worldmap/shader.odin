@@ -7,6 +7,8 @@ import "core:strings"
 
 import "vendor:raylib"
 
+import "../../game"
+
 
 //= Procedures
 
@@ -22,23 +24,23 @@ create_shader_variable_name :: proc(
 	name : string,
 ) {
 	cstr := strings.clone_to_cstring(name)
-	data.shaderVarLoc[name] = raylib.ShaderLocationIndex(raylib.GetShaderLocation(data.shader, cstr))
+	game.worldmap.shaderVarLoc[name] = raylib.ShaderLocationIndex(raylib.GetShaderLocation(game.worldmap.shader, cstr))
 }
 create_shader_variable_single :: proc(
 	name  : string,
-	value : ShaderVariable,
+	value : game.ShaderVariable,
 ) -> raylib.ShaderLocationIndex {
 	cstr := strings.clone_to_cstring(name)
-	data.shaderVarLoc[name] = raylib.ShaderLocationIndex(raylib.GetShaderLocation(data.shader, cstr))
-	data.shaderVar[name]    = value
+	game.worldmap.shaderVarLoc[name] = raylib.ShaderLocationIndex(raylib.GetShaderLocation(game.worldmap.shader, cstr))
+	game.worldmap.shaderVar[name]    = value
 
 	change_shader_variable(name)
 
-	return data.shaderVarLoc[name]
+	return game.worldmap.shaderVarLoc[name]
 }
 create_shader_variable_single_province :: proc(
 	name  : string,
-	value : ShaderProvince,
+	value : game.ShaderProvince,
 	index : u32,
 ) -> raylib.ShaderLocationIndex {
 	builder : strings.Builder
@@ -55,7 +57,7 @@ create_shader_variable_single_province :: proc(
 }
 create_shader_variable_array :: proc(
 	name  : string,
-	value : []ShaderVariable,
+	value : []game.ShaderVariable,
 	count : int,
 ) {
 	builder : strings.Builder
@@ -69,7 +71,7 @@ create_shader_variable_array :: proc(
 }
 create_shader_variable_array_province :: proc(
 	name  : string,
-	value : []ShaderProvince,
+	value : []game.ShaderProvince,
 	count : int,
 ) {
 	builder : strings.Builder
@@ -95,7 +97,7 @@ change_shader_variable :: proc{
 change_shader_variable_internal_single :: proc(
 	name  : string,
 ) {
-	value := &data.shaderVar[name]
+	value := &game.worldmap.shaderVar[name]
 	type  : raylib.ShaderUniformDataType = .FLOAT
 
 	switch v in value^ {
@@ -109,13 +111,13 @@ change_shader_variable_internal_single :: proc(
 		case [4]i32: type = .IVEC4
 	}
 
-	raylib.SetShaderValue(data.shader, data.shaderVarLoc[name], value, type)
+	raylib.SetShaderValue(game.worldmap.shader, game.worldmap.shaderVarLoc[name], value, type)
 }
 change_shader_variable_external_single :: proc(
 	name  : string,
-	value : ShaderVariable,
+	value : game.ShaderVariable,
 ) {
-	data.shaderVar[name] = value
+	game.worldmap.shaderVar[name] = value
 	type  : raylib.ShaderUniformDataType = .FLOAT
 
 	switch v in value {
@@ -129,11 +131,11 @@ change_shader_variable_external_single :: proc(
 		case [4]i32: type = .IVEC4
 	}
 
-	raylib.SetShaderValue(data.shader, data.shaderVarLoc[name], &data.shaderVar[name], type)
+	raylib.SetShaderValue(game.worldmap.shader, game.worldmap.shaderVarLoc[name], &game.worldmap.shaderVar[name], type)
 }
 change_shader_variable_external_array :: proc(
 	name  : string,
-	value : []ShaderVariable,
+	value : []game.ShaderVariable,
 	count : int,
 ) {
 	builder : strings.Builder

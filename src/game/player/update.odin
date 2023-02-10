@@ -15,7 +15,6 @@ import "../settings"
 import "../../game"
 import "../../game/provinces"
 import "../../graphics/worldmap"
-import "../../graphics/mapmodes"
 import "../../utilities/matrix_math"
 
 
@@ -29,48 +28,49 @@ update :: proc() {
 	update_mapmodes()
 	update_date_controls()
 	if raylib.IsKeyPressed(raylib.KeyboardKey.ESCAPE) {
-		game.pauseMenu = !game.pauseMenu
+		if game.menu == .pause	do game.menu = .none
+		else					do game.menu = .pause
 	}
 }
 
 //* Player movement
 update_player_movement :: proc() {
 
-	mod := ((data.zoom) / 5) / 100
+	mod := ((game.player.zoom) / 5) / 100
 
 	//* Key Movement
-	if settings.is_key_down("up")    do data.target.z   += MOVE_SPD * (mod+3)
-	if settings.is_key_down("down")  do data.target.z   -= MOVE_SPD * (mod+3)
-	if settings.is_key_down("left")  do data.target.x   += MOVE_SPD * (mod+3)
-	if settings.is_key_down("right") do data.target.x   -= MOVE_SPD * (mod+3)
+	if settings.is_key_down("up")    do game.player.target.z   += MOVE_SPD * (mod+3)
+	if settings.is_key_down("down")  do game.player.target.z   -= MOVE_SPD * (mod+3)
+	if settings.is_key_down("left")  do game.player.target.x   += MOVE_SPD * (mod+3)
+	if settings.is_key_down("right") do game.player.target.x   -= MOVE_SPD * (mod+3)
 
 	//* Drag movement
 	if settings.is_key_down("grabmap") {
 		mouseDelta: raylib.Vector2 = raylib.GetMouseDelta()
 
-		data.target.x += mouseDelta.x * mod
-		data.target.z += mouseDelta.y * mod
+		game.player.target.x += mouseDelta.x * mod
+		game.player.target.z += mouseDelta.y * mod
 	}
 
 	//* Edge scrolling
-	if settings.data.edgeScrolling {
-		if raylib.GetMouseX() <= EDGE_DIS do data.target.x   += MOVE_SPD
-		if raylib.GetMouseY() <= EDGE_DIS do data.target.z   += MOVE_SPD
-		if raylib.GetMouseX() >= settings.data.windowWidth - EDGE_DIS  do data.target.x -= MOVE_SPD
-		if raylib.GetMouseY() >= settings.data.windowHeight - EDGE_DIS do data.target.z -= MOVE_SPD
+	if game.settings.edgeScrolling {
+		if raylib.GetMouseX() <= EDGE_DIS do game.player.target.x   += MOVE_SPD
+		if raylib.GetMouseY() <= EDGE_DIS do game.player.target.z   += MOVE_SPD
+		if raylib.GetMouseX() >= game.settings.windowWidth - EDGE_DIS  do game.player.target.x -= MOVE_SPD
+		if raylib.GetMouseY() >= game.settings.windowHeight - EDGE_DIS do game.player.target.z -= MOVE_SPD
 	}
 
 	//* Edge contraints/looping
-	if worldmap.data != nil {
-		if data.target.z >  0                   do data.target.z =  0
-		if data.target.z < -worldmap.data.mapHeight do data.target.z = -worldmap.data.mapHeight
+	if game.worldmap != nil {
+		if game.player.target.z >  0							do game.player.target.z =  0
+		if game.player.target.z < -game.worldmap.mapHeight		do game.player.target.z = -game.worldmap.mapHeight
 
-		if worldmap.data.mapsettings.loopMap {
-			if data.target.x >  0                  do data.target.x = -worldmap.data.mapWidth
-			if data.target.x < -worldmap.data.mapWidth do data.target.x = 0
+		if game.worldmap.mapsettings.loopMap {
+			if game.player.target.x > 0							do game.player.target.x = -game.worldmap.mapWidth
+			if game.player.target.x < -game.worldmap.mapWidth	do game.player.target.x = 0
 		} else {
-			if data.target.x >  0                  do data.target.x = 0
-			if data.target.x < -worldmap.data.mapWidth do data.target.x = -worldmap.data.mapWidth
+			if game.player.target.x > 0							do game.player.target.x = 0
+			if game.player.target.x < -game.worldmap.mapWidth	do game.player.target.x = -game.worldmap.mapWidth
 		}
 	}
 }
@@ -79,18 +79,18 @@ update_player_movement :: proc() {
 update_player_camera :: proc() {
 
 	//* Zoom
-	if      settings.is_key_pressed("zoompos") do data.zoom -= 2
-	else if settings.is_key_pressed("zoomneg") do data.zoom += 2
+	if      settings.is_key_pressed("zoompos") do game.player.zoom -= 2
+	else if settings.is_key_pressed("zoomneg") do game.player.zoom += 2
 	
-	if data.zoom > ZOOM_MAX do data.zoom = ZOOM_MAX;
-	if data.zoom < ZOOM_MIN do data.zoom = ZOOM_MIN;
+	if game.player.zoom > ZOOM_MAX do game.player.zoom = ZOOM_MAX;
+	if game.player.zoom < ZOOM_MIN do game.player.zoom = ZOOM_MIN;
 
-	if data.cameraSlope.x != 0 do data.position.x = data.target.x + data.zoom / data.cameraSlope.x
-	else                       do data.position.x = data.target.x
-	if data.cameraSlope.y != 0 do data.position.y = data.target.y + data.zoom / data.cameraSlope.y
-	else                       do data.position.y = data.target.y
-	if data.cameraSlope.z != 0 do data.position.z = data.target.z + data.zoom / data.cameraSlope.z
-	else                       do data.position.z = data.target.z
+	if game.player.cameraSlope.x != 0	do game.player.position.x = game.player.target.x + game.player.zoom / game.player.cameraSlope.x
+	else								do game.player.position.x = game.player.target.x
+	if game.player.cameraSlope.y != 0	do game.player.position.y = game.player.target.y + game.player.zoom / game.player.cameraSlope.y
+	else								do game.player.position.y = game.player.target.y
+	if game.player.cameraSlope.z != 0	do game.player.position.z = game.player.target.z + game.player.zoom / game.player.cameraSlope.z
+	else								do game.player.position.z = game.player.target.z
 	
 }
 
@@ -104,10 +104,10 @@ update_player_mouse :: proc() {
 		#partial switch game.state {
 			case .choose:
 				//* Check nation viewer
-				elementWidth  : f32 = f32(settings.data.windowWidth) / 4
-				elementHeight : f32 = f32(settings.data.windowHeight)
-				topright      : f32 = f32(settings.data.windowWidth) - elementWidth
-				botleft       : f32 = f32(settings.data.windowHeight) - 50
+				elementWidth  : f32 = f32(game.settings.windowWidth) / 4
+				elementHeight : f32 = f32(game.settings.windowHeight)
+				topright      : f32 = f32(game.settings.windowWidth) - elementWidth
+				botleft       : f32 = f32(game.settings.windowHeight) - 50
 				res := is_within(
 					position,
 					{ topright, 0, elementWidth, elementHeight },
@@ -124,9 +124,9 @@ update_player_mouse :: proc() {
 		}
 
 		//* Creating ray and collision info
-		data.ray = raylib.GetMouseRay(position, data)
+		game.player.ray = raylib.GetMouseRay(position, game.player)
 		collision : raylib.RayCollision = {}
-		width, height := -worldmap.data.mapWidth/2, -worldmap.data.mapHeight/2
+		width, height := -game.worldmap.mapWidth/2, -game.worldmap.mapHeight/2
 		transformCenter : linalg.Matrix4x4f32 = {
 			-1, 0,  0, 0,
 			 0, 1,  0, 0,
@@ -137,31 +137,31 @@ update_player_mouse :: proc() {
 			-1, 0,  0, 0,
 			 0, 1,  0, 0,
 			 0, 0, -1, 0,
-			-worldmap.data.mapWidth, 0, 0, 1,
+			-game.worldmap.mapWidth, 0, 0, 1,
 		}
 		transformRight : linalg.Matrix4x4f32 = {
 			-1, 0,  0, 0,
 			 0, 1,  0, 0,
 			 0, 0, -1, 0,
-			+worldmap.data.mapWidth, 0, 0, 1,
+			+game.worldmap.mapWidth, 0, 0, 1,
 		}
 
 		//* Casting ray
 		collision = raylib.GetRayCollisionMesh(
-			data.ray,
-			worldmap.data.collisionMesh,
+			game.player.ray,
+			game.worldmap.collisionMesh,
 			transformCenter,
 		)
 		if !collision.hit {
 			collision = raylib.GetRayCollisionMesh(
-				data.ray,
-				worldmap.data.collisionMesh,
+				game.player.ray,
+				game.worldmap.collisionMesh,
 				transformLeft,
 			)
 			if !collision.hit {
 				collision = raylib.GetRayCollisionMesh(
-					data.ray,
-					worldmap.data.collisionMesh,
+					game.player.ray,
+					game.worldmap.collisionMesh,
 					transformRight,
 				)
 			}
@@ -169,20 +169,20 @@ update_player_mouse :: proc() {
 
 		//* Calculate PosX
 		posX : i32
-		if collision.point.x*20 > 0 do posX =  i32(worldmap.data.mapWidth*20) - i32(collision.point.x*20)
-		else                        do posX = -i32(collision.point.x*20) % i32(worldmap.data.mapWidth*20)
+		if collision.point.x*20 > 0 do posX =  i32(game.worldmap.mapWidth*20) - i32(collision.point.x*20)
+		else                        do posX = -i32(collision.point.x*20) % i32(game.worldmap.mapWidth*20)
 
 		//* Grab color
 		col := raylib.GetImageColor(
-			worldmap.data.provinceImage,
+			game.worldmap.provinceImage,
 			posX,
 			-i32(collision.point.z*20),
 		)
 
 		//* Set selected province
-		prov, res := &worldmap.data.provincesdata[col]
-		if res && prov.type != provinces.ProvinceType.impassable {
-			data.currentSelection = prov
+		prov, res := &game.provinces[col]
+		if res && prov.type != game.ProvinceType.impassable {
+			game.player.currentSelection = prov
 			shaderVariable := [4]f32{
 				f32(col.r) / 255,
 				f32(col.g) / 255,
@@ -191,7 +191,7 @@ update_player_mouse :: proc() {
 			}
 			worldmap.change_shader_variable("chosenProv", shaderVariable)
 		} else {
-			data.currentSelection = nil
+			game.player.currentSelection = nil
 			shaderVariable := [4]f32{ 255, 255, 255, 255 }
 			worldmap.change_shader_variable("chosenProv", shaderVariable)
 		}
@@ -207,13 +207,13 @@ update_mapmodes :: proc() {
 		#partial switch mapmode {
 			case .overworld:
 				builder : strings.Builder
-				for p in worldmap.data.provincesdata {
-					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+				for p in game.provinces {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", game.provinces[p].localID)
 					shaderVariable := [4]f32{
-						f32(worldmap.data.provincesdata[p].color.r)/255,
-						f32(worldmap.data.provincesdata[p].color.g)/255,
-						f32(worldmap.data.provincesdata[p].color.b)/255,
-						f32(worldmap.data.provincesdata[p].color.a)/255,
+						f32(game.provinces[p].color.r)/255,
+						f32(game.provinces[p].color.g)/255,
+						f32(game.provinces[p].color.b)/255,
+						f32(game.provinces[p].color.a)/255,
 					}
 					worldmap.change_shader_variable(shaderVarName, shaderVariable)
 					strings.builder_reset(&builder)
@@ -222,16 +222,16 @@ update_mapmodes :: proc() {
 
 			case .political:
 				builder : strings.Builder
-				for p in worldmap.data.provincesdata {
-					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+				for p in game.provinces {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", game.provinces[p].localID)
 					shaderVariable := [4]f32{ 0.75, 0.75, 0.75, 1 }
 
-					if worldmap.data.provincesdata[p].owner != nil {
+					if game.provinces[p].owner != nil {
 						shaderVariable = [4]f32{
-							f32(worldmap.data.provincesdata[p].owner.color.r)/255,
-							f32(worldmap.data.provincesdata[p].owner.color.g)/255,
-							f32(worldmap.data.provincesdata[p].owner.color.b)/255,
-							f32(worldmap.data.provincesdata[p].owner.color.a)/255,
+							f32(game.provinces[p].owner.color.r)/255,
+							f32(game.provinces[p].owner.color.g)/255,
+							f32(game.provinces[p].owner.color.b)/255,
+							f32(game.provinces[p].owner.color.a)/255,
 						}
 					}
 					worldmap.change_shader_variable(shaderVarName, shaderVariable)
@@ -241,13 +241,13 @@ update_mapmodes :: proc() {
 
 			case .terrain:
 				builder : strings.Builder
-				for p in worldmap.data.provincesdata {
-					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+				for p in game.provinces {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", game.provinces[p].localID)
 					shaderVariable := [4]f32{
-						f32(worldmap.data.provincesdata[p].terrain.color.r)/255,
-						f32(worldmap.data.provincesdata[p].terrain.color.g)/255,
-						f32(worldmap.data.provincesdata[p].terrain.color.b)/255,
-						f32(worldmap.data.provincesdata[p].terrain.color.a)/255,
+						f32(game.provinces[p].terrain.color.r)/255,
+						f32(game.provinces[p].terrain.color.g)/255,
+						f32(game.provinces[p].terrain.color.b)/255,
+						f32(game.provinces[p].terrain.color.a)/255,
 					}
 					worldmap.change_shader_variable(shaderVarName, shaderVariable)
 					strings.builder_reset(&builder)
@@ -256,10 +256,10 @@ update_mapmodes :: proc() {
 
 			case .control:
 				builder : strings.Builder
-				for p in worldmap.data.provincesdata {
-					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+				for p in game.provinces {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", game.provinces[p].localID)
 					shaderVariable : [4]f32
-					#partial switch worldmap.data.provincesdata[p].type {
+					#partial switch game.provinces[p].type {
 						case .base:
 							shaderVariable = [4]f32{ 0.75, 0.75, 0.75, 1 }
 							break
@@ -284,16 +284,16 @@ update_mapmodes :: proc() {
 			case .population:
 				builder : strings.Builder
 				maxPopulation : u64 = 0 
-				for p in worldmap.data.provincesdata {
-					count := worldmap.data.provincesdata[p].avePop.count
+				for p in game.provinces {
+					count := game.provinces[p].avePop.count
 					if maxPopulation < count do maxPopulation = count
 					fmt.printf("",count)
 				}
-				for p in worldmap.data.provincesdata {
-					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+				for p in game.provinces {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", game.provinces[p].localID)
 					shaderVariable := [4]f32{ 0.75, 0.75, 0.75, 1 }
-					if maxPopulation > 0 && worldmap.data.provincesdata[p].type != .impassable {
-						populationRatio : f32 = f32(worldmap.data.provincesdata[p].avePop.count) / f32(maxPopulation)
+					if maxPopulation > 0 && game.provinces[p].type != .impassable {
+						populationRatio : f32 = f32(game.provinces[p].avePop.count) / f32(maxPopulation)
 						shaderVariable = [4]f32{
 							1 - populationRatio,
 							populationRatio,
@@ -307,11 +307,11 @@ update_mapmodes :: proc() {
 
 			case .infrastructure:
 				builder : strings.Builder
-				for p in worldmap.data.provincesdata {
-					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
-					infraRatio     := f32(worldmap.data.provincesdata[p].curInfrastructure) / f32(worldmap.data.provincesdata[p].maxInfrastructure)
+				for p in game.provinces {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", game.provinces[p].localID)
+					infraRatio     := f32(game.provinces[p].curInfrastructure) / f32(game.provinces[p].maxInfrastructure)
 					shaderVariable := [4]f32{ 0.75, 0.75, 0.75, 1 }
-					if worldmap.data.provincesdata[p].type != .impassable {
+					if game.provinces[p].type != .impassable {
 						shaderVariable = [4]f32{
 							1 - infraRatio,
 							infraRatio,
@@ -325,15 +325,15 @@ update_mapmodes :: proc() {
 
 			case .ancestry:
 				builder : strings.Builder
-				for p in worldmap.data.provincesdata {
-					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+				for p in game.provinces {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", game.provinces[p].localID)
 					shaderVariable := [4]f32{ 1, 1, 1, 1 }
-					if worldmap.data.provincesdata[p].avePop != {} {
+					if game.provinces[p].avePop != {} {
 						shaderVariable = [4]f32{
-							f32(worldmap.data.provincesdata[p].avePop.ancestry.color.r)/255,
-							f32(worldmap.data.provincesdata[p].avePop.ancestry.color.g)/255,
-							f32(worldmap.data.provincesdata[p].avePop.ancestry.color.b)/255,
-							f32(worldmap.data.provincesdata[p].avePop.ancestry.color.a)/255,
+							f32(game.provinces[p].avePop.ancestry.color.r)/255,
+							f32(game.provinces[p].avePop.ancestry.color.g)/255,
+							f32(game.provinces[p].avePop.ancestry.color.b)/255,
+							f32(game.provinces[p].avePop.ancestry.color.a)/255,
 						}
 					}
 					worldmap.change_shader_variable(shaderVarName, shaderVariable)
@@ -343,15 +343,15 @@ update_mapmodes :: proc() {
 
 			case .culture:
 				builder : strings.Builder
-				for p in worldmap.data.provincesdata {
-					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+				for p in game.provinces {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", game.provinces[p].localID)
 					shaderVariable := [4]f32{ 1, 1, 1, 1 }
-					if worldmap.data.provincesdata[p].avePop != {} {
+					if game.provinces[p].avePop != {} {
 						shaderVariable = [4]f32{
-							f32(worldmap.data.provincesdata[p].avePop.culture.color.r)/255,
-							f32(worldmap.data.provincesdata[p].avePop.culture.color.g)/255,
-							f32(worldmap.data.provincesdata[p].avePop.culture.color.b)/255,
-							f32(worldmap.data.provincesdata[p].avePop.culture.color.a)/255,
+							f32(game.provinces[p].avePop.culture.color.r)/255,
+							f32(game.provinces[p].avePop.culture.color.g)/255,
+							f32(game.provinces[p].avePop.culture.color.b)/255,
+							f32(game.provinces[p].avePop.culture.color.a)/255,
 						}
 					}
 					worldmap.change_shader_variable(shaderVarName, shaderVariable)
@@ -361,15 +361,15 @@ update_mapmodes :: proc() {
 
 			case .religion:
 				builder : strings.Builder
-				for p in worldmap.data.provincesdata {
-					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", worldmap.data.provincesdata[p].localID)
+				for p in game.provinces {
+					shaderVarName  := fmt.sbprintf(&builder, "prov[%i].mapColor", game.provinces[p].localID)
 					shaderVariable := [4]f32{ 1, 1, 1, 1 }
-					if worldmap.data.provincesdata[p].avePop != {} {
+					if game.provinces[p].avePop != {} {
 						shaderVariable = [4]f32{
-							f32(worldmap.data.provincesdata[p].avePop.religion.color.r)/255,
-							f32(worldmap.data.provincesdata[p].avePop.religion.color.g)/255,
-							f32(worldmap.data.provincesdata[p].avePop.religion.color.b)/255,
-							f32(worldmap.data.provincesdata[p].avePop.religion.color.a)/255,
+							f32(game.provinces[p].avePop.religion.color.r)/255,
+							f32(game.provinces[p].avePop.religion.color.g)/255,
+							f32(game.provinces[p].avePop.religion.color.b)/255,
+							f32(game.provinces[p].avePop.religion.color.a)/255,
 						}
 					}
 					worldmap.change_shader_variable(shaderVarName, shaderVariable)
@@ -382,21 +382,21 @@ update_mapmodes :: proc() {
 
 //* Date keybindings
 update_date_controls :: proc() {
-	if settings.is_key_pressed("pause") do worldmap.data.timePause = !worldmap.data.timePause
+	if settings.is_key_pressed("pause") do game.worldmap.timePause = !game.worldmap.timePause
 	if settings.is_key_pressed("faster") {
-		switch worldmap.data.timeSpeed {
-			case 1: worldmap.data.timeSpeed = 0
-			case 2: worldmap.data.timeSpeed = 1
-			case 3: worldmap.data.timeSpeed = 2
-			case 4: worldmap.data.timeSpeed = 3
+		switch game.worldmap.timeSpeed {
+			case 1: game.worldmap.timeSpeed = 0
+			case 2: game.worldmap.timeSpeed = 1
+			case 3: game.worldmap.timeSpeed = 2
+			case 4: game.worldmap.timeSpeed = 3
 		}
 	}
 	if settings.is_key_pressed("slower") {
-		switch worldmap.data.timeSpeed {
-			case 0: worldmap.data.timeSpeed = 1
-			case 1: worldmap.data.timeSpeed = 2
-			case 2: worldmap.data.timeSpeed = 3
-			case 3: worldmap.data.timeSpeed = 4
+		switch game.worldmap.timeSpeed {
+			case 0: game.worldmap.timeSpeed = 1
+			case 1: game.worldmap.timeSpeed = 2
+			case 2: game.worldmap.timeSpeed = 3
+			case 3: game.worldmap.timeSpeed = 4
 		}
 	}
 }

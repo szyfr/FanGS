@@ -29,6 +29,9 @@ draw_button :: proc(
 		if raylib.IsMouseButtonReleased(.LEFT) do result = true
 	}
 
+	str : cstring = ""
+	if text != nil do str = text^
+
 	raylib.DrawTextureNPatch(
 		background^,
 		backgroundNPatch^,
@@ -38,12 +41,12 @@ draw_button :: proc(
 	)
 
 	textPosition : raylib.Vector2
-	textPosition.x = ((transform.width / 2) + transform.x) - (((fontSize * f32(len(text))) * 1.1) / 2);
+	textPosition.x = ((transform.width / 2) + transform.x) - (((fontSize * f32(len(str))) * 1.1) / 2);
 	textPosition.y = ((transform.height / 2) + transform.y) - (((fontSize * 1) * 1.1) / 2)
 
 	raylib.DrawTextEx(
 		font^,
-		text^,
+		str,
 		textPosition,
 		fontSize, 1,
 		fontColor,

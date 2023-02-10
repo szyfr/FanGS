@@ -7,7 +7,6 @@ import "core:fmt"
 import "vendor:raylib"
 
 import "debug"
-import "testing"
 
 import "game"
 import "game/date"
@@ -35,9 +34,9 @@ main_update :: proc() {
 			date.update()
 	}
 
-	if raylib.IsKeyPressed(raylib.KeyboardKey.O) {
-		for obj in localization.data {
-			fmt.printf("%v:%v\n", obj, localization.data[obj])
+	if raylib.IsKeyPressed(.O) {
+		for str in game.mods {
+			fmt.printf("%v\n", str)
 		}
 	}
 }
@@ -51,9 +50,7 @@ main_draw :: proc() {
 	raylib.ClearBackground(raylib.RAYWHITE)
 	
 	//* 3D elements
-	raylib.BeginMode3D(player.data)
-	//raylib.DrawGrid(100,10)
-
+	raylib.BeginMode3D(game.player)
 	#partial switch game.state {
 		case .mainmenu:
 		case .choose:
@@ -63,7 +60,6 @@ main_draw :: proc() {
 		case .observer:
 			worldmap.draw()
 	}
-	
 	raylib.EndMode3D()
 
 	//* 2D GUI
@@ -77,28 +73,28 @@ main_draw :: proc() {
 				case ui.out_options:
 				case ui.out_mods:
 			}
+			if game.menu == .mods	do ui.draw_modmenu()
 
 		case .choose:
-			if game.pauseMenu do ui.draw_pausemenu()
-			if player.data.currentSelection != nil do ui.draw_nationchooser()
+			if game.menu == .pause	do ui.draw_pausemenu()
+			if game.player.currentSelection != nil do ui.draw_nationchooser()
 
 		case .play:
 			ui.draw_datedisplay()
 			ui.draw_nationcontroller()
-			if game.pauseMenu do ui.draw_pausemenu()
-			if player.data.currentSelection != nil do ui.draw_provincemenu()
+			if game.menu == .pause do ui.draw_pausemenu()
+			if game.player.currentSelection != nil do ui.draw_provincemenu()
 
 		case .observer:
 			ui.draw_datedisplay()
 			ui.draw_nationcontroller()
-			if game.pauseMenu do ui.draw_pausemenu()
-			if player.data.currentSelection != nil do ui.draw_provincemenu()
+			if game.menu == .pause do ui.draw_pausemenu()
+			if game.player.currentSelection != nil do ui.draw_provincemenu()
 	}
 
-	//= Debug
+	//* Debug
 	raylib.DrawFPS(0,0)
 
-	//* End drawing
 	raylib.EndDrawing()
 }
 
@@ -119,34 +115,29 @@ main :: proc() {
 
 //= Init
 main_init :: proc() {
-
-	//* Debugging system
+	//* Debugging
 	debug.create_log()
 
-	//* Settings
+	//* Setup
 	settings.init()
-
-	//* Localization
 	localization.init()
 
-	//* Player
-	player.init()
-
 	//* Raylib
-	//raylib.SetTraceLogLevel(.NONE)
+	raylib.SetTraceLogLevel(.NONE)
 	raylib.InitWindow(
-		settings.data.windowWidth,
-		settings.data.windowHeight,
-		localization.data["game_desc"],
+		game.settings.windowWidth,
+		game.settings.windowHeight,
+		game.localization["game_desc"],
 	)
-	raylib.SetTargetFPS(settings.data.targetFPS)
+	raylib.SetTargetFPS(game.settings.targetFPS)
 	raylib.SetExitKey(raylib.KeyboardKey.NULL)
 
 	//* Graphics
 	graphics.init()
-
-	//* Testing
-	//testing.test()
+	
+	//* Data
+	player.init()
+	append(&game.mods, "farophi")
 }
 
 

@@ -4,15 +4,17 @@ package settings
 //= Imports
 import "core:encoding/json"
 
+import "../../game"
+
 import "../../debug"
 
 
 //= Procedures
 create_keybinding :: proc(
 	obj : json.Object,
-) -> Keybinding {
+) -> game.Keybinding {
 
-	binding : Keybinding = {}
+	binding : game.Keybinding = {}
 	origin  :=  u8(obj[SETTINGS_ORIGIN].(f64))
 	key     := u32(obj[SETTINGS_KEY].(f64))
 

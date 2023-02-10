@@ -14,7 +14,6 @@ import "../../game/player"
 import "../../game/settings"
 import "../../game/localization"
 import "../../game/provinces"
-import "../../graphics"
 import "elements"
 import "../worldmap"
 
@@ -26,12 +25,12 @@ PROVIEW_HEIGHT : f32 : 400
 
 //= Procedures
 draw_provincemenu :: proc() {
-	topLeft := raylib.Vector2{0, f32(settings.data.windowHeight) - PROVIEW_HEIGHT}
+	topLeft := raylib.Vector2{0, f32(game.settings.windowHeight) - PROVIEW_HEIGHT}
 
 	//* Background
 	raylib.DrawTextureNPatch(
-		graphics.general_textbox,
-		graphics.general_textbox_npatch,
+		game.general_textbox,
+		game.general_textbox_npatch,
 		{topLeft.x, topLeft.y, PROVIEW_WIDTH, PROVIEW_HEIGHT},
 		{0,0}, 0,
 		raylib.RAYWHITE,
@@ -41,37 +40,37 @@ draw_provincemenu :: proc() {
 
 	//* Province name
 	raylib.DrawTextEx(
-		graphics.font,
-		player.data.currentSelection.name^,
+		game.font,
+		game.player.currentSelection.name^,
 		{topLeft.x + 20, topLeft.y + 20},
-		settings.data.fontSize, 0,
+		game.settings.fontSize, 0,
 		raylib.BLACK,
 	)
 
 	//* Terrain
 	raylib.DrawTextEx(
-		graphics.font,
-		player.data.currentSelection.terrain.name^,
+		game.font,
+		game.player.currentSelection.terrain.name^,
 		{topLeft.x + 40, topLeft.y + 40},
-		settings.data.fontSize, 0,
+		game.settings.fontSize, 0,
 		raylib.BLACK,
 	)
 
 	//* Province Type
 	type : string
-	switch player.data.currentSelection.type {
-		case provinces.ProvinceType.NULL:         type = "NULL"
-		case provinces.ProvinceType.base:         type = "base"
-		case provinces.ProvinceType.controllable: type = "controllable"
-		case provinces.ProvinceType.ocean:        type = "ocean"
-		case provinces.ProvinceType.lake:         type = "lake"
-		case provinces.ProvinceType.impassable:   type = "impassable"
+	switch game.player.currentSelection.type {
+		case .NULL:         type = "NULL"
+		case .base:         type = "base"
+		case .controllable: type = "controllable"
+		case .ocean:        type = "ocean"
+		case .lake:         type = "lake"
+		case .impassable:   type = "impassable"
 	}
 	raylib.DrawTextEx(
-		graphics.font,
-		localization.data[type],
+		game.font,
+		game.localization[type],
 		{topLeft.x + 40, topLeft.y + 60},
-		settings.data.fontSize, 0,
+		game.settings.fontSize, 0,
 		raylib.BLACK,
 	)
 
@@ -80,44 +79,44 @@ draw_provincemenu :: proc() {
 	str     := fmt.sbprintf(
 		&builder,
 		"%v / %v",
-		player.data.currentSelection.curInfrastructure,
-		player.data.currentSelection.maxInfrastructure,
+		game.player.currentSelection.curInfrastructure,
+		game.player.currentSelection.maxInfrastructure,
 	)
 	raylib.DrawTextEx(
-		graphics.font,
+		game.font,
 		strings.clone_to_cstring(str),
 		{topLeft.x + 40, topLeft.y + 80},
-		settings.data.fontSize, 0,
+		game.settings.fontSize, 0,
 		raylib.BLACK,
 	)
 	clear(&builder.buf)
 
 	//* Populations
-	if player.data.currentSelection.type == .base && player.data.currentSelection.avePop.count > 0 {
+	if game.player.currentSelection.type == .base && game.player.currentSelection.avePop.count > 0 {
 		str = fmt.sbprintf(
 			&builder,
 			"%v | %v - %v - %v\n",
-			player.data.currentSelection.avePop.count,
-			player.data.currentSelection.avePop.ancestry.name^,
-			player.data.currentSelection.avePop.culture.name^,
-			player.data.currentSelection.avePop.religion.name^,
+			game.player.currentSelection.avePop.count,
+			game.player.currentSelection.avePop.ancestry.name^,
+			game.player.currentSelection.avePop.culture.name^,
+			game.player.currentSelection.avePop.religion.name^,
 		)
 		raylib.DrawTextEx(
-			graphics.font,
+			game.font,
 			strings.clone_to_cstring(str),
 			{topLeft.x + 20, topLeft.y + 120},
-			settings.data.fontSize, 0,
+			game.settings.fontSize, 0,
 			raylib.BLACK,
 		)
 	}
 
 	////* TEST
-	//if player.data.currentSelection.owner != nil {
+	//if game.player.currentSelection.owner != nil {
 	//	raylib.DrawTextEx(
-	//		graphics.font,
+	//		game.font,
 	//		"Owned",
 	//		{topLeft.x + 20, topLeft.y + 160},
-	//		settings.data.fontSize, 0,
+	//		game.settings.fontSize, 0,
 	//		raylib.BLACK,
 	//	)
 	//}
