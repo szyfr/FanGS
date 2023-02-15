@@ -1,0 +1,23 @@
+
+{
+	"ancestry_human": {
+		"culture_human_riverlander": {
+			"color": [89,155,183,255]
+		},
+	},
+
+	"ancestry_halfling": {
+		"culture_halfling_human": {
+			"color": [183,173,117,255]
+		},
+		"culture_halfling_drow": {
+			"color": [183,173,117,255] //TODO
+		},
+	},
+	
+	"ancestry_elf": {
+		"culture_elf_drow": {
+			"color": [183,108,176,255]
+		},
+	},
+}

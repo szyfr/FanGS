@@ -67,7 +67,7 @@ Province :: struct {
 
 	//* Data
 	localID : u32,
-	name    : ^cstring,
+	name    : string,
 	color   : raylib.Color,
 	shaderIndex: int,
 
@@ -119,6 +119,27 @@ Population :: struct {
 
 //* Worldmap storage
 Worldmap :: struct {
+	//* Worlds
+	worlds : [dynamic]World,
+	activeWorld : int,
+
+	//* Shader
+	shader         : raylib.Shader,
+
+	shaderVarLoc   : map[string]raylib.ShaderLocationIndex,
+	shaderVar      : map[string]ShaderVariable,
+
+	//* Data
+	provincePixelCount : int,
+
+	settings  : ^MapSettingsData,
+
+	date      : Date,
+	timeSpeed : uint,
+	timeDelay : uint,
+	timePause : bool,
+}
+World :: struct {
 	//* Drawing
 	provinceImage  : raylib.Image,
 	heightImage    : raylib.Image,
@@ -126,24 +147,9 @@ Worldmap :: struct {
 
 	collisionMesh  : raylib.Mesh,
 	model          : raylib.Model,
-	shader         : raylib.Shader,
-
-	shaderVarLoc   : map[string]raylib.ShaderLocationIndex,
-	shaderVar      : map[string]ShaderVariable,
-
-	mapHeight      : f32,
-	mapWidth       : f32,
-
-
-	//* Data
-	provincePixelCount : int,
-
-	mapsettings    : ^MapSettingsData,
-
-	date      : Date,
-	timeSpeed : uint,
-	timeDelay : uint,
-	timePause : bool,
+	
+	mapHeight : f32,
+	mapWidth  : f32,
 }
 MapSettingsData :: struct {
 	loopMap : bool,

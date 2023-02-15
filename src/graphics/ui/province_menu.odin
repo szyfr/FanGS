@@ -41,7 +41,7 @@ draw_provincemenu :: proc() {
 	//* Province name
 	raylib.DrawTextEx(
 		game.font,
-		game.player.currentSelection.name^,
+		strings.clone_to_cstring(game.player.currentSelection.name),
 		{topLeft.x + 20, topLeft.y + 20},
 		game.settings.fontSize, 0,
 		raylib.BLACK,

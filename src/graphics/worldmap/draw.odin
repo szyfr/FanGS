@@ -11,10 +11,10 @@ import "../../game"
 
 //= Procedures
 draw :: proc() {
-
+	world := game.worldmap.worlds[game.worldmap.activeWorld]
 	//* Center
 	raylib.DrawModelEx(
-		game.worldmap.model,
+		world.model,
 		{},
 		{0,1,0},
 		180,
@@ -23,8 +23,8 @@ draw :: proc() {
 	)
 	//* Left
 	raylib.DrawModelEx(
-		game.worldmap.model,
-		{-game.worldmap.mapWidth,0,0},
+		world.model,
+		{-world.mapWidth,0,0},
 		{0,1,0},
 		180,
 		{1,1,1},
@@ -32,8 +32,8 @@ draw :: proc() {
 	)
 	//* Right
 	raylib.DrawModelEx(
-		game.worldmap.model,
-		{game.worldmap.mapWidth,0,0},
+		world.model,
+		{world.mapWidth,0,0},
 		{0,1,0},
 		180,
 		{1,1,1},

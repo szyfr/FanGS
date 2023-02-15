@@ -11,12 +11,15 @@ import "../../game"
 import "../../game/settings"
 import "../../game/localization"
 
+import "../../debug"
+
 
 //= Constants
 MAIN_WIDTH         : f32 : 200
 MAIN_HEIGHT        : f32 : 320
 MAIN_BUTTON_WIDTH  : f32 : 250
 MAIN_BUTTON_HEIGHT : f32 :  60
+MAINMENU_MODDING_ERROR :: "[ERROR] No mods are currently selected."
 
 out_quit     :: 1
 out_newgame  :: 2
@@ -119,11 +122,15 @@ draw_mainmenu :: proc() -> i32 {
 
 	//* Button logic
 	// TODO: Load, Mods, and Options screens and functionality
-	if new		{
-		//TODO Show error on screen if NO mods enabled
+	if new {
+		if len(game.mods) == 0 {
+			append(&game.errorHolder.errorArray, debug.create(MAINMENU_MODDING_ERROR))
+			return 0
+		}
 		game.menu  = .none
 		game.state = .choose
-		worldmap.init("farophi") //TODO New mod loader
+		worldmap.init_new()
+		//worldmap.init("farophi")
 		if game.modsDirectory != nil do raylib.ClearDirectoryFiles()
 	}
 	if load		{}

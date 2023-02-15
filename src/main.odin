@@ -36,7 +36,7 @@ main_update :: proc() {
 
 	if raylib.IsKeyPressed(.O) {
 		for str in game.mods {
-			fmt.printf("%v\n", str)
+			append(&game.errorHolder.errorArray, debug.create("fuck"))
 		}
 	}
 }
@@ -92,6 +92,8 @@ main_draw :: proc() {
 			if game.player.currentSelection != nil do ui.draw_provincemenu()
 	}
 
+	debug.draw(game.errorHolder)
+
 	//* Debug
 	raylib.DrawFPS(0,0)
 
@@ -117,6 +119,7 @@ main :: proc() {
 main_init :: proc() {
 	//* Debugging
 	debug.create_log()
+	game.errorHolder = new(debug.ArrayHolder)
 
 	//* Setup
 	settings.init()

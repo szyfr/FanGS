@@ -1,0 +1,17 @@
+
+{
+	"ancestry_human": {
+		"color": [160,160,160,255],
+		"growth": 0.001,
+	},
+
+	"ancestry_halfling": {
+		"color": [183,121,73,255],
+		"growth": 0.001,
+	},
+	
+	"ancestry_elf":{
+		"color": [86,183,96,255],
+		"growth": 0.00025,
+	},
+}

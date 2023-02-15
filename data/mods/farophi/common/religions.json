@@ -1,0 +1,10 @@
+
+{
+	"religion_watergoddess": {
+		"color": [64,106,183,255],
+	},
+
+	"religion_evildrown": {
+		"color": [183,14,107,255],
+	},
+}

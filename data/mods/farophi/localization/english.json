@@ -1,92 +1,42 @@
 
 {
+	// Ancestries
+	"ancestry_human":"Human",
+	"ancestry_halfling":"Halfling",
+	"ancestry_elf":"Elf",
 
-	"ancestry": {
-		"human": {
-			"local": "Human",
-			"color": [160,160,160,255],
-			"growth": 0.001
-		},
-		"halfling": {
-			"local": "Halfling",
-			"color": [183,121,73,255],
-			"growth": 0.001
-		},
-		"elf":{
-			"local": "Elf",
-			"color": [86,183,96,255],
-			"growth": 0.00025
-		}
-	},
-	"culture": {
-		"human": {
-			"riverlander": {
-				"local": "Riverlander",
-				"color": [89,155,183,255]
-			}
-		},
-		"halfling": {
-			"halfling_human": {
-				"local": "Human",
-				"color": [183,173,117,255]
-			}
-		},
-		"elf": {
-			"drow": {
-				"local": "Drow",
-				"color": [183,108,176,255]
-			}
-		}
-	},
-	"religion": {
-		"water_goddess": {
-			"local": "Water Goddess",
-			"color": [64,106,183,255]
-		},
-		"evil_drow": {
-			"local": "Evil Drow God",
-			"color": [183,14,107,255]
-		}
-	},
+	// Cultures
+	"culture_human_riverlander":"human",
+	"culture_halfling_human":"Humanling",
+	"culture_halfling_drow":"Drowling",
+	"culture_elf_drow":"Drow",
 
-	"terrain": {
-		"grassland": {
-			"local": "Grassland",
-			"color": [22,240,65,255]
-		},
-		"cave": {
-			"local": "Cavern",
-			"color": [175,90,51,255]
-		},
-		"mountain": {
-			"local": "Mountain",
-			"color": [99,51,28,255]
-		},
-		"drow_hold": {
-			"local": "Drow Hold",
-			"color": [137,78,128,255]
-		}
-	},
+	// Religion
+	"religion_watergoddess":"Water Goddess",
+	"religion_evildrown":"Evil Drow God",
 
-	"provinces": {
-		"prov1":  "Prov1",
-		"prov2":  "Prov2",
-		"prov3":  "Prov3",
-		"prov4":  "Prov4",
-		"prov5":  "Prov5",
-		"prov6":  "Prov6",
-		"prov7":  "Prov7",
-		"prov8":  "Prov8",
-		"prov9":  "Prov9",
-		"prov10": "Prov10",
-		"prov11": "Prov11",
-		"prov12": "Prov12",
-		"prov13": "Prov13"
-	},
+	// Terrain
+	"terrain_grassland":"Grassland",
+	"terrain_cave":"Cavern",
+	"terrain_mountain":"Mountain",
+	"terrain_drowhold":"Drow Hold",
 
-	"nations": {
-		"HUMAN_TEMP": "Humania",
-		"DROW_TEMP":  "Drowtopia"
-	}
+	// Provinces
+	"prov1":"Prov1",
+	"prov2":"Prov2",
+	"prov3":"Prov3",
+	"prov4":"Prov4",
+	"prov5":"Prov5",
+	"prov6":"Prov6",
+	"prov7":"Prov7",
+	"prov8":"Prov8",
+	"prov9":"Prov9",
+	"prov10":"Prov10",
+	"prov11":"Prov11",
+	"prov12":"Prov12",
+	"prov13":"Prov13",
 
+	// Nations
+	"river_state_1":"Humania",
+	"drow_hold_1":"Drowtopia",
 }

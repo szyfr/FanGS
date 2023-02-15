@@ -1,6 +1,5 @@
 {
-	"1": {
-		"name": "prov1",
+	"prov1": {
 		"terrain": "grassland",
 		"type": "normal",
 		"color": {
@@ -26,8 +25,7 @@
 			}
 		]
 	},
-	"2": {
-		"name": "prov2",
+	"prov2": {
 		"terrain": "grassland",
 		"type": "normal",
 		"color": {
@@ -53,8 +51,7 @@
 			}
 		]
 	},
-	"3": {
-		"name": "prov3",
+	"prov3": {
 		"terrain": "grassland",
 		"type": "normal",
 		"color": {
@@ -80,8 +77,7 @@
 			}
 		]
 	},
-	"4": {
-		"name": "prov4",
+	"prov4": {
 		"terrain": "cave",
 		"type": "controllable",
 		"color": {
@@ -94,8 +90,7 @@
 
 		"population": []
 	},
-	"5": {
-		"name": "prov5",
+	"prov5": {
 		"terrain": "mountain",
 		"type": "impassable",
 		"color": {
@@ -108,8 +103,7 @@
 
 		"population": []
 	},
-	"6": {
-		"name": "prov6",
+	"prov6": {
 		"terrain": "cave",
 		"type": "controllable",
 		"color": {
@@ -122,8 +116,7 @@
 
 		"population": []
 	},
-	"7": {
-		"name": "prov7",
+	"prov7": {
 		"terrain": "cave",
 		"type": "normal",
 		"color": {
@@ -136,8 +129,7 @@
 
 		"population": []
 	},
-	"8": {
-		"name": "prov8",
+	"prov8": {
 		"terrain": "cave",
 		"type": "normal",
 		"color": {
@@ -150,8 +142,7 @@
 
 		"population": []
 	},
-	"9": {
-		"name": "prov9",
+	"prov9": {
 		"terrain": "cave",
 		"type": "normal",
 		"color": {
@@ -164,8 +155,7 @@
 
 		"population": []
 	},
-	"10": {
-		"name": "prov10",
+	"prov10": {
 		"terrain": "cave",
 		"type": "normal",
 		"color": {
@@ -178,8 +168,7 @@
 
 		"population": []
 	},
-	"11": {
-		"name": "prov11",
+	"prov11": {
 		"terrain": "cave",
 		"type": "normal",
 		"color": {
@@ -192,8 +181,7 @@
 
 		"population": []
 	},
-	"12": {
-		"name": "prov12",
+	"prov12": {
 		"terrain": "cave",
 		"type": "controllable",
 		"color": {
@@ -206,8 +194,7 @@
 
 		"population": []
 	},
-	"13": {
-		"name": "prov13",
+	"prov13": {
 		"terrain": "drow_hold",
 		"type": "normal",
 		"color": {

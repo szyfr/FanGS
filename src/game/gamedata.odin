@@ -4,11 +4,15 @@ package game
 //= Imports
 import "vendor:raylib"
 
+import "../debug"
+
 
 //= Global
 state : Gamestate = .mainmenu
 menu  : Menu      = .none
 abort : bool      =  false
+
+errorHolder : ^debug.ArrayHolder
 
 
 //* Graphics data

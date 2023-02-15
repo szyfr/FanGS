@@ -36,6 +36,7 @@ update :: proc() {
 //* Player movement
 update_player_movement :: proc() {
 
+	world := game.worldmap.worlds[game.worldmap.activeWorld]
 	mod := ((game.player.zoom) / 5) / 100
 
 	//* Key Movement
@@ -62,15 +63,15 @@ update_player_movement :: proc() {
 
 	//* Edge contraints/looping
 	if game.worldmap != nil {
-		if game.player.target.z >  0							do game.player.target.z =  0
-		if game.player.target.z < -game.worldmap.mapHeight		do game.player.target.z = -game.worldmap.mapHeight
+		if game.player.target.z >  0					do game.player.target.z =  0
+		if game.player.target.z < -world.mapHeight		do game.player.target.z = -world.mapHeight
 
-		if game.worldmap.mapsettings.loopMap {
-			if game.player.target.x > 0							do game.player.target.x = -game.worldmap.mapWidth
-			if game.player.target.x < -game.worldmap.mapWidth	do game.player.target.x = 0
+		if game.worldmap.settings.loopMap {
+			if game.player.target.x > 0					do game.player.target.x = -world.mapWidth
+			if game.player.target.x < -world.mapWidth	do game.player.target.x = 0
 		} else {
-			if game.player.target.x > 0							do game.player.target.x = 0
-			if game.player.target.x < -game.worldmap.mapWidth	do game.player.target.x = -game.worldmap.mapWidth
+			if game.player.target.x > 0					do game.player.target.x = 0
+			if game.player.target.x < -world.mapWidth	do game.player.target.x = -world.mapWidth
 		}
 	}
 }
@@ -123,10 +124,12 @@ update_player_mouse :: proc() {
 			case .play, .observer:
 		}
 
+		world := game.worldmap.worlds[game.worldmap.activeWorld]
+
 		//* Creating ray and collision info
 		game.player.ray = raylib.GetMouseRay(position, game.player)
 		collision : raylib.RayCollision = {}
-		width, height := -game.worldmap.mapWidth/2, -game.worldmap.mapHeight/2
+		width, height := -world.mapWidth/2, -world.mapHeight/2
 		transformCenter : linalg.Matrix4x4f32 = {
 			-1, 0,  0, 0,
 			 0, 1,  0, 0,
@@ -137,31 +140,31 @@ update_player_mouse :: proc() {
 			-1, 0,  0, 0,
 			 0, 1,  0, 0,
 			 0, 0, -1, 0,
-			-game.worldmap.mapWidth, 0, 0, 1,
+			-world.mapWidth, 0, 0, 1,
 		}
 		transformRight : linalg.Matrix4x4f32 = {
 			-1, 0,  0, 0,
 			 0, 1,  0, 0,
 			 0, 0, -1, 0,
-			+game.worldmap.mapWidth, 0, 0, 1,
+			+world.mapWidth, 0, 0, 1,
 		}
 
 		//* Casting ray
 		collision = raylib.GetRayCollisionMesh(
 			game.player.ray,
-			game.worldmap.collisionMesh,
+			world.collisionMesh,
 			transformCenter,
 		)
 		if !collision.hit {
 			collision = raylib.GetRayCollisionMesh(
 				game.player.ray,
-				game.worldmap.collisionMesh,
+				world.collisionMesh,
 				transformLeft,
 			)
 			if !collision.hit {
 				collision = raylib.GetRayCollisionMesh(
 					game.player.ray,
-					game.worldmap.collisionMesh,
+					world.collisionMesh,
 					transformRight,
 				)
 			}
@@ -169,12 +172,12 @@ update_player_mouse :: proc() {
 
 		//* Calculate PosX
 		posX : i32
-		if collision.point.x*20 > 0 do posX =  i32(game.worldmap.mapWidth*20) - i32(collision.point.x*20)
-		else                        do posX = -i32(collision.point.x*20) % i32(game.worldmap.mapWidth*20)
+		if collision.point.x*20 > 0 do posX =  i32(world.mapWidth*20) - i32(collision.point.x*20)
+		else                        do posX = -i32(collision.point.x*20) % i32(world.mapWidth*20)
 
 		//* Grab color
 		col := raylib.GetImageColor(
-			game.worldmap.provinceImage,
+			world.provinceImage,
 			posX,
 			-i32(collision.point.z*20),
 		)
