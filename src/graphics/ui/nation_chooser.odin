@@ -70,7 +70,7 @@ draw_nationchooser :: proc() {
 			game.font,
 			name,
 			{ topright.x + namePosition, topright.y + 20 },
-			game.settings.fontSize + 8, 0,
+			game.settings.fontSize + TEXT_HEADING1, 0,
 			raylib.BLACK,
 		)
 

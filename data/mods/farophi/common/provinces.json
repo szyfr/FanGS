@@ -1,6 +1,6 @@
 {
 	"prov1": {
-		"terrain": "grassland",
+		"terrain": "terrain_grassland",
 		"type": "normal",
 		"color": {
 			"r": 219,
@@ -12,21 +12,21 @@
 
 		"population": [
 			{
-				"ancestry": "human",
-				"culture": "riverlander",
-				"religion": "water_goddess",
+				"ancestry": "ancestry_human",
+				"culture": "culture_human_riverlander",
+				"religion": "religion_watergoddess",
 				"count": 2000
 			},
 			{
-				"ancestry": "halfling",
-				"culture": "halfling_human",
-				"religion": "water_goddess",
+				"ancestry": "ancestry_halfling",
+				"culture": "culture_halfling_human",
+				"religion": "religion_watergoddess",
 				"count": 1000
 			}
 		]
 	},
 	"prov2": {
-		"terrain": "grassland",
+		"terrain": "terrain_grassland",
 		"type": "normal",
 		"color": {
 			"r": 125,
@@ -38,21 +38,21 @@
 
 		"population": [
 			{
-				"ancestry": "human",
-				"culture": "riverlander",
-				"religion": "water_goddess",
+				"ancestry": "ancestry_human",
+				"culture": "culture_human_riverlander",
+				"religion": "religion_watergoddess",
 				"count": 1500
 			},
 			{
-				"ancestry": "halfling",
-				"culture": "halfling_human",
-				"religion": "water_goddess",
+				"ancestry": "ancestry_halfling",
+				"culture": "culture_halfling_human",
+				"religion": "religion_watergoddess",
 				"count": 500
 			}
 		]
 	},
 	"prov3": {
-		"terrain": "grassland",
+		"terrain": "terrain_grassland",
 		"type": "normal",
 		"color": {
 			"r": 109,
@@ -64,21 +64,21 @@
 
 		"population": [
 			{
-				"ancestry": "human",
-				"culture": "riverlander",
-				"religion": "water_goddess",
+				"ancestry": "ancestry_human",
+				"culture": "culture_human_riverlander",
+				"religion": "religion_watergoddess",
 				"count": 1000
 			},
 			{
-				"ancestry": "halfling",
-				"culture": "halfling_human",
-				"religion": "water_goddess",
+				"ancestry": "ancestry_halfling",
+				"culture": "culture_halfling_human",
+				"religion": "religion_watergoddess",
 				"count": 500
 			}
 		]
 	},
 	"prov4": {
-		"terrain": "cave",
+		"terrain": "terrain_cave",
 		"type": "controllable",
 		"color": {
 			"r": 100,
@@ -91,7 +91,7 @@
 		"population": []
 	},
 	"prov5": {
-		"terrain": "mountain",
+		"terrain": "terrain_mountain",
 		"type": "impassable",
 		"color": {
 			"r": 135,
@@ -104,7 +104,7 @@
 		"population": []
 	},
 	"prov6": {
-		"terrain": "cave",
+		"terrain": "terrain_cave",
 		"type": "controllable",
 		"color": {
 			"r": 224,
@@ -117,7 +117,7 @@
 		"population": []
 	},
 	"prov7": {
-		"terrain": "cave",
+		"terrain": "terrain_cave",
 		"type": "normal",
 		"color": {
 			"r": 121,
@@ -130,7 +130,7 @@
 		"population": []
 	},
 	"prov8": {
-		"terrain": "cave",
+		"terrain": "terrain_cave",
 		"type": "normal",
 		"color": {
 			"r": 51,
@@ -143,7 +143,7 @@
 		"population": []
 	},
 	"prov9": {
-		"terrain": "cave",
+		"terrain": "terrain_cave",
 		"type": "normal",
 		"color": {
 			"r": 51,
@@ -156,7 +156,7 @@
 		"population": []
 	},
 	"prov10": {
-		"terrain": "cave",
+		"terrain": "terrain_cave",
 		"type": "normal",
 		"color": {
 			"r": 92,
@@ -169,7 +169,7 @@
 		"population": []
 	},
 	"prov11": {
-		"terrain": "cave",
+		"terrain": "terrain_cave",
 		"type": "normal",
 		"color": {
 			"r": 92,
@@ -182,7 +182,7 @@
 		"population": []
 	},
 	"prov12": {
-		"terrain": "cave",
+		"terrain": "terrain_cave",
 		"type": "controllable",
 		"color": {
 			"r": 164,
@@ -195,7 +195,7 @@
 		"population": []
 	},
 	"prov13": {
-		"terrain": "drow_hold",
+		"terrain": "terrain_drowhold",
 		"type": "normal",
 		"color": {
 			"r": 224,
@@ -207,9 +207,9 @@
 
 		"population": [
 			{
-				"ancestry": "elf",
-				"culture": "drow",
-				"religion": "evil_drow",
+				"ancestry": "ancestry_elf",
+				"culture": "culture_elf_drow",
+				"religion": "religion_evildrow",
 				"count": 10000
 			}
 		]

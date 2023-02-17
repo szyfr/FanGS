@@ -36,8 +36,8 @@ update :: proc() {
 //* Player movement
 update_player_movement :: proc() {
 
-	world := game.worldmap.worlds[game.worldmap.activeWorld]
-	mod := ((game.player.zoom) / 5) / 100
+	world	:= game.worldmap.worlds[game.worldmap.activeWorld]
+	mod		:= ((game.player.zoom) / 5) / 100
 
 	//* Key Movement
 	if settings.is_key_down("up")    do game.player.target.z   += MOVE_SPD * (mod+3)

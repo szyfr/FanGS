@@ -5,6 +5,7 @@
 	"language": "english",
 	"edgescrolling": false,
 	"fontsize": 12,
+	"alert":1,
 
 	"keybindings": {
 		"up": {

@@ -8,9 +8,10 @@ import "../debug"
 
 
 //= Global
-state : Gamestate = .mainmenu
-menu  : Menu      = .none
-abort : bool      =  false
+state	: Gamestate		= .mainmenu
+menu	: Menu			= .none
+abort	: bool			=  false
+alert	: AlertLevel	= .high
 
 errorHolder : ^debug.ArrayHolder
 

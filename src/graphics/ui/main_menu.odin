@@ -38,7 +38,7 @@ draw_mainmenu :: proc() -> i32 {
 		game.font,
 		game.localization["game_name"],
 		topleft + 50,
-		40, 1,
+		game.settings.fontSize + TEXT_TITLE, 1,
 		raylib.BLACK,
 	)
 
@@ -124,13 +124,12 @@ draw_mainmenu :: proc() -> i32 {
 	// TODO: Load, Mods, and Options screens and functionality
 	if new {
 		if len(game.mods) == 0 {
-			append(&game.errorHolder.errorArray, debug.create(MAINMENU_MODDING_ERROR))
+			debug.create(&game.errorHolder.errorArray, MAINMENU_MODDING_ERROR, 0)
 			return 0
 		}
 		game.menu  = .none
 		game.state = .choose
 		worldmap.init_new()
-		//worldmap.init("farophi")
 		if game.modsDirectory != nil do raylib.ClearDirectoryFiles()
 	}
 	if load		{}

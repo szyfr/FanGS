@@ -29,24 +29,25 @@ init :: proc() {
 	game.localization = make(map[string]cstring, 10000)
 
 	//* Generate path to file
-	builder : strings.Builder
-	strings.write_string(&builder, LOCAL_LOCATION)
-	strings.write_string(&builder, strings.clone_from_cstring(game.settings.language))
-	strings.write_string(&builder, LOCAL_EXT)
-	location := strings.to_string(builder)
+	path := strings.concatenate({
+		LOCAL_LOCATION,
+		strings.clone_from_cstring(game.settings.language),
+		LOCAL_EXT,
+	})
 
 	//* Check for localization file
-	if !os.is_file(location) {
-		builderdebug : strings.Builder
-		strings.write_string(&builderdebug, ERR_LOCALIZATION_FIND)
-		strings.write_string(&builderdebug, ERR_LOCALIZATION_INFO)
-		strings.write_string(&builderdebug, strings.clone_from_cstring(game.settings.language))
-		strings.write_string(&builderdebug, LOCAL_EXT)
-		debug.add_to_log(strings.to_string(builderdebug))
+	if !os.is_file(path) {
+		error := strings.concatenate({
+			ERR_LOCALIZATION_FIND,
+			ERR_LOCALIZATION_INFO,
+			strings.clone_from_cstring(game.settings.language),
+			LOCAL_EXT,
+		})
+		debug.create(&game.errorHolder.errorArray, strings.clone_to_cstring(error), 1)
 	}
 
 	//* Load file
-	rawdata, err := os.read_entire_file_from_filename(location)
+	rawdata, err := os.read_entire_file_from_filename(path)
 	jsonData, er := json.parse(rawdata)
 
 	//* Grab localization
@@ -55,7 +56,7 @@ init :: proc() {
 	}
 
 	//* Logging
-	debug.add_to_log(LOCALIZATION_LOADED)
+	debug.create(&game.errorHolder.errorArray, LOCALIZATION_LOADED, 2)
 
 	//* Cleanup
 	delete(rawdata)

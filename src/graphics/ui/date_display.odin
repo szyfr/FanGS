@@ -26,7 +26,7 @@ draw_datedisplay :: proc() {
 		game.font,
 		date.to_string(),
 		{posX-24,posY},
-		16,
+		game.settings.fontSize,
 		1,
 		raylib.BLACK,
 	)

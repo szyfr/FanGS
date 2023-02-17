@@ -24,7 +24,7 @@ create_keybinding :: proc(
 		binding.valid  = true
 	} else {
 		binding.valid = false
-		debug.add_to_log(ERR_SETTINGS_ORIG)
+		debug.create(&game.errorHolder.errorArray, ERR_SETTINGS_ORIG, 2)
 	}
 
 	return binding

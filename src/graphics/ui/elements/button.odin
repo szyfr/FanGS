@@ -4,6 +4,8 @@ package elements
 //= Imports
 import "vendor:raylib"
 
+import "../../../game"
+
 
 //= Procedures
 
@@ -18,23 +20,30 @@ draw_button :: proc(
 	fontColor        :  raylib.Color      = raylib.BLACK,
 	text             : ^cstring           = nil,
 ) -> bool {
-	bgColor : raylib.Color = bgColorDefault
-	result  : bool         = false
+	bgTexture		:= background
+	bgNPatch		:= backgroundNPatch
+	bgColor			:= bgColorDefault
+	usedFont		:= font
+	usedFontSize	:= fontSize
+	str				: cstring = ""
+	result			:= false
+
+	if bgTexture == nil do bgTexture = &game.general_textbox
+	if bgNPatch  == nil do bgNPatch  = &game.general_textbox_npatch
+	if usedFont  == nil do usedFont  = &game.font
+	if usedFontSize == 0 do usedFontSize = game.settings.fontSize
+	if text != nil do str = text^
 
 	//* Test if clicked
 	mousePosition := raylib.GetMousePosition()
-	
 	if test_bounds(mousePosition, transform) {
 		bgColor = bgColorSelected
 		if raylib.IsMouseButtonReleased(.LEFT) do result = true
 	}
 
-	str : cstring = ""
-	if text != nil do str = text^
-
 	raylib.DrawTextureNPatch(
-		background^,
-		backgroundNPatch^,
+		bgTexture^,
+		bgNPatch^,
 		transform,
 		raylib.Vector2{0,0}, 0,
 		bgColor,
@@ -43,12 +52,11 @@ draw_button :: proc(
 	textPosition : raylib.Vector2
 	textPosition.x = ((transform.width / 2) + transform.x) - (((fontSize * f32(len(str))) * 1.1) / 2);
 	textPosition.y = ((transform.height / 2) + transform.y) - (((fontSize * 1) * 1.1) / 2)
-
 	raylib.DrawTextEx(
-		font^,
+		usedFont^,
 		str,
 		textPosition,
-		fontSize, 1,
+		usedFontSize, 1,
 		fontColor,
 	)
 

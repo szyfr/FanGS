@@ -130,8 +130,6 @@ Worldmap :: struct {
 	shaderVar      : map[string]ShaderVariable,
 
 	//* Data
-	provincePixelCount : int,
-
 	settings  : ^MapSettingsData,
 
 	date      : Date,
@@ -198,4 +196,10 @@ ProvinceType :: enum {
     ocean,
 	lake,
     impassable,
+}
+
+AlertLevel :: enum {
+	none,
+	low,
+	high,
 }

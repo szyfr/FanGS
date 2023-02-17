@@ -15,57 +15,58 @@ import "../../debug"
 //= Constants
 SETTINGS_LOCATION   :: "data/settings.json"
 
-SETTINGS_SCREENWIDTH  :: "screenwidth"
-SETTINGS_SCREENHEIGHT :: "screenheight"
-SETTINGS_TARGETFPS    :: "targetfps"
-SETTINGS_EDGESCROLL   :: "edgescrolling"
-SETTINGS_FONTSIZE     :: "fontsize"
-SETTINGS_LANGUAGE     :: "language"
-SETTINGS_KEYBINDINGS  :: "keybindings"
-SETTINGS_MAPMODES     :: "mapmodes"
+SETTINGS_SCREENWIDTH	:: "screenwidth"
+SETTINGS_SCREENHEIGHT	:: "screenheight"
+SETTINGS_TARGETFPS		:: "targetfps"
+SETTINGS_EDGESCROLL		:: "edgescrolling"
+SETTINGS_FONTSIZE		:: "fontsize"
+SETTINGS_LANGUAGE		:: "language"
+SETTINGS_KEYBINDINGS	:: "keybindings"
+SETTINGS_MAPMODES		:: "mapmodes"
+SETTINGS_ALERT			:: "alert"
 
-SETTINGS_ORIGIN     :: "origin"
-SETTINGS_KEY        :: "key"
+SETTINGS_ORIGIN			:: "origin"
+SETTINGS_KEY			:: "key"
 
-SETINGS_KEY_UP      :: "up"
-SETINGS_KEY_DOWN    :: "down"
-SETINGS_KEY_LEFT    :: "left"
-SETINGS_KEY_RIGHT   :: "right"
-SETINGS_KEY_GRABMAP :: "grabmap"
+SETINGS_KEY_UP			:: "up"
+SETINGS_KEY_DOWN		:: "down"
+SETINGS_KEY_LEFT		:: "left"
+SETINGS_KEY_RIGHT		:: "right"
+SETINGS_KEY_GRABMAP		:: "grabmap"
 SETINGS_KEY_ZOOM_POSITIVE :: "zoompos"
 SETINGS_KEY_ZOOM_NEGATIVE :: "zoomneg"
-SETINGS_KEY_PAUSE   :: "pause"
-SETINGS_KEY_FASTER  :: "faster"
-SETINGS_KEY_SLOWER  :: "slower"
-SETINGS_KEY_MM00    :: "mm00"
-SETINGS_KEY_MM01    :: "mm01"
-SETINGS_KEY_MM02    :: "mm02"
-SETINGS_KEY_MM03    :: "mm03"
-SETINGS_KEY_MM04    :: "mm04"
-SETINGS_KEY_MM05    :: "mm05"
-SETINGS_KEY_MM06    :: "mm06"
-SETINGS_KEY_MM07    :: "mm07"
-SETINGS_KEY_MM08    :: "mm08"
-SETINGS_KEY_MM09    :: "mm09"
+SETINGS_KEY_PAUSE		:: "pause"
+SETINGS_KEY_FASTER		:: "faster"
+SETINGS_KEY_SLOWER		:: "slower"
+SETINGS_KEY_MM00		:: "mm00"
+SETINGS_KEY_MM01		:: "mm01"
+SETINGS_KEY_MM02		:: "mm02"
+SETINGS_KEY_MM03		:: "mm03"
+SETINGS_KEY_MM04		:: "mm04"
+SETINGS_KEY_MM05		:: "mm05"
+SETINGS_KEY_MM06		:: "mm06"
+SETINGS_KEY_MM07		:: "mm07"
+SETINGS_KEY_MM08		:: "mm08"
+SETINGS_KEY_MM09		:: "mm09"
 
-SETTINGS_MAPMODE_OVERWORLD      :: "overworld"
-SETTINGS_MAPMODE_POLITICAL      :: "political"
-SETTINGS_MAPMODE_TERRAIN        :: "terrain"
-SETTINGS_MAPMODE_CONTROL        :: "control"
-SETTINGS_MAPMODE_AUTONOMY       :: "autonomy"
-SETTINGS_MAPMODE_POPULATION     :: "population"
-SETTINGS_MAPMODE_INFRASTRUCTURE :: "infrastructure"
-SETTINGS_MAPMODE_ANCESTRY       :: "ancestry"
-SETTINGS_MAPMODE_CULTURE        :: "culture"
-SETTINGS_MAPMODE_RELIGION       :: "religion"
+SETTINGS_MAPMODE_OVERWORLD		:: "overworld"
+SETTINGS_MAPMODE_POLITICAL		:: "political"
+SETTINGS_MAPMODE_TERRAIN		:: "terrain"
+SETTINGS_MAPMODE_CONTROL		:: "control"
+SETTINGS_MAPMODE_AUTONOMY		:: "autonomy"
+SETTINGS_MAPMODE_POPULATION		:: "population"
+SETTINGS_MAPMODE_INFRASTRUCTURE	:: "infrastructure"
+SETTINGS_MAPMODE_ANCESTRY		:: "ancestry"
+SETTINGS_MAPMODE_CULTURE		:: "culture"
+SETTINGS_MAPMODE_RELIGION		:: "religion"
 
-SETTINGS_DEFAULT_LANGUAGE :: "english"
+SETTINGS_DEFAULT_LANGUAGE		:: "english"
 
-ERR_SETTINGS_FIND   :: "[ERROR]:\tFailed to find Settings file."
-ERR_SETTINGS_LANG   :: "[ERROR]:\tInput language does not currently exist."
-ERR_SETTINGS_ORIG   :: "[ERROR]:\tInput key lacks a valid origin."
-SETTINGS_LOADED     :: "[LOG]:\tLoaded program settings."
-SETTINGS_SAVED      :: "[LOG]:\tSaved program settings."
+ERR_SETTINGS_FIND	:: "[ERROR]:\tFailed to find Settings file."
+ERR_SETTINGS_LANG	:: "[ERROR]:\tInput language does not currently exist."
+ERR_SETTINGS_ORIG	:: "[ERROR]:\tInput key lacks a valid origin."
+SETTINGS_LOADED		:: "[LOG]:\tLoaded program settings."
+SETTINGS_SAVED		:: "[LOG]:\tSaved program settings."
 
 
 //= Procedures
@@ -78,7 +79,8 @@ init :: proc() {
 
 	//* Check for present file
 	if !os.is_file(SETTINGS_LOCATION) {
-		debug.add_to_log(ERR_SETTINGS_FIND)
+		debug.create(&game.errorHolder.errorArray, ERR_SETTINGS_FIND, 2)
+		//if game.alert >= .high do append(&game.errorHolder.errorArray, debug.create(ERR_SETTINGS_FIND))
 		
 		generate_default_settings()
 		save_settings()
@@ -96,6 +98,7 @@ init :: proc() {
 	game.settings.targetFPS     = i32(jsonData.(json.Object)[SETTINGS_TARGETFPS].(f64))
 	game.settings.edgeScrolling =     jsonData.(json.Object)[SETTINGS_EDGESCROLL].(bool)
 	game.settings.fontSize      = f32(jsonData.(json.Object)[SETTINGS_FONTSIZE].(f64))
+	game.alert                  = game.AlertLevel(jsonData.(json.Object)[SETTINGS_ALERT].(f64))
 	game.settings.language      = strings.clone_to_cstring(jsonData.(json.Object)[SETTINGS_LANGUAGE].(string))
 
 	//* Grab keybindings
@@ -143,7 +146,7 @@ init :: proc() {
 	}
 
 	//* Logging
-	debug.add_to_log(SETTINGS_LOADED)
+	debug.create(&game.errorHolder.errorArray, SETTINGS_LOADED, 2)
 
 	//* Cleanup
 	delete(rawData)
@@ -370,5 +373,5 @@ save_settings :: proc() {
 
 	os.write_entire_file(SETTINGS_LOCATION, builder.buf[:])
 
-	debug.add_to_log(SETTINGS_SAVED)
+	debug.create(&game.errorHolder.errorArray, SETTINGS_SAVED, 2)
 }

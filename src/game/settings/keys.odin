@@ -24,7 +24,7 @@ is_key_down :: proc(
 
 	//* Check for key's existance
 	keybind, res := game.settings.keybindings[key]
-	if !res do debug.add_to_log(ERR_KEYBINDING_ATTEMPT)
+	if !res do debug.create(&game.errorHolder.errorArray, ERR_KEYBINDING_ATTEMPT, 2)
 
 	switch keybind.origin {
 		case 0: // Keyboard
@@ -46,7 +46,7 @@ is_key_pressed :: proc(
 
 	//* Check for key's existance
 	keybind, res := game.settings.keybindings[key]
-	if !res do debug.add_to_log(ERR_KEYBINDING_ATTEMPT)
+	if !res do debug.create(&game.errorHolder.errorArray, ERR_KEYBINDING_ATTEMPT, 2)
 
 	switch keybind.origin {
 		case 0: // Keyboard

@@ -43,7 +43,7 @@ draw_provincemenu :: proc() {
 		game.font,
 		strings.clone_to_cstring(game.player.currentSelection.name),
 		{topLeft.x + 20, topLeft.y + 20},
-		game.settings.fontSize, 0,
+		game.settings.fontSize + TEXT_HEADING1, 0,
 		raylib.BLACK,
 	)
 

@@ -3,9 +3,10 @@
 
 
 ## 0.02_0 "Governance" - 22/12/14 -> ??/??/??
-[Unreleased] Streams - 13
+[Unreleased] Streams - 14
 ### Added
-- 
+- Migrated to using shaders for world map
+- Swapped to mod loader
 ### Removed
 - 
 ### Changed

@@ -1,18 +1,18 @@
 
 {
-	"grassland": {
+	"terrain_grassland": {
 		"color": [22,240,65,255],
 	},
 
-	"cave": {
+	"terrain_cave": {
 		"color": [175,90,51,255],
 	},
 
-	"mountain": {
+	"terrain_mountain": {
 		"color": [99,51,28,255],
 	},
 	
-	"drow_hold": {
+	"terrain_drowhold": {
 		"color": [137,78,128,255],
 	},
 }

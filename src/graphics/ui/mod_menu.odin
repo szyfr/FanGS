@@ -49,14 +49,14 @@ draw_modmenu :: proc() {
 		game.font,
 		game.localization["mod_name"],
 		{ topleft.x + 40, topleft.y + 25},
-		game.settings.fontSize+4, 1,
+		game.settings.fontSize + TEXT_HEADING2, 1,
 		raylib.BLACK,
 	)
 	raylib.DrawTextEx(
 		game.font,
 		game.localization["mod_enable"],
 		{ botright.x - (f32(len(game.localization["mod_enable"])) * (game.settings.fontSize+4)) - 70, topleft.y + 25},
-		game.settings.fontSize+4, 1,
+		game.settings.fontSize + TEXT_HEADING2, 1,
 		raylib.BLACK,
 	)
 
@@ -106,7 +106,7 @@ draw_modmenu :: proc() {
 		background			= &game.general_textbox,
 		backgroundNPatch	= &game.general_textbox_npatch,
 		font				= &game.font,
-		fontSize			=  game.settings.fontSize+4,
+		fontSize			=  game.settings.fontSize + TEXT_HEADING2,
 		text				= &game.localization["mod_refresh"],
 	)
 

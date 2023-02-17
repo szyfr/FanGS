@@ -33,12 +33,6 @@ main_update :: proc() {
 			player.update()
 			date.update()
 	}
-
-	if raylib.IsKeyPressed(.O) {
-		for str in game.mods {
-			append(&game.errorHolder.errorArray, debug.create("fuck"))
-		}
-	}
 }
 
 
@@ -92,9 +86,9 @@ main_draw :: proc() {
 			if game.player.currentSelection != nil do ui.draw_provincemenu()
 	}
 
-	debug.draw(game.errorHolder)
 
 	//* Debug
+	debug.draw(game.errorHolder, int(game.alert))
 	raylib.DrawFPS(0,0)
 
 	raylib.EndDrawing()
